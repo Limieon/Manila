@@ -1,6 +1,5 @@
-
-print('Running Core')
-
-task('compile', () => {
-	print('Building Core...')
-})
+task('compile')
+	.dependsOn(':compile')
+	.executes(() => {
+		print('Compiling Core...')
+	})

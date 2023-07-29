@@ -1,6 +1,6 @@
-
-print('Running Client')
-
-task('compile', () => {
-	print('Building Client...')
-})
+task('compile')
+	.dependsOn(':compile')
+	.dependsOn(':core:compile')
+	.executes(() => {
+		print('Compiling Client...')
+	})
