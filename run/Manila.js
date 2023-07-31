@@ -16,6 +16,8 @@ task('compile').executes(() => {
 
 	print(`Compiling for ${graphicsApi}`)
 	print('Year:', year)
+
+	throw new Error('Lol')
 })
 
 task('run')
