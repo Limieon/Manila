@@ -3,23 +3,23 @@ import Gradient from 'gradient-string'
 
 const LOG_PREFIX = Chalk.gray('>')
 export default class Logger {
-	static init(quiet) {
+	static init(quiet: boolean) {
 		Logger.#quiet = quiet
 	}
 
-	static info(...msg) {
+	static info(...msg: string[]) {
 		if (Logger.#quiet) return
 		console.log(`${LOG_PREFIX}`, msg.join(' '))
 	}
-	static warning(...msg) {
+	static warning(...msg: string[]) {
 		console.log(`${LOG_PREFIX}`, Chalk.yellow(msg.join(' ')))
 	}
-	static error(...msg) {
+	static error(...msg: string[]) {
 		console.log(`${LOG_PREFIX}`, Chalk.red(msg.join(' ')))
 	}
 
-	static script(file, ...msg) {
-		console.log(`${Chalk.blue(file)} ${LOG_PREFIX}`, msg.join(' '))
+	static script(...msg: string[]) {
+		console.log(`${LOG_PREFIX}`, msg.join(' '))
 	}
 
 	static #quiet

@@ -1,32 +1,38 @@
 {
-  "name": "manila",
-  "version": "1.0.0",
-  "description": "A BuildSystem for C# using JavaScript",
-  "main": "index.js",
-  "type": "module",
-  "scripts": {
-    "start": "node index.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Limieon/Manila.git"
-  },
-  "keywords": [
-    "buildsystem",
-    "c#"
-  ],
-  "author": "Limieon",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/Limieon/Manila/issues"
-  },
-  "homepage": "https://github.com/Limieon/Manila#readme",
-  "dependencies": {
-    "chalk": "^5.3.0",
-    "child_process": "^1.0.2",
-    "commander": "^11.0.0",
-    "figlet": "^1.6.0",
-    "gradient-string": "^2.0.2",
-    "inquirer": "^9.2.8"
-  }
+	"name": "manila",
+	"version": "1.0.0",
+	"description": "A BuildSystem for C# using JavaScript",
+	"main": "index.js",
+	"type": "module",
+	"scripts": {
+		"start": "npx ts-node-esm index.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Limieon/Manila.git"
+	},
+	"keywords": [
+		"buildsystem",
+		"c#"
+	],
+	"author": "Limieon",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/Limieon/Manila/issues"
+	},
+	"homepage": "https://github.com/Limieon/Manila#readme",
+	"dependencies": {
+		"@types/chalk": "^2.2.0",
+		"@types/commander": "^2.12.2",
+		"@types/figlet": "^1.5.6",
+		"@types/inquirer": "^9.0.3",
+		"@types/node": "^20.4.5",
+		"chalk": "^5.3.0",
+		"child_process": "^1.0.2",
+		"commander": "^11.0.0",
+		"figlet": "^1.6.0",
+		"gradient-string": "^2.0.2",
+		"inquirer": "^9.2.8",
+		"ts-node": "^10.9.1"
+	}
 }
