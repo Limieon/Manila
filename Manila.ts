@@ -81,4 +81,6 @@ export default class Manila {
 		if (!FS.existsSync(srcDir)) FS.mkdirSync(srcDir, { recursive: true })
 		if (!FS.existsSync(binDir)) FS.mkdirSync(binDir, { recursive: true })
 	}
+
+	static installPlugin(name: string) {}
 }

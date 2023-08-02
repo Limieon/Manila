@@ -17,6 +17,7 @@ type Parameter = {
 	description: string
 	vDefault: any
 	type: ParameterType
+	project: Project
 }
 
 type Project = {
@@ -113,12 +114,17 @@ function print(...msg: string[]) {
 	Logger.script(msg.join(' '))
 }
 
+function importPlugin(name: string) {
+	ScriptHook.importPlugin(name)
+}
+
 // Script Hook Class
 export default class ScriptHook {
 	static run(app: Command) {
 		ScriptHook.#app = app
 		ScriptHook.#tasks = {}
 		ScriptHook.#rootDir = process.cwd()
+		ScriptHook.#projects = []
 		ScriptHook.#parameters = []
 		ScriptHook.#lastFileNames = []
 
@@ -171,7 +177,8 @@ export default class ScriptHook {
 	}
 
 	static registerParameter(name: string, description: string, vDefault: any, type: ParameterType) {
-		ScriptHook.#parameters.push({ name, description, vDefault, type })
+		if (!this.#fileIsProjectFile) ScriptHook.#parameters.push({ name, description, vDefault, type, project: undefined })
+		else ScriptHook.#parameters.push({ name, description, vDefault, type, project: this.#projects[this.#projects.length - 1] })
 	}
 
 	static getDependencies(task: TaskBuilder, deps = new Set<string>()): Set<string> {
@@ -216,6 +223,8 @@ export default class ScriptHook {
 
 		return true
 	}
+
+	static importPlugin(name: string) {}
 
 	static getApp(): Command {
 		return ScriptHook.#app
@@ -276,9 +285,12 @@ export default class ScriptHook {
 	}
 
 	static prettyPrintParameters() {
-		const table = []
+		const projects: { [key: string]: string[][] } = {}
 
 		ScriptHook.#parameters.forEach((p) => {
+			let projectName = p.project == undefined ? 'global' : p.project.name
+			if (projects[projectName] == undefined) projects[projectName] = []
+
 			let type = ''
 			switch (p.type) {
 				case ParameterType.NUMBER:
@@ -288,16 +300,29 @@ export default class ScriptHook {
 			}
 
 			if (p.type == ParameterType.BOOLEAN) {
-				table.push([`  ${Chalk.gray('--' + p.name)}`, p.description])
+				projects[projectName].push([`  ${Chalk.gray('--' + p.name)}`, p.description])
 			} else {
-				table.push([
+				projects[projectName].push([
 					`  ${Chalk.gray('--' + p.name)} <${Chalk.blue(type)}>   `,
 					p.description + ' ' + Chalk.gray(`(Default: ${p.vDefault})   `)
 				])
 			}
 		})
 
-		console.log(Utils.createTable(table))
+		Object.keys(projects).forEach((k) => {
+			console.log(Chalk.magenta('Available Parameters:'), Chalk.gray(`(${k})`))
+			console.log(Utils.createTable(projects[k]))
+		})
+	}
+
+	static prettyPrintProjects() {
+		const table = [[Chalk.blue('Project'), Chalk.blue('Namespace'), Chalk.blue('Version')]]
+
+		ScriptHook.#projects.forEach((p) => {
+			table.push([`${Chalk.gray('-')} ${p.name}`, p.namespace, p.version])
+		})
+
+		console.log(Utils.createTable(table, 3))
 	}
 
 	static registerProject(name: string) {

@@ -41,7 +41,7 @@ const app = new Command('manila')
 					return
 				} else {
 					console.log()
-					console.error(`${Chalk.red('TASK FAILED!')}${Chalk.gray(':')} ${errorMsg}`)
+					console.error(`${Chalk.red('TASK FAILED!')} ${Chalk.gray('-')} ${errorMsg}`)
 					console.log(errorMsg)
 					console.log()
 					console.log(`Took ${(timeElapsed / 60).toFixed(0)}m ${timeElapsed % 60}s`)
@@ -54,7 +54,6 @@ const app = new Command('manila')
 
 		ScriptHook.prettyPrintTasks()
 
-		console.log(Chalk.magenta('Available Parameters:'))
 		ScriptHook.prettyPrintParameters()
 	})
 
@@ -102,6 +101,38 @@ app.command('init')
 			namespace,
 			dummy: modules
 		})
+	})
+
+app.command('projects')
+	.description('List all available projects')
+	.action(() => {
+		ScriptHook.run(app)
+
+		console.log(Chalk.magenta('Available Projects:'))
+		ScriptHook.prettyPrintProjects()
+	})
+
+app.command('parameters')
+	.description('List all available parameters')
+	.action(() => {
+		ScriptHook.run(app)
+
+		ScriptHook.prettyPrintParameters()
+	})
+
+app.command('tasks')
+	.description('List all available tasks')
+	.action(() => {
+		ScriptHook.run(app)
+
+		ScriptHook.prettyPrintTasks()
+	})
+
+app.command('install')
+	.description('Install a plugin')
+	.argument('<plugin>', 'the plugin to install')
+	.action((plugin) => {
+		Manila.installPlugin(plugin)
 	})
 
 console.log(Gradient.vice.multiline(Figlet.textSync('Manila', 'Doom')))

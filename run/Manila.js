@@ -1,3 +1,5 @@
+importPlugin('manila.c#')
+
 const headless = parameterBoolean('headless', 'Enables compilation flags for headless running')
 const graphicsApi = parameterString('gapi', 'Choose a graphics api', 'opengl')
 const year = parameterNumber('year', 'Enter a year', 2023)
@@ -16,8 +18,6 @@ task('compile').executes(() => {
 
 	print(`Compiling for ${graphicsApi}`)
 	print('Year:', year)
-
-	throw new Error('Lol')
 })
 
 task('run')
