@@ -6,5 +6,13 @@
 	"semi": false,
 	"endOfLine": "lf",
 	"bracketSameLine": true,
-	"printWidth": 140
+	"printWidth": 140,
+	"overrides": [
+		{
+			"files": ["*.yaml", "*.yml"],
+			"options": {
+				"editorconfig": true
+			}
+		}
+	]
 }

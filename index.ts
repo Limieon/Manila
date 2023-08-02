@@ -132,9 +132,10 @@ app.command('install')
 	.description('Install a plugin')
 	.argument('<plugin>', 'the plugin to install')
 	.action((plugin) => {
-		Manila.installPlugin(plugin)
+		// This will later be used to install 3rd-Party plugins
 	})
 
 console.log(Gradient.vice.multiline(Figlet.textSync('Manila', 'Doom')))
+Manila.init()
 
 app.parse()
