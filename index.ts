@@ -211,7 +211,7 @@ app.command('install')
 		if (p == undefined) throw new Error(`Could not find plugin ${plugin}!`)
 
 		// Check if newer or same version in installed
-		let installedVersion = plugins[plugin] != undefined ? plugins[plugin].version : undefined
+		let installedVersion = pluginsConfig[plugin] != undefined ? pluginsConfig[plugin].version : undefined
 		if (installedVersion != undefined && !force) {
 			if (!Semver.gt(p.version, installedVersion)) {
 				console.log(Chalk.yellow(`Plugin ${Chalk.blue(plugin)} is already installed!`))
@@ -241,6 +241,34 @@ app.command('install')
 		console.log(Chalk.green('Successfully installed'), Chalk.blue(plugin))
 
 		Manila.updatePluginsConfig(pluginsConfig)
+	})
+
+app.command('link')
+	.description('Links a locoally installed plugin')
+	.argument('<dir>', 'the directory to your plugin')
+	.argument('<name>', 'the name of your plugin')
+	.argument('[indexFile]', 'the name of your index file', 'index.ts')
+	.action((dir, name, indexFile) => {
+		let plugins = Manila.getPluginsConfig()
+
+		if (!FS.existsSync(dir)) {
+			console.log(Chalk.red(`Specified plugin directory does not exist!`))
+			process.exit(-1)
+		}
+		if (plugins[name] != undefined) {
+			console.log(Chalk.red(`Plugin ${name} already exists in your plugins list!`))
+			process.exit(-1)
+		}
+
+		plugins[name] = {
+			indexFile: indexFile,
+			location: Path.relative(process.cwd(), dir),
+			version: '1.0.0'
+		}
+
+		Manila.updatePluginsConfig(plugins)
+
+		console.log(Chalk.green('Successfully linked plugin!'))
 	})
 
 console.log(Gradient.vice.multiline(Figlet.textSync('Manila', 'Doom')))

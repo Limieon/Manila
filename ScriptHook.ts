@@ -209,7 +209,7 @@ export default class ScriptHook {
 	static async importPlugin(name: string): Promise<any> {
 		const plugin = this.#plugins[name]
 		if (plugin == undefined) throw new Error(`Plugin ${name} could not be found!`)
-		let path = `file://${Path.join(this.#rootDir, '.manila', 'plugins', name, plugin.indexFile)}`
+		let path = `file://${Path.join(this.#rootDir, plugin.location, plugin.indexFile)}`
 		return (await import(path)).default
 	}
 
