@@ -5,26 +5,7 @@ import Path from 'path'
 
 import Logger from './Logger.js'
 import Utils from './Utils.js'
-
-enum ParameterType {
-	BOOLEAN,
-	STRING,
-	NUMBER
-}
-
-type Parameter = {
-	name: string
-	description: string
-	vDefault: any
-	type: ParameterType
-	project: Project
-}
-
-type Project = {
-	name: string
-	namespace?: string
-	version?: string
-}
+import Manila, { Parameter, ParameterType, ModuleParameters, Plugin, Project, ProjectParameters } from './Manila.js'
 
 class TaskBuilder {
 	constructor(name: string) {
@@ -114,38 +95,39 @@ function print(...msg: string[]) {
 	Logger.script(msg.join(' '))
 }
 
-function importPlugin(name: string) {
-	ScriptHook.importPlugin(name)
+async function importPlugin(name: string): Promise<any> {
+	return await ScriptHook.importPlugin(name)
 }
 
 // Script Hook Class
 export default class ScriptHook {
 	static run(app: Command) {
-		ScriptHook.#app = app
-		ScriptHook.#tasks = {}
-		ScriptHook.#rootDir = process.cwd()
-		ScriptHook.#projects = []
-		ScriptHook.#parameters = []
-		ScriptHook.#lastFileNames = []
+		this.#app = app
+		this.#tasks = {}
+		this.#rootDir = process.cwd()
+		this.#projects = []
+		this.#plugins = Manila.getPluginsConfig()
+		this.#parameters = []
+		this.#lastFileNames = []
 
 		if (!FS.existsSync('./Manila.js')) {
 			console.log(Chalk.red('Could not find Manila.js BuildScript!'))
 			return -1
 		}
 
-		ScriptHook.runFile(Path.join(process.cwd(), './Manila.js'))
+		this.runFile(Path.join(process.cwd(), './Manila.js'))
 
-		ScriptHook.runSubFiles(process.cwd(), true)
+		this.runSubFiles(process.cwd(), true)
 	}
 
 	static runSubFiles(dir: string, rootDir: boolean) {
 		FS.readdirSync(dir).forEach((f) => {
 			if (FS.statSync(Path.join(dir, f)).isFile()) {
 				if (f === 'Manila.js' && !rootDir) {
-					ScriptHook.runFile(Path.join(dir, 'Manila.js'))
+					this.runFile(Path.join(dir, 'Manila.js'))
 				}
 			} else {
-				ScriptHook.runSubFiles(Path.join(dir, f), false)
+				this.runSubFiles(Path.join(dir, f), false)
 			}
 		})
 	}
@@ -155,30 +137,30 @@ export default class ScriptHook {
 		version = undefined
 		this.#fileIsProjectFile = false
 
-		ScriptHook.#lastFileNames.push(file)
+		this.#lastFileNames.push(file)
 		try {
-			eval(FS.readFileSync(file, { encoding: 'utf-8' }))
+			eval(`(async () => { ${FS.readFileSync(file, { encoding: 'utf-8' })} })()`)
 		} catch (e) {
 			throw e
 		}
-		ScriptHook.#lastFileNames.pop()
+		this.#lastFileNames.pop()
 
 		if (this.#fileIsProjectFile) this.setProjectParameters(namespace, version)
 	}
 
 	static registerTask(task: TaskBuilder) {
 		const name = task.getName()
-		if (ScriptHook.#tasks[name] != undefined) {
+		if (this.#tasks[name] != undefined) {
 			Logger.error(`Task with name ${name} already has been defined!`)
 			process.exit(-1)
 		}
 
-		ScriptHook.#tasks[name] = task
+		this.#tasks[name] = task
 	}
 
 	static registerParameter(name: string, description: string, vDefault: any, type: ParameterType) {
-		if (!this.#fileIsProjectFile) ScriptHook.#parameters.push({ name, description, vDefault, type, project: undefined })
-		else ScriptHook.#parameters.push({ name, description, vDefault, type, project: this.#projects[this.#projects.length - 1] })
+		if (!this.#fileIsProjectFile) this.#parameters.push({ name, description, vDefault, type, project: undefined })
+		else this.#parameters.push({ name, description, vDefault, type, project: this.#projects[this.#projects.length - 1] })
 	}
 
 	static getDependencies(task: TaskBuilder, deps = new Set<string>()): Set<string> {
@@ -197,10 +179,10 @@ export default class ScriptHook {
 	}
 
 	static hasTask(name: string): boolean {
-		return ScriptHook.#tasks[name] != undefined
+		return this.#tasks[name] != undefined
 	}
 	static runTask(name: string): boolean {
-		const task = ScriptHook.#tasks[name]
+		const task = this.#tasks[name]
 		if (task == undefined) return false
 
 		const dependencies = this.getDependencies(task)
@@ -224,23 +206,28 @@ export default class ScriptHook {
 		return true
 	}
 
-	static importPlugin(name: string) {}
+	static async importPlugin(name: string): Promise<any> {
+		const plugin = this.#plugins[name]
+		if (plugin == undefined) throw new Error(`Plugin ${name} could not be found!`)
+		let path = `file://${Path.join(this.#rootDir, '.manila', 'plugins', name, plugin.indexFile)}`
+		return (await import(path)).default
+	}
 
 	static getApp(): Command {
-		return ScriptHook.#app
+		return this.#app
 	}
 	static getLastFileName(): string {
-		return ScriptHook.#lastFileNames[ScriptHook.#lastFileNames.length - 1]
+		return this.#lastFileNames[this.#lastFileNames.length - 1]
 	}
 	static getLastFileNames(): string[] {
-		return ScriptHook.#lastFileNames
+		return this.#lastFileNames
 	}
 	static getRootDir(): string {
-		return ScriptHook.#rootDir
+		return this.#rootDir
 	}
 
 	static prettyPrintTasks() {
-		const tasksNames = Object.keys(ScriptHook.#tasks)
+		const tasksNames = Object.keys(this.#tasks)
 		const namespaces = ['']
 
 		tasksNames.forEach((t) => {
@@ -264,7 +251,7 @@ export default class ScriptHook {
 
 				if (ns != n) return
 
-				const task = ScriptHook.#tasks[t]
+				const task = this.#tasks[t]
 				const dependencies = task.getDependencies()
 
 				const text = `  ${Chalk.blue('-')} ${Chalk.gray(t)}`
@@ -287,7 +274,7 @@ export default class ScriptHook {
 	static prettyPrintParameters() {
 		const projects: { [key: string]: string[][] } = {}
 
-		ScriptHook.#parameters.forEach((p) => {
+		this.#parameters.forEach((p) => {
 			let projectName = p.project == undefined ? 'global' : p.project.name
 			if (projects[projectName] == undefined) projects[projectName] = []
 
@@ -318,7 +305,7 @@ export default class ScriptHook {
 	static prettyPrintProjects() {
 		const table = [[Chalk.blue('Project'), Chalk.blue('Namespace'), Chalk.blue('Version')]]
 
-		ScriptHook.#projects.forEach((p) => {
+		this.#projects.forEach((p) => {
 			table.push([`${Chalk.gray('-')} ${p.name}`, p.namespace, p.version])
 		})
 
@@ -336,6 +323,7 @@ export default class ScriptHook {
 	}
 
 	static #app: Command
+	static #plugins: { [key: string]: Plugin }
 	static #parameters: Parameter[]
 	static #projects: Project[]
 	static #fileIsProjectFile: boolean

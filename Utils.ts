@@ -24,4 +24,9 @@ export default class Utils {
 
 		return out
 	}
+
+	static getRepoKey(url: string) {
+		let res = /\/\/(.*?).git/.exec(url)[1].split('/')
+		return `${res[0]}/${res[1]}/${res[2]}`
+	}
 }

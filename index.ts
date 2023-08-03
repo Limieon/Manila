@@ -4,10 +4,17 @@ import Gradient from 'gradient-string'
 import { Command } from 'commander'
 import Figlet from 'figlet'
 import Path from 'path'
+import Axios from 'axios'
+import FS from 'fs'
+import Semver, { SemVer } from 'semver'
 
-import Manila from './Manila.js'
+import { simpleGit } from 'simple-git'
+const Git = simpleGit()
+
+import Manila, { PluginIndexFile } from './Manila.js'
 import ScriptHook from './ScriptHook.js'
 import Logger from './Logger.js'
+import Utils from './Utils.js'
 
 const manila = Gradient.vice('Manila')
 const app = new Command('manila')
@@ -128,14 +135,115 @@ app.command('tasks')
 		ScriptHook.prettyPrintTasks()
 	})
 
+app.command('plugins')
+	.description('List available plugin repositories')
+	.action(async (plugin) => {
+		const repos = Manila.getSetting_stringList('pluginRepositories', [
+			'https://raw.githubusercontent.com/Limieon/Manila-Plugins/main/index.manila.json'
+		])
+
+		await new Promise<void>((done, rej) => {
+			repos.forEach(async (r, i, a) => {
+				Axios.get(r)
+					.then((res) => {
+						const { data } = res
+
+						console.log(
+							`${Chalk.magenta(data.name)}: ${Chalk.yellow(Object.keys(data.plugins).length)} ${Chalk.gray('plugin(s)')}`
+						)
+
+						let table = []
+						Object.keys(data.plugins).forEach((k) => {
+							console.log(`  - ${Chalk.blue(data.plugins[k].name)} - ${Chalk.yellow(data.plugins[k].version)}`)
+						})
+
+						if (i == a.length - 1) done()
+						else console.log()
+					})
+					.catch((err) => {
+						let e = err.response
+						console.log(e)
+						throw new Error(`Could not fetch plugin index file (Error: ${e.status} ${e.statusText})\nURL: ${r}`)
+					})
+			})
+		})
+	})
+
 app.command('install')
 	.description('Install a plugin')
 	.argument('<plugin>', 'the plugin to install')
-	.action((plugin) => {
-		// This will later be used to install 3rd-Party plugins
+	.option('-f, --force', 'force install a plugin')
+	.action(async (plugin, opts) => {
+		let force = opts.force == undefined ? false : opts.force
+		let pluginsConfig = Manila.getPluginsConfig()
+
+		console.log(Chalk.gray('Parsing plugin indices...'))
+
+		const repos = Manila.getSetting_stringList('pluginRepositories', [
+			'https://raw.githubusercontent.com/Limieon/Manila-Plugins/main/index.manila.json'
+		])
+
+		let plugins: { [key: string]: { name: string; version: string; index: string; repo: string } } = {}
+		await new Promise<void>((done, rej) => {
+			repos.forEach(async (r, i, a) => {
+				Axios.get(r)
+					.then((res) => {
+						const index: PluginIndexFile = res.data
+
+						Object.keys(index.plugins).forEach((k) => {
+							plugins[k] = index.plugins[k]
+							plugins[k].repo = index.name
+						})
+
+						if (i == a.length - 1) done()
+					})
+					.catch((err) => {
+						let e = err.response
+						console.log(e)
+						throw new Error(`Could not fetch plugin index file (Error: ${e.status} ${e.statusText})\nURL: ${r}`)
+					})
+			})
+		})
+
+		let ts = Date.now()
+
+		let p = plugins[plugin]
+		if (p == undefined) throw new Error(`Could not find plugin ${plugin}!`)
+
+		// Check if newer or same version in installed
+		let installedVersion = plugins[plugin] != undefined ? plugins[plugin].version : undefined
+		if (installedVersion != undefined && !force) {
+			if (!Semver.gt(p.version, installedVersion)) {
+				console.log(Chalk.yellow(`Plugin ${Chalk.blue(plugin)} is already installed!`))
+				process.exit(0)
+			}
+		}
+
+		console.log(Chalk.gray('Installing'), Chalk.blue(p.name), Chalk.gray('from'), `${Chalk.magenta(p.repo)}${Chalk.gray('...')}`)
+
+		if (!FS.existsSync('./.manila/tmp')) FS.mkdirSync('./.manila/tmp', { recursive: true })
+
+		console.log(Chalk.gray('Cloning git repo...'))
+		await Git.clone('https://github.com/Limieon/Manila-Plugins.git', `./.manila/tmp/${ts}`)
+
+		if (FS.existsSync(`./.manila/plugins/${plugin}`)) {
+			console.log(Chalk.gray('Removing old installation...'))
+			FS.rmSync(`./.manila/plugins/${plugin}`, { recursive: true })
+		}
+		FS.cpSync(`./.manila/tmp/${ts}/${plugin}`, `./.manila/plugins/${plugin}`, { recursive: true })
+
+		pluginsConfig[plugin] = {
+			indexFile: p.index,
+			version: p.version,
+			location: `/.manila/plugins/${plugin}`
+		}
+
+		console.log(Chalk.green('Successfully installed'), Chalk.blue(plugin))
+
+		Manila.updatePluginsConfig(pluginsConfig)
 	})
 
 console.log(Gradient.vice.multiline(Figlet.textSync('Manila', 'Doom')))
-Manila.init()
+if (process.argv.indexOf(`--no-logo`) < 0) Manila.init()
 
 app.parse()

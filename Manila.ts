@@ -1,17 +1,55 @@
-import FS from 'fs'
+import FS, { copyFile } from 'fs'
 import Path from 'path'
-import * as YAML from 'yaml'
+import YAML from 'yaml'
 
-type ProjectParameters = {
+export type ProjectParameters = {
 	name: string
 	namespace: string
 	dummy: boolean
 }
 
-type ModuleParameters = {
+export type ModuleParameters = {
 	name: string
 	namespace: string
 	dir: string
+}
+
+export enum ParameterType {
+	BOOLEAN,
+	STRING,
+	NUMBER
+}
+
+export type Parameter = {
+	name: string
+	description: string
+	vDefault: any
+	type: ParameterType
+	project: Project
+}
+
+export type Project = {
+	name: string
+	namespace?: string
+	version?: string
+}
+
+export type PlujginConfig = { [key: string]: Plugin }
+
+export type Plugin = {
+	version: string
+	indexFile: string
+	location: string
+}
+
+export type PluginIndex = {
+	name: string
+	version: string
+	index: string
+}
+export type PluginIndexFile = {
+	name: string
+	plugins: PluginIndex[]
 }
 
 const dummyProjectTemplate = `// This is your main Manila BuildScipt
@@ -50,29 +88,44 @@ namespace = '{namespace}'
 version = '1.0.0'
 `
 
-const settingsTemplate = `# Here you can specify your local Manila settings
-#
-# Specify your target .NET version
+const settingsTemplate = `# This is your manila settings file
+# You can configure your Manila settings in this file
+
+# Add plugin index file to install 3rd-Party plugins
+pluginRepositories:
+- https://raw.githubusercontent.com/Limieon/Manila-Plugins/main/index.manila.json
+
+# Specify your target dotnet version
 dotnet: 7.0
 `
 
 export default class Manila {
 	static init() {
-		this.#settings = {}
+		let settingsFileName = this.#getSettingsFileName()
+		this.#settings = settingsFileName != undefined ? YAML.parse(FS.readFileSync(settingsFileName, { encoding: 'utf-8' })) : {}
+		this.#plugins = FS.existsSync('./.manila/plugins.manila.json')
+			? JSON.parse(FS.readFileSync('./.manila/plugins.manila.json', { encoding: 'utf-8' }))
+			: { plugins: {} }
+	}
 
-		// Load settings file if it exists
-		let fileName = this.#getSettingsFileName()
-		if (fileName != undefined) this.#settings = YAML.parse(FS.readFileSync(fileName, { encoding: 'utf-8' }))
+	static getSettingsConfig(): object {
+		return this.#settings
+	}
+
+	static updatePluginsConfig(config: PlujginConfig) {
+		this.#plugins = config
+		FS.writeFileSync('./.manila/plugins.manila.json', JSON.stringify(config, null, 4))
+	}
+	static getPluginsConfig(): PlujginConfig {
+		return this.#plugins
 	}
 
 	static #getSettingsFileName(): string {
-		return FS.existsSync('./settings.manila')
-			? 'settings.manila'
-			: FS.existsSync('./settings.manila.yml')
-			? 'settings.manila.yml'
-			: FS.existsSync('./settings.manila.yaml')
-			? 'settings.manila.yaml'
-			: undefined
+		const fileNames = ['./.manila/settings.manila', './.manila/settings.manila.yaml', './.manila/settings.manila.yml']
+		for (const f of fileNames) {
+			if (FS.existsSync(f)) return f
+		}
+		return undefined
 	}
 
 	static getSetting(key: string, vDefault: any = undefined): any {
@@ -97,7 +150,7 @@ export default class Manila {
 		return setting
 	}
 
-	static parseTemplate(template: string, replace: object): string {
+	static parseTemplate(template: string, replace: object = {}): string {
 		let out = template.replaceAll('{\\t}', '\t')
 
 		Object.keys(replace).forEach((k) => {
@@ -115,7 +168,7 @@ export default class Manila {
 	}
 
 	static createDefaultSettingsFile(name: string, namespace: string) {
-		FS.writeFileSync('./settings.manila.yml', this.parseTemplate(settingsTemplate, {}), { encoding: 'utf-8' })
+		FS.writeFileSync('./.manila/settings.manila', this.parseTemplate(settingsTemplate, {}), { encoding: 'utf-8' })
 	}
 
 	static createProject(p: ProjectParameters) {
@@ -137,4 +190,5 @@ export default class Manila {
 	static installPlugin(name: string, silent: boolean) {}
 
 	static #settings: object
+	static #plugins: { [key: string]: Plugin }
 }
