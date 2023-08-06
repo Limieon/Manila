@@ -1,4 +1,4 @@
-importPlugin('manila.c#')
+const ManilaCS = await importPlugin('manila.cs')
 
 const headless = parameterBoolean('headless', 'Enables compilation flags for headless running')
 const graphicsApi = parameterString('gapi', 'Choose a graphics api', 'opengl')

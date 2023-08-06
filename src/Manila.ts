@@ -34,7 +34,7 @@ export type Project = {
 	version?: string
 }
 
-export type PlujginConfig = { [key: string]: Plugin }
+export type PluginConfig = { [key: string]: Plugin }
 
 export type Plugin = {
 	version: string
@@ -49,7 +49,7 @@ export type PluginIndex = {
 }
 export type PluginIndexFile = {
 	name: string
-	plugins: PluginIndex[]
+	plugins: { [key: string]: PluginIndex }
 }
 
 const dummyProjectTemplate = `// This is your main Manila BuildScipt
@@ -108,15 +108,21 @@ export default class Manila {
 			: { plugins: {} }
 	}
 
+	static dirContainsBuildFile() {
+		return FS.existsSync('./Manila.js')
+	}
+
 	static getSettingsConfig(): object {
 		return this.#settings
 	}
 
-	static updatePluginsConfig(config: PlujginConfig) {
+	static updatePluginsConfig(config: PluginConfig) {
 		this.#plugins = config
+
+		if (!FS.existsSync('./.manila/')) FS.mkdirSync('./.manila/', { recursive: true })
 		FS.writeFileSync('./.manila/plugins.manila.json', JSON.stringify(config, null, 4))
 	}
-	static getPluginsConfig(): PlujginConfig {
+	static getPluginsConfig(): PluginConfig {
 		return this.#plugins
 	}
 

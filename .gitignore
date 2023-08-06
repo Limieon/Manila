@@ -1,5 +1,8 @@
 node_modules/
 
+run/.manila/plugins/
+run/.manila/tmp/
+
 test
 
 package-lock.json

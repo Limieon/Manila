@@ -1,6 +1,6 @@
 using System;
 
-internal class Core
+public class Core
 {
 	public static void init(string[] args)
 	{

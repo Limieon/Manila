@@ -1,12 +1,13 @@
 import Chalk from 'chalk'
 import Inquirer from 'inquirer'
 import Gradient from 'gradient-string'
-import { Command } from 'commander'
 import Figlet from 'figlet'
 import Path from 'path'
 import Axios from 'axios'
 import FS from 'fs'
-import Semver, { SemVer } from 'semver'
+import Semver from 'semver'
+
+import minimist from 'minimist'
 
 import { simpleGit } from 'simple-git'
 const Git = simpleGit()
@@ -15,16 +16,113 @@ import Manila, { PluginIndexFile } from './Manila.js'
 import ScriptHook from './ScriptHook.js'
 import Logger from './Logger.js'
 import Utils from './Utils.js'
+import CLIApp from './CLIApp.js'
+import * as Commands from './Commands.js'
+
+const args = minimist(process.argv.slice(2))
+let subCommand = args._[0]
 
 const manila = Gradient.vice('Manila')
+const app = new CLIApp('manila', 'A BuildSystem for C# using JavaScript', '1.0.0')
+
+app.registerCommand({
+	name: 'init',
+	description: 'Initializes a new Manila project',
+	callback: Commands.init
+})
+app.registerCommand({
+	name: 'projects',
+	description: 'List available projects',
+	callback: Commands.projects
+})
+app.registerCommand({
+	name: 'tasks',
+	description: 'List available tasks',
+	callback: Commands.tasks
+})
+app.registerCommand({
+	name: 'parameters',
+	description: 'List available parameters',
+	callback: Commands.parameters
+})
+app.registerCommand({
+	name: 'plugins',
+	description: 'List available plugins',
+	callback: Commands.plugins
+})
+app.registerCommand({
+	name: 'install',
+	description: 'Installs a plugin',
+	parameters: [
+		{
+			name: 'plugin',
+			description: 'the plugin to install',
+			type: 'string'
+		}
+	],
+	callback: Commands.install
+})
+app.registerCommand({
+	name: 'link',
+	description: 'Links a locally installed plugin',
+	parameters: [
+		{
+			name: 'dir',
+			description: 'the root directory of your plugin',
+			type: 'string'
+		},
+		{
+			name: 'name',
+			description: 'the name of your plugin (will be used for importing)',
+			type: 'string'
+		},
+		{
+			name: 'indexFile',
+			description: 'the name of your index file',
+			type: 'string',
+			default: 'index.ts'
+		}
+	],
+	callback: Commands.link
+})
+
+app.registerGlobalOption({
+	name: 'help',
+	alias: 'h',
+	description: 'Prints this help text',
+	type: 'flag'
+})
+app.registerGlobalOption({
+	name: 'dir',
+	alias: 'd',
+	description: 'Changes working directory',
+	type: 'string',
+	default: '.'
+})
+
+//app.printHelpText()
+app.printHelpText('link')
+
+/*
 const app = new Command('manila')
 	.description('A BuildSystem for C# using JavaScript')
+	.option('--dir [dir]', 'change the working directory', '.')
+
+app.command('run')
 	.argument('[task]', 'the task to run')
 	.version('1.0.0')
 	.action((task, opts) => {
-		ScriptHook.run(app)
+		if (Manila.dirContainsBuildFile()) {
+			ScriptHook.run(app)
 
-		if (task != undefined) {
+			if (task == undefined) {
+				ScriptHook.prettyPrintProjects()
+				ScriptHook.prettyPrintTasks()
+				ScriptHook.prettyPrintParameters()
+
+				return
+			}
+
 			if (ScriptHook.hasTask(task)) {
 				console.log(`Running task ${Chalk.blue(task)} and its dependencies...\n`)
 
@@ -35,7 +133,7 @@ const app = new Command('manila')
 				try {
 					success = ScriptHook.runTask(task)
 				} catch (e) {
-					errorMsg = e
+					errorMsg = e as string
 					success = false
 				}
 
@@ -45,23 +143,23 @@ const app = new Command('manila')
 					console.log()
 					console.log(`${Chalk.green('TASK SUCCESSFUL!')}`)
 					console.log(`Took ${(timeElapsed / 60).toFixed(0)}m ${timeElapsed % 60}s`)
-					return
 				} else {
 					console.log()
 					console.error(`${Chalk.red('TASK FAILED!')} ${Chalk.gray('-')} ${errorMsg}`)
 					console.log(errorMsg)
 					console.log()
 					console.log(`Took ${(timeElapsed / 60).toFixed(0)}m ${timeElapsed % 60}s`)
-					return
 				}
-			} else {
-				Logger.error(`Task ${Chalk.blue(task)} was not found!\n`)
+
+				return
 			}
+
+			console.log(Chalk.red(`Task ${Chalk.black(task)} could not be found!`))
+			return
 		}
 
-		ScriptHook.prettyPrintTasks()
-
-		ScriptHook.prettyPrintParameters()
+		console.log(Chalk.red('Directory does not seem to contain a Manila BuildScript!'))
+		console.log('Initialize your Manila project by running', Chalk.blue('manila init'))
 	})
 
 app.command('init')
@@ -152,7 +250,6 @@ app.command('plugins')
 							`${Chalk.magenta(data.name)}: ${Chalk.yellow(Object.keys(data.plugins).length)} ${Chalk.gray('plugin(s)')}`
 						)
 
-						let table = []
 						Object.keys(data.plugins).forEach((k) => {
 							console.log(`  - ${Chalk.blue(data.plugins[k].name)} - ${Chalk.yellow(data.plugins[k].version)}`)
 						})
@@ -190,9 +287,14 @@ app.command('install')
 					.then((res) => {
 						const index: PluginIndexFile = res.data
 
-						Object.keys(index.plugins).forEach((k) => {
-							plugins[k] = index.plugins[k]
-							plugins[k].repo = index.name
+						Object.keys(index.plugins).forEach((k: string) => {
+							const plugin = index.plugins[k]
+							plugins[k] = {
+								name: plugin.name,
+								index: plugin.index,
+								version: plugin.version,
+								repo: index.name
+							}
 						})
 
 						if (i == a.length - 1) done()
@@ -244,7 +346,7 @@ app.command('install')
 	})
 
 app.command('link')
-	.description('Links a locoally installed plugin')
+	.description('Links a locally installed plugin')
 	.argument('<dir>', 'the directory to your plugin')
 	.argument('<name>', 'the name of your plugin')
 	.argument('[indexFile]', 'the name of your index file', 'index.ts')
@@ -271,7 +373,13 @@ app.command('link')
 		console.log(Chalk.green('Successfully linked plugin!'))
 	})
 
+const options = app.opts()
 console.log(Gradient.vice.multiline(Figlet.textSync('Manila', 'Doom')))
-if (process.argv.indexOf(`--no-logo`) < 0) Manila.init()
+console.log(options)
+if (options.dir != undefined) process.chdir(options.dir)
+console.log('Working in', process.cwd())
+
+Manila.init()
 
 app.parse()
+*/
