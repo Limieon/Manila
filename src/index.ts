@@ -28,6 +28,13 @@ const app = new CLIApp('manila', 'A BuildSystem for C# using JavaScript', '1.0.0
 app.registerCommand({
 	name: 'init',
 	description: 'Initializes a new Manila project',
+	options: [
+		{
+			name: 'default',
+			alias: 'd',
+			description: 'Initializes a default project without prompting'
+		}
+	],
 	callback: Commands.init
 })
 app.registerCommand({
@@ -86,22 +93,48 @@ app.registerCommand({
 	callback: Commands.link
 })
 
+app.registerCommand({
+	name: 'help',
+	description: 'Shows information to a specific command',
+	parameters: [
+		{
+			name: 'command',
+			description: 'the command to get information for',
+			type: 'string',
+			optional: true,
+			default: null
+		}
+	],
+	callback: (args: object) => {
+		app.printHelpText(args['command'])
+	}
+})
+
 app.registerGlobalOption({
 	name: 'help',
 	alias: 'h',
-	description: 'Prints this help text',
-	type: 'flag'
+	description: 'Prints this help text'
 })
 app.registerGlobalOption({
 	name: 'dir',
 	alias: 'd',
 	description: 'Changes working directory',
-	type: 'string',
-	default: '.'
+	parmaters: [
+		{
+			name: 'dir',
+			description: 'the directory to change into',
+			type: 'string',
+			default: '.'
+		}
+	]
+})
+app.registerGlobalOption({
+	name: 'verbose',
+	alias: 'v',
+	description: 'Enables verbose logging'
 })
 
-//app.printHelpText()
-app.printHelpText('link')
+app.parse(process.argv.slice(2))
 
 /*
 const app = new Command('manila')
