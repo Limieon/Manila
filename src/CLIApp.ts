@@ -16,7 +16,7 @@ export type Option = {
 	name: string
 	description: string
 	alias?: string
-	parmaters?: Parameter[]
+	parmater?: Parameter
 }
 
 export type Command = {
@@ -149,13 +149,13 @@ export default class CLIApp {
 		else return `${Chalk.gray('<')}${Chalk.cyan(p.name)}${Chalk.gray('>')}`
 	}
 	stringifyOption(o: Option) {
-		let parameters: string[] = []
+		let parameterstr: string = ''
 
-		if (o.parmaters != undefined && o.parmaters.length > 0) o.parmaters.forEach((p) => parameters.push(this.stringifyParameter(p)))
+		if (o.parmater != undefined) parameterstr = this.stringifyParameter(o.parmater)
 
 		if (o.alias != undefined)
-			return `  ${Chalk.gray('-')}${Chalk.yellow(o.alias)}, ${Chalk.gray('--')}${Chalk.yellow(o.name)} ${parameters.join(' ')}`
-		return `  ${Chalk.gray('--')}${Chalk.yellow(o.name)} ${parameters.join(' ')}`
+			return `  ${Chalk.gray('-')}${Chalk.yellow(o.alias)}, ${Chalk.gray('--')}${Chalk.yellow(o.name)} ${parameterstr}`
+		return `  ${Chalk.gray('--')}${Chalk.yellow(o.name)} ${parameterstr}`
 	}
 
 	parse(args: string[]) {
@@ -171,6 +171,52 @@ export default class CLIApp {
 		if (cmd == undefined) {
 			console.log(Chalk.red('Sub Command named'), Chalk.blue(command), Chalk.red('could not be found!'))
 			return
+		}
+
+		let options: Option[] = cmd.options
+		Object.keys(this.#globalOptions).forEach((k) => options.push(this.#globalOptions[k]))
+
+		for (const k of Object.keys(pargs)) {
+			if (k == '_') continue
+			let type = typeof pargs[k]
+
+			// Check if option k is valid on command
+			let option: Option = undefined
+			for (const o of options) {
+				if (o.name == k || o.alias == k) {
+					option = o
+					break
+				}
+			}
+			if (!option) {
+				console.log(Chalk.red(`Option ${Chalk.blue(k)} not valid for command ${Chalk.blue(cmd.name)}!`))
+				return
+			}
+
+			// Convert parameters to different data types if required
+			if (option.parmater.type == 'string' && type == 'number') {
+				type = 'string'
+				pargs[k] = `${pargs[k]}`
+			}
+
+			// Check if option k has the correct type
+
+			if (type == 'boolean' && option.parmater != undefined) {
+				console.log(Chalk.red(`Option ${Chalk.blue(k)} does not require any parameters!`))
+				return
+			}
+			if (option.parmater.type == 'string' && type != 'string') {
+				console.log(
+					Chalk.red(`Option ${Chalk.blue(k)} required a ${Chalk.yellow('string')} parameter but got ${Chalk.blue(pargs[k])}!`)
+				)
+				return
+			}
+			if (option.parmater.type == 'number' && type != 'number') {
+				console.log(
+					Chalk.red(`Option ${Chalk.blue(k)} required a ${Chalk.yellow('number')} parameter but got ${Chalk.blue(pargs[k])}!`)
+				)
+				return
+			}
 		}
 
 		let argsObject = {}

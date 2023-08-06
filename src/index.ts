@@ -119,14 +119,12 @@ app.registerGlobalOption({
 	name: 'dir',
 	alias: 'd',
 	description: 'Changes working directory',
-	parmaters: [
-		{
-			name: 'dir',
-			description: 'the directory to change into',
-			type: 'string',
-			default: '.'
-		}
-	]
+	parmater: {
+		name: 'dir',
+		description: 'the directory to change into',
+		type: 'string',
+		default: '.'
+	}
 })
 app.registerGlobalOption({
 	name: 'verbose',
