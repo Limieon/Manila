@@ -10,4 +10,6 @@ task('compile')
 	.executes(() => {
 		print('Compiling Client...')
 		print('Lol:', lol)
+
+		throw new Error('Could not find OS!')
 	})

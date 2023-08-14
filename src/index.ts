@@ -4,7 +4,7 @@ import Gradient from 'gradient-string'
 import Figlet from 'figlet'
 import Path from 'path'
 import Axios from 'axios'
-import FS from 'fs'
+import FS, { utimes } from 'fs'
 import Semver from 'semver'
 
 import minimist from 'minimist'
@@ -40,17 +40,17 @@ app.registerCommand({
 app.registerCommand({
 	name: 'projects',
 	description: 'List available projects',
-	callback: Commands.projects
+	callback: (args, opts) => Commands.projects(opts)
 })
 app.registerCommand({
 	name: 'tasks',
 	description: 'List available tasks',
-	callback: Commands.tasks
+	callback: (args, opts) => Commands.tasks(opts)
 })
 app.registerCommand({
 	name: 'parameters',
 	description: 'List available parameters',
-	callback: Commands.parameters
+	callback: (args, opts) => Commands.parameters(opts)
 })
 app.registerCommand({
 	name: 'plugins',
@@ -131,6 +131,43 @@ app.registerGlobalOption({
 	alias: 'v',
 	description: 'Enables verbose logging'
 })
+
+if (subCommand.startsWith(':')) {
+	// Subcommand is a task
+	if (args['dir']) process.chdir(args['dir'])
+
+	const task = subCommand
+
+	Manila.init()
+	await ScriptHook.run()
+
+	if (ScriptHook.hasTask(task)) {
+		let start = Date.now()
+		try {
+			const res = await ScriptHook.runTask(task)
+			const duration = Date.now() - start
+
+			if (res) {
+				console.log()
+				console.log(Chalk.green(`Task Successful! ${Chalk.gray('Took')} ${Chalk.cyan(Utils.stringifyDuration(duration))}`))
+				process.exit(0)
+			} else {
+				console.log()
+				console.log(Chalk.red(`Task Failed! ${Chalk.gray('Took')} ${Chalk.cyan(Utils.stringifyDuration(duration))}`))
+				process.exit(-1)
+			}
+		} catch (e) {
+			console.log()
+			const duration = Date.now() - start
+			console.log(Chalk.red(`Task Failed! ${Chalk.gray('Took')} ${Chalk.cyan(Utils.stringifyDuration(duration))}`))
+			console.log(e)
+			process.exit(-1)
+		}
+	} else {
+		console.log(Chalk.red(`Cannot find task named ${Chalk.blue(task)}!`))
+		process.exit(-1)
+	}
+}
 
 app.parse(process.argv.slice(2))
 

@@ -101,8 +101,7 @@ async function importPlugin(name: string): Promise<any> {
 
 // Script Hook Class
 export default class ScriptHook {
-	static run(app: Command) {
-		this.#app = app
+	static async run() {
 		this.#tasks = {}
 		this.#rootDir = process.cwd()
 		this.#projects = []
@@ -115,21 +114,21 @@ export default class ScriptHook {
 			return -1
 		}
 
-		this.runFile(Path.join(process.cwd(), './Manila.js'))
+		await this.runFile(Path.join(process.cwd(), './Manila.js'))
 
-		this.runSubFiles(process.cwd(), true)
+		await this.runSubFiles(process.cwd(), true)
 	}
 
-	static runSubFiles(dir: string, rootDir: boolean) {
-		FS.readdirSync(dir).forEach((f) => {
+	static async runSubFiles(dir: string, rootDir: boolean) {
+		for (const f of FS.readdirSync(dir)) {
 			if (FS.statSync(Path.join(dir, f)).isFile()) {
 				if (f === 'Manila.js' && !rootDir) {
-					this.runFile(Path.join(dir, 'Manila.js'))
+					await this.runFile(Path.join(dir, 'Manila.js'))
 				}
 			} else {
-				this.runSubFiles(Path.join(dir, f), false)
+				await this.runSubFiles(Path.join(dir, f), false)
 			}
-		})
+		}
 	}
 
 	static async runFile(file: string) {
@@ -139,7 +138,7 @@ export default class ScriptHook {
 
 		this.#lastFileNames.push(file)
 		try {
-			eval(`(async () => { ${FS.readFileSync(file, { encoding: 'utf-8' })} })()`)
+			await eval(`(async () => { ${FS.readFileSync(file, { encoding: 'utf-8' })} })()`)
 		} catch (e) {
 			throw e
 		}
@@ -200,7 +199,11 @@ export default class ScriptHook {
 					`${Chalk.yellow(taskNum++)}${Chalk.gray('/')}${Chalk.cyan(dependencies.size)} ${Chalk.gray('>')} ${Chalk.blue(t)}`
 				)
 			}
-			this.#tasks[t].getCallback()()
+			try {
+				this.#tasks[t].getCallback()()
+			} catch (e) {
+				throw new Error(`Could not execute task ${Chalk.blue(name)}! (${e})`)
+			}
 		})
 
 		return true
@@ -211,10 +214,6 @@ export default class ScriptHook {
 		if (plugin == undefined) throw new Error(`Plugin ${name} could not be found!`)
 		let path = `file://${Path.join(this.#rootDir, plugin.location, plugin.indexFile)}`
 		return (await import(path)).default
-	}
-
-	static getApp(): Command {
-		return this.#app
 	}
 	static getLastFileName(): string {
 		return this.#lastFileNames[this.#lastFileNames.length - 1]
@@ -282,6 +281,7 @@ export default class ScriptHook {
 			switch (p.type) {
 				case ParameterType.NUMBER:
 					type = 'number'
+					break
 				case ParameterType.STRING:
 					type = 'string'
 			}
@@ -322,7 +322,6 @@ export default class ScriptHook {
 		this.#projects[i].version = version
 	}
 
-	static #app: Command
 	static #plugins: { [key: string]: Plugin }
 	static #parameters: Parameter[]
 	static #projects: Project[]
