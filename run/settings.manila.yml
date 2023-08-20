@@ -1,0 +1,8 @@
+# You can configure your Manila settings in this file
+
+# Add plugin index file to install 3rd-Party plugins
+pluginRepositories:
+- https://raw.githubusercontent.com/Limieon/Manila-Plugins/main/index.manila.json
+
+# Specify your target dotnet version
+dotnet: 7.0

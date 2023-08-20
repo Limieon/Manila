@@ -5,7 +5,8 @@ import Path from 'path'
 
 import Logger from './Logger.js'
 import Utils from './Utils.js'
-import Manila, { Parameter, ParameterType, ModuleParameters, Plugin, Project, ProjectParameters } from './Manila.js'
+import Manila, { Parameter, ParameterType, ModuleParameters, Plugin, Project, ProjectParameters, PluginIndexFile } from './Manila.js'
+import FileNames from './FileNames.js'
 
 class TaskBuilder {
 	constructor(name: string) {
@@ -95,8 +96,9 @@ function print(...msg: string[]) {
 	Logger.script(msg.join(' '))
 }
 
-async function importPlugin(name: string): Promise<any> {
-	return await ScriptHook.importPlugin(name)
+async function importPlugin(name: string, dir?: string): Promise<any> {
+	if (dir == undefined) return await ScriptHook.importPlugin(name)
+	return await ScriptHook.importPluginFromFile(name, dir)
 }
 
 // Script Hook Class
@@ -215,6 +217,21 @@ export default class ScriptHook {
 		let path = `file://${Path.join(this.#rootDir, plugin.location, plugin.indexFile)}`
 		return (await import(path)).default
 	}
+	static async importPluginFromFile(name: string, dir: string): Promise<any> {
+		const indexFile = FileNames.pluginIndexFile(dir)
+
+		if (!FS.existsSync(dir)) throw new Error(`Directory ${dir} does not exist!`)
+		if (indexFile == undefined)
+			throw new Error(`Cannot import plugin ${name}!\nDirectory ${dir} does not contain a valid plugin index file!`)
+		const data: PluginIndexFile = JSON.parse(FS.readFileSync(Path.join(dir, indexFile), { encoding: 'utf-8' }))
+
+		const plugin = data.plugins[name]
+		if (plugin == undefined) throw new Error(`Plugin index file does not contain a plugin named ${name}!`)
+
+		const path = `file://${Path.join(this.#rootDir, dir, name, plugin.index)}`
+		return (await import(path)).default
+	}
+
 	static getLastFileName(): string {
 		return this.#lastFileNames[this.#lastFileNames.length - 1]
 	}

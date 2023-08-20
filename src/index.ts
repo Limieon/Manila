@@ -132,6 +132,7 @@ app.registerGlobalOption({
 	description: 'Enables verbose logging'
 })
 
+console.log(Gradient.vice.multiline(Figlet.textSync('Manila', { font: 'Doom' })))
 if (subCommand.startsWith(':')) {
 	// Subcommand is a task
 	if (args['dir']) process.chdir(args['dir'])

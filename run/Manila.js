@@ -1,4 +1,4 @@
-const ManilaCS = await importPlugin('manila.cs')
+const ManilaCS = await importPlugin('manila.cs', '../../Manila-Plugins/')
 
 const headless = parameterBoolean('headless', 'Enables compilation flags for headless running')
 const graphicsApi = parameterString('gapi', 'Choose a graphics api', 'opengl')
@@ -15,6 +15,8 @@ task('compile').executes(() => {
 	if (headless) {
 		print('Compiling Headless...')
 	}
+
+	ManilaCS.foo()
 
 	print(`Compiling for ${graphicsApi}`)
 	print('Year:', year)
