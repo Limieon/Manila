@@ -5,8 +5,31 @@ import Path from 'path'
 
 import Logger from './Logger.js'
 import Utils from './Utils.js'
-import Manila, { Parameter, ParameterType, ModuleParameters, Plugin, Project, ProjectParameters, PluginIndexFile } from './Manila.js'
+import BuildSystem, {
+	Parameter,
+	ParameterType,
+	ModuleParameters,
+	Plugin,
+	Project,
+	ProjectParameters,
+	PluginIndexFile
+} from './BuildSystem.js'
 import FileNames from './FileNames.js'
+
+import ManilaWrapper from './ManilaWrapper.js'
+
+// This exposes the api given from 'ManilaWrapper'
+class Manila {
+	static getProject() {
+		return ManilaWrapper.getProject()
+	}
+	static getWorkspace() {
+		return ManilaWrapper.getWorkspace()
+	}
+	static getConfig() {
+		return ManilaWrapper.getConfig()
+	}
+}
 
 class TaskBuilder {
 	constructor(name: string) {
@@ -107,7 +130,7 @@ export default class ScriptHook {
 		this.#tasks = {}
 		this.#rootDir = process.cwd()
 		this.#projects = []
-		this.#plugins = Manila.getPluginsConfig()
+		this.#plugins = BuildSystem.getPluginsConfig()
 		this.#parameters = []
 		this.#lastFileNames = []
 

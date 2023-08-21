@@ -12,7 +12,7 @@ import minimist from 'minimist'
 import { simpleGit } from 'simple-git'
 const Git = simpleGit()
 
-import Manila, { PluginIndexFile } from './Manila.js'
+import BuildSystem, { PluginIndexFile } from './BuildSystem.js'
 import ScriptHook from './ScriptHook.js'
 import Logger from './Logger.js'
 import Utils from './Utils.js'
@@ -139,7 +139,7 @@ if (subCommand.startsWith(':')) {
 
 	const task = subCommand
 
-	Manila.init()
+	BuildSystem.init()
 	await ScriptHook.run()
 
 	if (ScriptHook.hasTask(task)) {

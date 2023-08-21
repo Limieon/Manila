@@ -1,4 +1,4 @@
-import Manila from './Manila.js'
+import BuildSystem from './BuildSystem.js'
 import ScriptHook from './ScriptHook.js'
 
 export function init() {}
@@ -6,7 +6,7 @@ export function install() {}
 export async function projects(opts: object) {
 	if (opts['dir']) process.chdir(opts['dir'])
 
-	Manila.init()
+	BuildSystem.init()
 	await ScriptHook.run()
 
 	ScriptHook.prettyPrintProjects()
@@ -14,7 +14,7 @@ export async function projects(opts: object) {
 export async function parameters(opts: object) {
 	if (opts['dir']) process.chdir(opts['dir'])
 
-	Manila.init()
+	BuildSystem.init()
 	await ScriptHook.run()
 
 	ScriptHook.prettyPrintParameters()
@@ -22,7 +22,7 @@ export async function parameters(opts: object) {
 export async function tasks(opts: object) {
 	if (opts['dir']) process.chdir(opts['dir'])
 
-	Manila.init()
+	BuildSystem.init()
 	await ScriptHook.run()
 
 	ScriptHook.prettyPrintTasks()

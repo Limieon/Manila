@@ -1,36 +1,49 @@
-const ManilaCS = await importPlugin('manila.cs', '../../Manila-Plugins/')
+const ManilaCS = await importPlugin('manila.cs')
 
 const headless = parameterBoolean('headless', 'Enables compilation flags for headless running')
 const graphicsApi = parameterString('gapi', 'Choose a graphics api', 'opengl')
 const year = parameterNumber('year', 'Enter a year', 2023)
 const test = parameterBoolean('test', 'Run tests')
 
-task('clean').executes(() => {
-	print('Cleaning...')
-})
+// Specify a project where you want to customize your settings
+// use regex for multiple projects or use an array for multiple specific projects:
+// 'project': Only project
+// '/.*/': Only projects matching this regex
+// ['project1', 'project2']: Every project included inside the array
+project(/.*/, async () => {
+	version = '1.0.0'
+	author = 'Limieon'
 
-task('compile').executes(() => {
-	print('Compiling...')
-
-	if (headless) {
-		print('Compiling Headless...')
-	}
-
-	ManilaCS.foo()
-
-	print(`Compiling for ${graphicsApi}`)
-	print('Year:', year)
-})
-
-task('run')
-	.dependsOn(':compile')
-	.dependsOn(':clean')
-	.executes(() => {
-		print('Running...')
+	// Those properties will be available in all projects
+	properties({
+		appName: 'GenesisEngine'
 	})
 
-task('tests')
-	.dependsOn(':compile')
-	.executes(() => {
-		print('Running Tests...')
+	// Here you can define your repositories containing your dependencies
+	repositories([
+		git('https://github.com/Limieon/Manila-Repositories'),
+		local('../../Manila-Repositories')
+	])
+})
+
+// You can have as many project declarators as you want
+project(':core', () => {
+	dependencies([
+		testImplementation('BenchmarkDotNet')
+	])
+})
+
+project(':client', () => {
+	// This will add the graphicsApi property into the client project
+	// Properties can override each other
+	// The order will be the execution order (top to bottom)
+	// That means bottom properties will override top properties
+	properties({
+		graphicsApi: graphicsApi
 	})
+
+	// Here you can declare dependencies
+	dependencies([
+		implemenatation(project(':core'))
+	])
+})

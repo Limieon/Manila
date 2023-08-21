@@ -99,7 +99,7 @@ pluginRepositories:
 dotnet: 7.0
 `
 
-export default class Manila {
+export default class BuildSystem {
 	static init() {
 		let settingsFileName = this.#getSettingsFileName()
 		this.#settings = settingsFileName != undefined ? YAML.parse(FS.readFileSync(settingsFileName, { encoding: 'utf-8' })) : {}
