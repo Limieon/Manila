@@ -121,6 +121,10 @@ async function importPlugin(name: string, dir?: string): Promise<any> {
 	return await ScriptHook.importPluginFromFile(name, dir)
 }
 
+function getProperty(name: string) {
+	return ScriptHook.getProperty(name)
+}
+
 function project(filter: RegExp | string | string[], func: () => void) {
 	let type: ProjectDecleratorType = undefined
 
@@ -376,6 +380,7 @@ export default class ScriptHook {
 	}
 
 	static registerProject(name: string) {
+		this.#currentProject = name
 		this.#projects.push({ name })
 		this.#fileIsProjectFile = true
 	}
@@ -390,7 +395,6 @@ export default class ScriptHook {
 	}
 
 	static async prepareForProjectScript(name: string) {
-		console.log(name)
 		return new Promise<void>((res, rej) => {
 			this.#projectDeclarators.forEach(async (p, i) => {
 				if (p.type === ProjectDecleratorType.REGEXP) {
@@ -422,6 +426,23 @@ export default class ScriptHook {
 		this.#scriptProperties.push({ name, scope })
 	}
 
+	static getProperty(name: string) {
+		let prop = undefined
+		for (const p of this.#scriptProperties) {
+			if (p.name == name) {
+				prop = p
+				break
+			}
+		}
+
+		if (prop == undefined) throw new Error(`Cannot find property named '${name}'!`)
+		if (prop.scope != ScriptPropertyScope.PROJECT && prop.scope != ScriptPropertyScope.COMMON)
+			throw new Error(`Property named '${name}' does not exist in project or common scope!`)
+
+		return this.#projectProperties[this.#currentProject][name]
+	}
+
+	static #currentProject: string = undefined
 	static #plugins: { [key: string]: Plugin }
 	static #parameters: Parameter[]
 	static #projects: Project[]
