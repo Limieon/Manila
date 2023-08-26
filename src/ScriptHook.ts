@@ -37,12 +37,8 @@ class Manila {
 
 class TaskBuilder {
 	constructor(name: string) {
-		const temp = Path.relative(ScriptHook.getRootDir(), ScriptHook.getLastFileName()).split('\\')
-		if (temp.length > 1) {
-			this.#name = `:${temp[0].toLowerCase()}:${name}`
-		} else {
-			this.#name = `:${name}`
-		}
+		this.#name = `${ScriptHook.getCurrentProjectName()}:${name}`
+		this.#project = ScriptHook.getCurrentProjectName()
 
 		this.#dependencies = new Set()
 		ScriptHook.registerTask(this)
@@ -60,18 +56,26 @@ class TaskBuilder {
 		return this
 	}
 
-	getName() {
+	getName(): string {
 		return this.#name
 	}
-	getDependencies() {
+	getDependencies(): Set<string> {
 		return this.#dependencies
 	}
-	getCallback() {
+	getCallback(): () => void {
 		return this.#callback
+	}
+	getProject(): string {
+		return this.#project
+	}
+	getRealName(): string {
+		let temp = this.#name.split(':')
+		return temp[temp.length - 1]
 	}
 
 	#name: string
 	#dependencies: Set<string>
+	#project: string
 	#callback: () => void
 }
 
@@ -198,8 +202,7 @@ export default class ScriptHook {
 	static registerTask(task: TaskBuilder) {
 		const name = task.getName()
 		if (this.#tasks[name] != undefined) {
-			Logger.error(`Task with name ${name} already has been defined!`)
-			process.exit(-1)
+			throw new Error(`Task with name ${name} already has been defined!`)
 		}
 
 		this.#tasks[name] = task
@@ -293,47 +296,32 @@ export default class ScriptHook {
 	}
 
 	static prettyPrintTasks() {
-		const tasksNames = Object.keys(this.#tasks)
-		const namespaces = ['']
-
-		tasksNames.forEach((t) => {
-			const temp = t.split(':')
-			if (temp.length > 2) {
-				namespaces.push(temp[1])
-			}
+		const tasksObj: { [key: string]: TaskBuilder[] } = {}
+		Object.keys(this.#tasks).forEach((key) => {
+			const t = this.#tasks[key]
+			if (tasksObj[t.getProject()] == undefined) tasksObj[t.getProject()] = []
+			tasksObj[t.getProject()].push(t)
 		})
 
-		namespaces.forEach((n) => {
-			const nsName = n == '' ? 'global' : n
+		Object.keys(tasksObj).forEach((k) => {
+			console.log()
 
-			console.log(Chalk.magenta('Available Tasks:'), Chalk.gray(`(${nsName})`))
-			tasksNames.forEach((t) => {
-				// Check that the task (t) is inside the namespace (n)
-				const temp = t.split(':')
-				let ns = ''
-				if (temp.length > 2) {
-					ns = temp[1]
+			const tasks = tasksObj[k]
+
+			console.log(Chalk.magenta('Available Tasks:'), Chalk.gray(`(${k})`))
+			tasks.forEach((t) => {
+				let hasDeps = t.getDependencies().size > 0
+				let deps = [...t.getDependencies()]
+				if (hasDeps) {
+					console.log(`  ${Chalk.blue('-')} ${Chalk.gray(t.getName())} ${Chalk.cyan('->')} ${Chalk.gray(deps[0])}`)
+				} else {
+					console.log(`  ${Chalk.blue('-')} ${Chalk.gray(t.getName())}`)
 				}
 
-				if (ns != n) return
-
-				const task = this.#tasks[t]
-				const dependencies = task.getDependencies()
-
-				const text = `  ${Chalk.blue('-')} ${Chalk.gray(t)}`
-				if (dependencies.size < 1) {
-					console.log(text)
-				} else {
-					let first = true
-					task.getDependencies().forEach((d) => {
-						if (first) console.log(`${text} ${Chalk.cyan('->')} ${Chalk.gray(d)}`)
-						else console.log(' '.repeat(`  - ${t}   `.length), Chalk.gray(d))
-
-						first = false
-					})
+				for (let i = 1; i < deps.length; ++i) {
+					console.log(' '.repeat(t.getName().length + 7), Chalk.gray(deps[i]))
 				}
 			})
-			console.log()
 		})
 	}
 
@@ -370,10 +358,15 @@ export default class ScriptHook {
 	}
 
 	static prettyPrintProjects() {
-		const table = [[Chalk.blue('Project'), Chalk.blue('Namespace'), Chalk.blue('Version')]]
+		const table = [[Chalk.blue('Project'), Chalk.blue('Namespace'), Chalk.blue('Version'), Chalk.blue('ID')]]
 
 		this.#projects.forEach((p) => {
-			table.push([`${Chalk.gray('-')} ${p.name}`, p.namespace, p.version])
+			table.push([
+				`${Chalk.gray('-')} ${this.#projectProperties[p.name]['name']}`,
+				this.#projectProperties[p.name]['namespace'],
+				this.#projectProperties[p.name]['version'],
+				p.name
+			])
 		})
 
 		console.log(Utils.createTable(table, 3))
@@ -413,12 +406,13 @@ export default class ScriptHook {
 		})
 	}
 
-	static addProjectProperties(name: string) {
+	// __name__ to not overwrite any script property that is named 'name'
+	static addProjectProperties(__name__: string) {
 		let obj = {}
 		this.#scriptProperties.forEach((p) => {
-			if (p.scope === ScriptPropertyScope.PROJECT || ScriptPropertyScope.COMMON) eval(`obj['${p.name}'] = ${p.name}`)
+			if (p.scope === ScriptPropertyScope.PROJECT || p.scope === ScriptPropertyScope.COMMON) eval(`obj['${p.name}'] = ${p.name}`)
 		})
-		this.#projectProperties[name] = obj
+		this.#projectProperties[__name__] = obj
 	}
 
 	static registerScriptProperty(name: string, scope: ScriptPropertyScope) {
@@ -440,6 +434,10 @@ export default class ScriptHook {
 			throw new Error(`Property named '${name}' does not exist in project or common scope!`)
 
 		return this.#projectProperties[this.#currentProject][name]
+	}
+
+	static getCurrentProjectName(): string {
+		return this.#currentProject
 	}
 
 	static #currentProject: string = undefined
@@ -466,3 +464,6 @@ let version = undefined
 
 ScriptHook.registerScriptProperty('author', ScriptPropertyScope.PROJECT)
 let author = undefined
+
+ScriptHook.registerScriptProperty('name', ScriptPropertyScope.COMMON)
+let name = undefined

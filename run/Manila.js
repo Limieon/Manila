@@ -34,6 +34,7 @@ project(/.*/, async () => {
 
 // You can have as many project declarators as you want
 project(':core', () => {
+	name = 'Genesis Core'
 	namespace = 'Genesis.Core'
 
 	//dependencies([
@@ -42,12 +43,13 @@ project(':core', () => {
 })
 
 project(':client', async () => {
+	name = 'Genesis Client'
 	namespace = 'Genesis.Client'
 
-	// This will add the graphicsApi property into the client project
-	// Properties can override each other
-	// The order will be the execution order (top to bottom)
-	// That means bottom properties will override top properties
+	//// This will add the graphicsApi property into the client project
+	//// Properties can override each other
+	//// The order will be the execution order (top to bottom)
+	//// That means bottom properties will override top properties
 	//properties({
 	//	graphicsApi: graphicsApi
 	//})
@@ -55,5 +57,11 @@ project(':client', async () => {
 	//// Here you can declare dependencies
 	//dependencies([
 	//	implemenatation(project(':core'))
+	//  implementatiopn(nuget('Silk.NET.Core', '2.17.1'))
 	//])
+})
+
+project(':core:server', async () => {
+	name = 'Genesis Server Core'
+	namespace = 'Genesis.Core.Server'
 })
