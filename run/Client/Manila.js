@@ -1,12 +1,12 @@
 const ManilaCS = await importPlugin('manila.cs')
 
-project('client')
-namespace = 'Genesis.Client'
-version = '1.0.0'
-
 const workspace = Manila.getWorkspace()
 const project = Manila.getProject()
 const config = Manila.getConfig()
+
+// print('Workspace:', workspace.name)
+// print('Project:', project.name)
+// print('Config:', config.config)
 
 task('compile')
 	.executes(() => {

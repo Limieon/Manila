@@ -1,4 +1,4 @@
-import FS, { copyFileSync } from 'fs'
+import FS, { Dirent, copyFileSync } from 'fs'
 import Chalk from 'chalk'
 import { Command } from 'commander'
 import Path from 'path'
@@ -10,9 +10,13 @@ import BuildSystem, {
 	ParameterType,
 	ModuleParameters,
 	Plugin,
+	ProjectDeclarator,
+	ProjectDecleratorType,
 	Project,
 	ProjectParameters,
-	PluginIndexFile
+	PluginIndexFile,
+	ScriptProperty,
+	ScriptPropertyScope
 } from './BuildSystem.js'
 import FileNames from './FileNames.js'
 
@@ -71,16 +75,9 @@ class TaskBuilder {
 	#callback: () => void
 }
 
-// Global Script Variables
-let namespace = undefined
-let version = undefined
-
 // Global Script Functions
 function task(name: string) {
 	return new TaskBuilder(name)
-}
-function project(name: string) {
-	ScriptHook.registerProject(name)
 }
 function parameterBoolean(name: string, description: string) {
 	ScriptHook.registerParameter(name, description, undefined, ParameterType.BOOLEAN)
@@ -124,6 +121,24 @@ async function importPlugin(name: string, dir?: string): Promise<any> {
 	return await ScriptHook.importPluginFromFile(name, dir)
 }
 
+function project(filter: RegExp | string | string[], func: () => void) {
+	let type: ProjectDecleratorType = undefined
+
+	if (filter instanceof RegExp) {
+		type = ProjectDecleratorType.REGEXP
+	}
+	if (typeof filter === 'string') {
+		type = ProjectDecleratorType.STRING
+	}
+	if (Array.isArray(filter) && filter.every((item) => typeof item === 'string')) {
+		type = ProjectDecleratorType.STRING_ARRAY
+	}
+
+	if (type == undefined) throw new Error('The filter attribute must either be a regexp, string, or string array!')
+
+	ScriptHook.addProjectDeclerator({ filter, func, type })
+}
+
 // Script Hook Class
 export default class ScriptHook {
 	static async run() {
@@ -133,6 +148,8 @@ export default class ScriptHook {
 		this.#plugins = BuildSystem.getPluginsConfig()
 		this.#parameters = []
 		this.#lastFileNames = []
+		this.#projectDeclarators = []
+		this.#projectProperties = {}
 
 		if (!FS.existsSync('./Manila.js')) {
 			console.log(Chalk.red('Could not find Manila.js BuildScript!'))
@@ -148,7 +165,11 @@ export default class ScriptHook {
 		for (const f of FS.readdirSync(dir)) {
 			if (FS.statSync(Path.join(dir, f)).isFile()) {
 				if (f === 'Manila.js' && !rootDir) {
+					let projectName = `:${Path.relative(this.#rootDir, dir).replaceAll('/', ':').replaceAll('\\', ':').toLowerCase()}`
+					this.registerProject(projectName)
+					await this.prepareForProjectScript(projectName)
 					await this.runFile(Path.join(dir, 'Manila.js'))
+					this.addProjectProperties(projectName)
 				}
 			} else {
 				await this.runSubFiles(Path.join(dir, f), false)
@@ -157,8 +178,6 @@ export default class ScriptHook {
 	}
 
 	static async runFile(file: string) {
-		namespace = undefined
-		version = undefined
 		this.#fileIsProjectFile = false
 
 		this.#lastFileNames.push(file)
@@ -362,6 +381,43 @@ export default class ScriptHook {
 		this.#projects[i].version = version
 	}
 
+	static addProjectDeclerator(declerator: ProjectDeclarator) {
+		this.#projectDeclarators.push(declerator)
+	}
+
+	static async prepareForProjectScript(name: string) {
+		console.log(name)
+		return new Promise<void>((res, rej) => {
+			this.#projectDeclarators.forEach(async (p, i) => {
+				if (p.type === ProjectDecleratorType.REGEXP) {
+					if ((p.filter as RegExp).test(name)) await p.func()
+				}
+				if (p.type === ProjectDecleratorType.STRING_ARRAY) {
+					if ((p.filter as string[]).includes(name)) await p.func()
+				}
+				if (p.type === ProjectDecleratorType.STRING) {
+					if ((p.filter as string) == name) await p.func()
+				}
+
+				// Resolve the promise after the last element has been iterated
+				if (this.#projectDeclarators.length == i + 1) res()
+			})
+		})
+	}
+
+	static addProjectProperties(name: string) {
+		let obj = {}
+		this.#scriptProperties.forEach((p) => {
+			if (p.scope === ScriptPropertyScope.PROJECT || ScriptPropertyScope.COMMON) eval(`obj['${p.name}'] = ${p.name}`)
+		})
+		this.#projectProperties[name] = obj
+	}
+
+	static registerScriptProperty(name: string, scope: ScriptPropertyScope) {
+		console.log(this.#scriptProperties)
+		this.#scriptProperties.push({ name, scope })
+	}
+
 	static #plugins: { [key: string]: Plugin }
 	static #parameters: Parameter[]
 	static #projects: Project[]
@@ -369,4 +425,19 @@ export default class ScriptHook {
 	static #tasks: { [key: string]: TaskBuilder }
 	static #lastFileNames: string[]
 	static #rootDir: string
+	static #projectDeclarators: ProjectDeclarator[]
+	static #scriptProperties: ScriptProperty[] = []
+	static #projectProperties: { [key: string]: object }
 }
+
+// Global Variables that have to be defined by scripts
+// Projects
+
+ScriptHook.registerScriptProperty('namespace', ScriptPropertyScope.PROJECT)
+let namespace = undefined
+
+ScriptHook.registerScriptProperty('version', ScriptPropertyScope.PROJECT)
+let version = undefined
+
+ScriptHook.registerScriptProperty('author', ScriptPropertyScope.PROJECT)
+let author = undefined

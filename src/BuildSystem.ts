@@ -52,6 +52,27 @@ export type PluginIndexFile = {
 	plugins: { [key: string]: PluginIndex }
 }
 
+export enum ProjectDecleratorType {
+	REGEXP,
+	STRING,
+	STRING_ARRAY
+}
+export type ProjectDeclarator = {
+	filter: RegExp | string | string[]
+	func: () => void
+	type: ProjectDecleratorType
+}
+
+export enum ScriptPropertyScope {
+	COMMON,
+	PROJECT,
+	MAIN
+}
+export type ScriptProperty = {
+	scope: ScriptPropertyScope
+	name: string
+}
+
 const dummyProjectTemplate = `// This is your main Manila BuildScipt
 // You can create Taks using the task function
 // and can accept user parameters
