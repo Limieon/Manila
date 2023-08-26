@@ -17,8 +17,6 @@ async function sleep(dur) {
 // '/.*/': Only projects matching this regex
 // ['project1', 'project2']: Every project included inside the array
 project(/.*/, async () => {
-	print('/.*/')
-
 	author = 'Limieon'
 	version = '1.0.0'
 	//
@@ -36,7 +34,6 @@ project(/.*/, async () => {
 
 // You can have as many project declarators as you want
 project(':core', () => {
-	print(':core')
 	namespace = 'Genesis.Core'
 
 	//dependencies([
@@ -45,7 +42,6 @@ project(':core', () => {
 })
 
 project(':client', async () => {
-	print(':client')
 	namespace = 'Genesis.Client'
 
 	// This will add the graphicsApi property into the client project

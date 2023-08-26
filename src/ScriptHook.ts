@@ -228,6 +228,10 @@ export default class ScriptHook {
 		const task = this.#tasks[name]
 		if (task == undefined) return false
 
+		task.getDependencies().forEach((d) => {
+			if (this.#tasks[d] == undefined) throw new Error(`Dependant Task ${d} could not be found!`)
+		})
+
 		const dependencies = this.getDependencies(task)
 
 		dependencies.add(task.getName())
