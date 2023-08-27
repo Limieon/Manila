@@ -109,7 +109,7 @@ app.registerCommand({
 			default: null
 		}
 	],
-	callback: (args: object) => {
+	callback: args => {
 		app.printHelpText(args['command'])
 	}
 })

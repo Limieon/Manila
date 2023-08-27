@@ -36,7 +36,7 @@ project(/.*/, async () => {
 
 // You can have as many project declarators as you want
 project(':core', () => {
-	name = 'Genesis Core'
+	name = 'GenesisCore'
 	namespace = 'Genesis.Core'
 
 	//dependencies([
@@ -45,7 +45,7 @@ project(':core', () => {
 })
 
 project(':client', async () => {
-	name = 'Genesis Client'
+	name = 'GenesisClient'
 	namespace = 'Genesis.Client'
 
 	//// This will add the graphicsApi property into the client project

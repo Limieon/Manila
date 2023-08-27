@@ -167,6 +167,8 @@ export default class ScriptHook {
 		await this.runFile(Path.join(process.cwd(), './Manila.js'))
 		this.addMainProperties()
 
+		ManilaWrapper.setWorkspace(this.#projectProperties._['appName'], this.#rootDir)
+
 		await this.runSubFiles(process.cwd(), true)
 	}
 
@@ -177,6 +179,11 @@ export default class ScriptHook {
 					let projectName = `:${Path.relative(this.#rootDir, dir).replaceAll('/', ':').replaceAll('\\', ':').toLowerCase()}`
 					this.registerProject(projectName)
 					await this.prepareForProjectScript(projectName)
+					this.addProjectProperties(projectName)
+
+					const props = this.#projectProperties[projectName]
+					ManilaWrapper.setProject(projectName, props['name'], props['namespace'], dir, props['author'])
+
 					await this.runFile(Path.join(dir, 'Manila.js'))
 					this.addProjectProperties(projectName)
 				}
@@ -449,9 +456,9 @@ export default class ScriptHook {
 	}
 
 	static getProjectByID(id: string) {
-		this.#projects.forEach(p => {
+		for (const p of this.#projects) {
 			if (p.name == id) return p
-		})
+		}
 		return undefined
 	}
 

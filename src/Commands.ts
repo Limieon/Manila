@@ -171,5 +171,3 @@ export async function tasks(opts: object) {
 export function link() {}
 
 export function plugins() {}
-
-export function help() {}

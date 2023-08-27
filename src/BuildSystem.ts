@@ -2,6 +2,7 @@ import FS, { copyFile } from 'fs'
 import Path from 'path'
 import YAML from 'yaml'
 import FileUtils from './FileUtils.js'
+import ManilaWrapper from './ManilaWrapper.js'
 
 export type ProjectParameters = {
 	name: string
@@ -129,6 +130,8 @@ export default class BuildSystem {
 		this.#plugins = FileUtils.getPluginFileFromRootDir()
 			? JSON.parse(FS.readFileSync(FileUtils.getPluginFileFromRootDir(), { encoding: 'utf-8' }))
 			: {}
+
+		ManilaWrapper.init()
 	}
 
 	static dirContainsBuildFile() {
