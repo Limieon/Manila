@@ -45,7 +45,7 @@ export default class CLIApp {
 		if (option.alias.length < 1 || option.alias.length > 1) throw new Error('Aliases must be one char long!')
 
 		let aliases: string[] = []
-		Object.keys(this.#globalOptions).forEach((k) => {
+		Object.keys(this.#globalOptions).forEach(k => {
 			if (aliases.includes(this.#globalOptions[k].alias))
 				throw new Error(`Alias ${this.#globalOptions[k].alias} has already been defined for command ${k}!`)
 		})
@@ -55,12 +55,12 @@ export default class CLIApp {
 		if (args.parameters == undefined) args.parameters = []
 
 		let aliases: string[] = []
-		args.options.forEach((o) => {
+		args.options.forEach(o => {
 			if (this.#globalOptions[o.name] != undefined) throw new Error(`Option ${o.name} already existing in global options!`)
 			if (aliases.includes(o.alias)) throw new Error(`Alias of option ${o.name} uses an already defined alias!`)
 			aliases.push(o.alias)
 
-			Object.keys(this.#globalOptions).forEach((k) => {
+			Object.keys(this.#globalOptions).forEach(k => {
 				if (o.alias == this.#globalOptions[k].alias) throw new Error(`Alias for option ${o.name} already exists on option ${k}!`)
 			})
 		})
@@ -83,10 +83,10 @@ export default class CLIApp {
 
 			console.log(Chalk.magenta('Available Commands:'))
 			let table = []
-			Object.keys(this.#commands).forEach((k) => {
+			Object.keys(this.#commands).forEach(k => {
 				let c = this.#commands[k]
 				let names: string[] = []
-				c.parameters.forEach((p) => {
+				c.parameters.forEach(p => {
 					names.push(this.stringifyParameter(p))
 				})
 
@@ -95,7 +95,7 @@ export default class CLIApp {
 
 			table.push([])
 			table.push([Chalk.magenta('Globally available options:')])
-			Object.keys(this.#globalOptions).forEach((k) => {
+			Object.keys(this.#globalOptions).forEach(k => {
 				let o = this.#globalOptions[k]
 				if (o.alias != undefined) table.push([this.stringifyOption(o), o.description])
 			})
@@ -110,23 +110,32 @@ export default class CLIApp {
 		}
 
 		let params: string[] = []
-		cmd.parameters.forEach((p) => {
+		cmd.parameters.forEach(p => {
 			params.push(this.stringifyParameter(p))
 		})
 
 		console.log(Chalk.gray(cmd.description))
-		console.log(
-			Chalk.magenta('Usage:'),
-			Chalk.blue(this.name),
-			Chalk.yellow(cmd.name),
-			`${params.join(' ')}${Chalk.gray('[')}${Chalk.cyan('options')}${Chalk.gray(']')}`
-		)
+		if (params.length > 0) {
+			console.log(
+				Chalk.magenta('Usage:'),
+				Chalk.blue(this.name),
+				Chalk.yellow(cmd.name),
+				`${params.join(' ')} ${Chalk.gray('[')}${Chalk.cyan('options')}${Chalk.gray(']')}`
+			)
+		} else {
+			console.log(
+				Chalk.magenta('Usage:'),
+				Chalk.blue(this.name),
+				Chalk.yellow(cmd.name),
+				`${params.join(' ')}${Chalk.gray('[')}${Chalk.cyan('options')}${Chalk.gray(']')}`
+			)
+		}
 		console.log()
 
 		const table = []
 		if (cmd.parameters.length > 0) {
 			console.log(Chalk.magenta('Parameters:'))
-			cmd.parameters.forEach((p) => {
+			cmd.parameters.forEach(p => {
 				if (p.default)
 					table.push([`  ${Chalk.cyan(p.name)}`, `${p.description} ${Chalk.gray(`(Default: ${Chalk.yellow(p.default)})`)}`])
 				else table.push([`  ${Chalk.cyan(p.name)}`, p.description])
@@ -134,10 +143,10 @@ export default class CLIApp {
 			table.push([])
 		}
 		table.push([Chalk.magenta('Options:')])
-		Object.keys(this.#globalOptions).forEach((k) => {
+		Object.keys(this.#globalOptions).forEach(k => {
 			table.push([this.stringifyOption(this.#globalOptions[k]), this.#globalOptions[k].description])
 		})
-		cmd.options.forEach((o) => {
+		cmd.options.forEach(o => {
 			table.push([this.stringifyOption(o), o.description])
 		})
 
@@ -168,13 +177,18 @@ export default class CLIApp {
 		let cmd = this.#commands[command]
 		const pargs = minimist(args)
 
+		if (pargs.help || pargs.h) {
+			this.printHelpText(command)
+			return
+		}
+
 		if (cmd == undefined) {
 			console.log(Chalk.red('Sub Command named'), Chalk.blue(command), Chalk.red('could not be found!'))
 			return
 		}
 
 		let options: Option[] = cmd.options
-		Object.keys(this.#globalOptions).forEach((k) => options.push(this.#globalOptions[k]))
+		Object.keys(this.#globalOptions).forEach(k => options.push(this.#globalOptions[k]))
 
 		for (const k of Object.keys(pargs)) {
 			if (k == '_') continue
@@ -192,6 +206,8 @@ export default class CLIApp {
 				console.log(Chalk.red(`Option ${Chalk.blue(k)} not valid for command ${Chalk.blue(cmd.name)}!`))
 				return
 			}
+
+			if (option.parmater == undefined) continue
 
 			// Convert parameters to different data types if required
 			if (option.parmater.type == 'string' && type == 'number') {

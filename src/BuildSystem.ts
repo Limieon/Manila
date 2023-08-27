@@ -170,7 +170,7 @@ export default class BuildSystem {
 		let setting: any[] = this.#settings[key]
 
 		if (typeof setting !== 'object') throw new Error("Setting 'pluginMirros' has to be a string list!")
-		setting.forEach((s) => {
+		setting.forEach(s => {
 			if (typeof s !== 'string') throw new Error("Setting 'pluginMirros' has to be a string list!")
 		})
 
@@ -180,7 +180,7 @@ export default class BuildSystem {
 	static parseTemplate(template: string, replace: object = {}): string {
 		let out = template.replaceAll('{\\t}', '\t')
 
-		Object.keys(replace).forEach((k) => {
+		Object.keys(replace).forEach(k => {
 			out = out.replaceAll(`{${k}}`, replace[k])
 		})
 		return out

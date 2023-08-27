@@ -37,8 +37,8 @@ class Manila {
 
 class TaskBuilder {
 	constructor(name: string) {
-		this.#name = `${ScriptHook.getCurrentProjectName()}:${name}`
-		this.#project = ScriptHook.getCurrentProjectName()
+		this.#name = `${ScriptHook.getCurrentProject().name}:${name}`
+		this.#project = ScriptHook.getCurrentProject()
 
 		this.#dependencies = new Set()
 		ScriptHook.registerTask(this)
@@ -65,7 +65,7 @@ class TaskBuilder {
 	getCallback(): () => void {
 		return this.#callback
 	}
-	getProject(): string {
+	getProject(): Project {
 		return this.#project
 	}
 	getRealName(): string {
@@ -75,7 +75,7 @@ class TaskBuilder {
 
 	#name: string
 	#dependencies: Set<string>
-	#project: string
+	#project: Project
 	#callback: () => void
 }
 
@@ -138,7 +138,7 @@ function project(filter: RegExp | string | string[], func: () => void) {
 	if (typeof filter === 'string') {
 		type = ProjectDecleratorType.STRING
 	}
-	if (Array.isArray(filter) && filter.every((item) => typeof item === 'string')) {
+	if (Array.isArray(filter) && filter.every(item => typeof item === 'string')) {
 		type = ProjectDecleratorType.STRING_ARRAY
 	}
 
@@ -165,6 +165,7 @@ export default class ScriptHook {
 		}
 
 		await this.runFile(Path.join(process.cwd(), './Manila.js'))
+		this.addMainProperties()
 
 		await this.runSubFiles(process.cwd(), true)
 	}
@@ -235,7 +236,7 @@ export default class ScriptHook {
 		const task = this.#tasks[name]
 		if (task == undefined) return false
 
-		task.getDependencies().forEach((d) => {
+		task.getDependencies().forEach(d => {
 			if (this.#tasks[d] == undefined) throw new Error(`Dependant Task ${d} could not be found!`)
 		})
 
@@ -244,7 +245,7 @@ export default class ScriptHook {
 		dependencies.add(task.getName())
 		let taskNum = 1
 
-		dependencies.forEach((t) => {
+		dependencies.forEach(t => {
 			if (taskNum == dependencies.size) {
 				console.log(
 					`${Chalk.green(taskNum++)}${Chalk.gray('/')}${Chalk.cyan(dependencies.size)} ${Chalk.gray('>')} ${Chalk.blue(t)}`
@@ -297,19 +298,19 @@ export default class ScriptHook {
 
 	static prettyPrintTasks() {
 		const tasksObj: { [key: string]: TaskBuilder[] } = {}
-		Object.keys(this.#tasks).forEach((key) => {
+		Object.keys(this.#tasks).forEach(key => {
 			const t = this.#tasks[key]
-			if (tasksObj[t.getProject()] == undefined) tasksObj[t.getProject()] = []
-			tasksObj[t.getProject()].push(t)
+			if (tasksObj[t.getProject().name] == undefined) tasksObj[t.getProject().name] = []
+			tasksObj[t.getProject().name].push(t)
 		})
 
-		Object.keys(tasksObj).forEach((k) => {
+		Object.keys(tasksObj).forEach(k => {
 			console.log()
 
 			const tasks = tasksObj[k]
 
 			console.log(Chalk.magenta('Available Tasks:'), Chalk.gray(`(${k})`))
-			tasks.forEach((t) => {
+			tasks.forEach(t => {
 				let hasDeps = t.getDependencies().size > 0
 				let deps = [...t.getDependencies()]
 				if (hasDeps) {
@@ -328,7 +329,7 @@ export default class ScriptHook {
 	static prettyPrintParameters() {
 		const projects: { [key: string]: string[][] } = {}
 
-		this.#parameters.forEach((p) => {
+		this.#parameters.forEach(p => {
 			let projectName = p.project == undefined ? 'global' : p.project.name
 			if (projects[projectName] == undefined) projects[projectName] = []
 
@@ -351,7 +352,7 @@ export default class ScriptHook {
 			}
 		})
 
-		Object.keys(projects).forEach((k) => {
+		Object.keys(projects).forEach(k => {
 			console.log(Chalk.magenta('Available Parameters:'), Chalk.gray(`(${k})`))
 			console.log(Utils.createTable(projects[k]))
 		})
@@ -360,7 +361,7 @@ export default class ScriptHook {
 	static prettyPrintProjects() {
 		const table = [[Chalk.blue('Project'), Chalk.blue('Namespace'), Chalk.blue('Version'), Chalk.blue('ID')]]
 
-		this.#projects.forEach((p) => {
+		this.#projects.forEach(p => {
 			table.push([
 				`${Chalk.gray('-')} ${this.#projectProperties[p.name]['name']}`,
 				this.#projectProperties[p.name]['namespace'],
@@ -409,10 +410,17 @@ export default class ScriptHook {
 	// __name__ to not overwrite any script property that is named 'name'
 	static addProjectProperties(__name__: string) {
 		let obj = {}
-		this.#scriptProperties.forEach((p) => {
+		this.#scriptProperties.forEach(p => {
 			if (p.scope === ScriptPropertyScope.PROJECT || p.scope === ScriptPropertyScope.COMMON) eval(`obj['${p.name}'] = ${p.name}`)
 		})
 		this.#projectProperties[__name__] = obj
+	}
+	static addMainProperties() {
+		let obj = {}
+		this.#scriptProperties.forEach(p => {
+			if (p.scope === ScriptPropertyScope.MAIN || p.scope === ScriptPropertyScope.COMMON) eval(`obj['${p.name}'] = ${p.name}`)
+		})
+		this.#projectProperties['_'] = obj
 	}
 
 	static registerScriptProperty(name: string, scope: ScriptPropertyScope) {
@@ -436,8 +444,15 @@ export default class ScriptHook {
 		return this.#projectProperties[this.#currentProject][name]
 	}
 
-	static getCurrentProjectName(): string {
-		return this.#currentProject
+	static getCurrentProject(): Project {
+		return this.getProjectByID(this.#currentProject)
+	}
+
+	static getProjectByID(id: string) {
+		this.#projects.forEach(p => {
+			if (p.name == id) return p
+		})
+		return undefined
 	}
 
 	static #currentProject: string = undefined
@@ -454,8 +469,8 @@ export default class ScriptHook {
 }
 
 // Global Variables that have to be defined by scripts
-// Projects
 
+// Projects
 ScriptHook.registerScriptProperty('namespace', ScriptPropertyScope.PROJECT)
 let namespace = undefined
 
@@ -465,5 +480,10 @@ let version = undefined
 ScriptHook.registerScriptProperty('author', ScriptPropertyScope.PROJECT)
 let author = undefined
 
+// Common
 ScriptHook.registerScriptProperty('name', ScriptPropertyScope.COMMON)
 let name = undefined
+
+// Main
+ScriptHook.registerScriptProperty('appName', ScriptPropertyScope.MAIN)
+let appName = undefined

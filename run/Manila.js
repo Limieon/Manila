@@ -5,6 +5,8 @@ const graphicsApi = parameterString('gapi', 'Choose a graphics api', 'opengl')
 const year = parameterNumber('year', 'Enter a year', 2023)
 const test = parameterBoolean('test', 'Run tests')
 
+appName = 'GenesisEngine'
+
 async function sleep(dur) {
 	return new Promise((res, rej) => {
 		setTimeout(res, dur)
@@ -59,9 +61,4 @@ project(':client', async () => {
 	//	implemenatation(project(':core'))
 	//  implementatiopn(nuget('Silk.NET.Core', '2.17.1'))
 	//])
-})
-
-project(':core:server', async () => {
-	name = 'Genesis Server Core'
-	namespace = 'Genesis.Core.Server'
 })

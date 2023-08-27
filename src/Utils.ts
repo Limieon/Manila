@@ -14,7 +14,7 @@ export default class Utils {
 
 		for (let i = 0; i < maxWidths.length; ++i) maxWidths[i] = maxWidths[i] + minMargin
 
-		data.forEach((a) => {
+		data.forEach(a => {
 			a.forEach((s, i) => {
 				out += s
 				out += ' '.repeat(maxWidths[i] - s.replaceAll(/\x1B\[[0-9;]*m/g, '').length)

@@ -8,3 +8,5 @@ test
 package-lock.json
 
 README.md
+
+.VSCodeCounter/
