@@ -7,8 +7,59 @@ import Path from 'path'
 import FS from 'fs'
 import FileUtils from './FileUtils.js'
 import SemVer from 'semver'
+import Gradient from 'gradient-string'
+import * as Prompts from '@clack/prompts'
 
-export function init() {}
+export async function init(opts: object) {
+	Prompts.intro(Gradient.vice('Init Manila App'))
+
+	const { name, dir, namespace, modules } = await Prompts.group({
+		name: () =>
+			Prompts.text({
+				message: 'Enter the name of your project',
+				placeholder: Path.basename(process.cwd())
+			}),
+		dir: () =>
+			Prompts.text({
+				message: 'Enther the root of your project',
+				validate: val => {
+					if (FS.existsSync(Path.join(process.cwd(), val))) return 'Path does already exist'
+				}
+			}),
+		namespace: () =>
+			Prompts.text({
+				message: 'Enter the prefix of your namespace'
+			}),
+		modules: () =>
+			Prompts.confirm({
+				message: 'Do you want to create a module (sub-project)?'
+			})
+	})
+
+	if (!FS.existsSync(dir)) FS.mkdirSync(dir)
+	process.chdir(dir)
+
+	if (modules) {
+		const { moduleName } = await Prompts.group({
+			moduleName: () =>
+				Prompts.text({
+					message: 'Etner the name of your module'
+				})
+		})
+
+		BuildSystem.createModule({
+			name: moduleName,
+			namespace: `${namespace}`,
+			dir: Path.join(moduleName)
+		})
+	}
+
+	BuildSystem.createProject({
+		name,
+		namespace,
+		dummy: modules
+	})
+}
 
 export async function install(pluginName: string, opts: object) {
 	if (opts['dir']) process.chdir(opts['dir'])

@@ -126,9 +126,9 @@ export default class BuildSystem {
 	static init() {
 		let settingsFileName = FileUtils.getSettingsFileFromRootDir()
 		this.#settings = settingsFileName != undefined ? YAML.parse(FS.readFileSync(settingsFileName, { encoding: 'utf-8' })) : {}
-		this.#plugins = FS.existsSync('./.manila/plugins.manila.json')
-			? JSON.parse(FS.readFileSync('./.manila/plugins.manila.json', { encoding: 'utf-8' }))
-			: { plugins: {} }
+		this.#plugins = FileUtils.getPluginFileFromRootDir()
+			? JSON.parse(FS.readFileSync(FileUtils.getPluginFileFromRootDir(), { encoding: 'utf-8' }))
+			: {}
 	}
 
 	static dirContainsBuildFile() {
