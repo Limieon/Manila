@@ -22,6 +22,8 @@ import FileUtils from './FileUtils.js'
 
 import ManilaWrapper from './ManilaWrapper.js'
 
+// #MANILA_EXPOSE_API_BEGIN
+
 // This exposes the api given from 'ManilaWrapper'
 class Manila {
 	static getProject() {
@@ -32,6 +34,17 @@ class Manila {
 	}
 	static getConfig() {
 		return ManilaWrapper.getConfig()
+	}
+
+	static file(...path: string[]) {
+		return ManilaWrapper.file(...path)
+	}
+
+	static dir(...path: string[]) {
+		return ManilaWrapper.directory(...path)
+	}
+	static directory(...path: string[]) {
+		return ManilaWrapper.directory(...path)
 	}
 }
 
@@ -116,10 +129,14 @@ function parameterNumber(name: string, description: string, vDefault: number | s
 	return vDefault
 }
 
-function print(...msg: string[]) {
+function print(...msg: any[]) {
 	if (msg.length < 1 || (msg.length == 1 && !msg[0])) {
 		console.log()
 		return
+	}
+
+	for (let i = 0; i < msg.length; ++i) {
+		if (`${msg[i]}` == '[object Object]') msg[i] = `${Chalk.yellow(msg[i].constructor.name)}`
 	}
 	Logger.script(msg.join(' '))
 }
@@ -150,6 +167,8 @@ function project(filter: RegExp | string | string[], func: () => void) {
 
 	ScriptHook.addProjectDeclerator({ filter, func, type })
 }
+
+// #MANILA_EXPOSE_API_END
 
 // Script Hook Class
 export default class ScriptHook {
@@ -479,6 +498,7 @@ export default class ScriptHook {
 	static #projectProperties: { [key: string]: object }
 }
 
+// #MANILA_EXPOSE_FLAGS_BEGIN
 // Global Variables that have to be defined by scripts
 
 // Projects
@@ -498,3 +518,4 @@ let name = undefined
 // Main
 ScriptHook.registerScriptProperty('appName', ScriptPropertyScope.MAIN)
 let appName = undefined
+// #MANILA_EXPOSE_FLAGS_END

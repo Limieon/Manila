@@ -18,7 +18,7 @@ export default class Logger {
 		console.log(`${LOG_PREFIX}`, Chalk.red(msg.join(' ')))
 	}
 
-	static script(...msg: string[]) {
+	static script(...msg: any[]) {
 		console.log(`${LOG_PREFIX}`, msg.join(' '))
 	}
 
