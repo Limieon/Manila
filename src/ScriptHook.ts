@@ -117,6 +117,10 @@ function parameterNumber(name: string, description: string, vDefault: number | s
 }
 
 function print(...msg: string[]) {
+	if (msg.length < 1 || (msg.length == 1 && !msg[0])) {
+		console.log()
+		return
+	}
 	Logger.script(msg.join(' '))
 }
 
