@@ -94,7 +94,7 @@ app.registerCommand({
 			default: 'index.ts'
 		}
 	],
-	callback: Commands.link
+	callback: (args, opts) => Commands.link(args['dir'], args['name'], args['indexFile'], opts)
 })
 
 app.registerCommand({

@@ -15,10 +15,6 @@ export const OS_NAMES = {
 	android: 'Android'
 }
 
-export type ManilaConfig_OS = {
-	name: string
-	nodeName: string
-}
 export class ManilaConfig {
 	constructor(config: string = 'Debug') {
 		this.config = config

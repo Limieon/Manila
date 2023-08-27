@@ -24,5 +24,10 @@ task('print')
 
 task('compile')
 	.executes(() => {
-		print('Bin Dir:', Manila.directory(workspace.location).concat('bin', `${config.config}-${config.arch}`, config.platform, project.name).getPath())
+		ManilaCS.compile({
+			project,
+			workspace,
+			config,
+			binDir: Manila.directory(workspace.location).concat('bin', `${config.config}-${config.arch}`, config.platform, project.name)
+		})
 	})

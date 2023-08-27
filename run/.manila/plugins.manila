@@ -1,7 +1,7 @@
 {
     "manila.cs": {
         "indexFile": "index.ts",
-        "location": ".manila\\plugins\\manila.cs",
+        "location": "..\\..\\Manila-Plugins\\manila.cs",
         "version": "1.0.0"
     }
 }

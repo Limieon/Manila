@@ -168,6 +168,33 @@ export async function tasks(opts: object) {
 	ScriptHook.prettyPrintTasks()
 }
 
-export function link() {}
+export function link(dir: string, name: string, indexFile: string, opts: object) {
+	if (opts['dir']) process.chdir(opts['dir'])
+
+	const installedPluginFileDir = FileUtils.getPluginFileFromRootDir()
+	if (!installedPluginFileDir) FS.writeFileSync('./.manila/plugins.manila', '{}')
+	const iPlugins: PluginConfig = JSON.parse(FS.readFileSync(FileUtils.getPluginFileFromRootDir(), { encoding: 'utf-8' }))
+
+	const pluginFileName = FileUtils.getPluginFileFromRootDir()
+
+	if (!FS.existsSync(dir)) {
+		console.log(Chalk.red(`Specified plugin directory does not exist!`))
+		process.exit(-1)
+	}
+	if (plugins[name] != undefined) {
+		console.log(Chalk.red(`Plugin ${name} already exists in your plugins list!`))
+		process.exit(-1)
+	}
+
+	iPlugins[name] = {
+		indexFile: indexFile,
+		location: Path.relative(process.cwd(), dir),
+		version: '1.0.0'
+	}
+
+	FS.writeFileSync(pluginFileName, JSON.stringify(iPlugins, null, 4))
+
+	console.log(Chalk.green('Successfully linked plugin!'))
+}
 
 export function plugins() {}
