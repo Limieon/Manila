@@ -20,35 +20,65 @@ import BuildSystem, {
 } from './BuildSystem.js'
 import FileUtils from './FileUtils.js'
 
-import ManilaWrapper from './ManilaWrapper.js'
+import ManilaWrapper, { ManilaConfig, ManilaDirectory, ManilaFile, ManilaProject, ManilaWorkspace } from './ManilaWrapper.js'
 
 // #MANILA_EXPOSE_API_BEGIN
 
 // This exposes the api given from 'ManilaWrapper'
 class Manila {
-	static getProject() {
+	/**
+	 * Returns the current project
+	 */
+	static getProject(): ManilaProject {
 		return ManilaWrapper.getProject()
 	}
-	static getWorkspace() {
+	/**
+	 * Returns the current workspace
+	 */
+	static getWorkspace(): ManilaWorkspace {
 		return ManilaWrapper.getWorkspace()
 	}
-	static getConfig() {
+	/**
+	 * Returns the current build configuration
+	 */
+	static getConfig(): ManilaConfig {
 		return ManilaWrapper.getConfig()
 	}
 
-	static file(...path: string[]) {
+	/**
+	 * Returns a new file instance
+	 * @param path the path of the file
+	 * @returns ManilaFile
+	 */
+	static file(...path: string[]): ManilaFile {
 		return ManilaWrapper.file(...path)
 	}
 
-	static dir(...path: string[]) {
+	/**
+	 * Returns a new directory instance
+	 * @param path the path of the directory
+	 * @returns ManilaDirectory
+	 */
+	static dir(...path: string[]): ManilaDirectory {
 		return ManilaWrapper.directory(...path)
 	}
-	static directory(...path: string[]) {
+	/**
+	 * Returns a new directory instance
+	 * @param path the path of the directory
+	 * @returns ManilaDirectory
+	 */
+	static directory(...path: string[]): ManilaDirectory {
 		return ManilaWrapper.directory(...path)
 	}
 }
 
+/**
+ * A task that can be executed
+ */
 class TaskBuilder {
+	/**
+	 * @param name the name of the task
+	 */
 	constructor(name: string) {
 		this.#name = `${ScriptHook.getCurrentProject().name}:${name}`
 		this.#project = ScriptHook.getCurrentProject()
@@ -57,30 +87,54 @@ class TaskBuilder {
 		ScriptHook.registerTask(this)
 	}
 
-	dependsOn(...names: string[]) {
+	/**
+	 * Sets dependencies for this task
+	 * @param names the dependencies
+	 * @returns TaskBuilder
+	 */
+	dependsOn(...names: string[]): TaskBuilder {
 		if (typeof names === 'string') names = [names]
 		this.#dependencies = new Set([...this.#dependencies, ...names])
 
 		return this
 	}
-	executes(callback: () => {}) {
+	/**
+	 * Sets the callback function
+	 * @param callback the function that will be executed when the task is run
+	 * @returns TaskBuilder
+	 */
+	executes(callback: () => {}): TaskBuilder {
 		this.#callback = callback
-
 		return this
 	}
 
+	/**
+	 * Gets the name of the task
+	 */
 	getName(): string {
 		return this.#name
 	}
+	/**
+	 * Gets the dependencies of the task
+	 */
 	getDependencies(): Set<string> {
 		return this.#dependencies
 	}
+	/**
+	 * Gets the callback of the task
+	 */
 	getCallback(): () => void {
 		return this.#callback
 	}
+	/**
+	 * Gets the project that contains the task
+	 */
 	getProject(): Project {
 		return this.#project
 	}
+	/**
+	 * Gets the task name with the prefixed project
+	 */
 	getRealName(): string {
 		let temp = this.#name.split(':')
 		return temp[temp.length - 1]
@@ -93,14 +147,32 @@ class TaskBuilder {
 }
 
 // Global Script Functions
-function task(name: string) {
+
+/**
+ * Create a new task
+ * @param name name of the task
+ * @returns TaskBuilder
+ */
+function task(name: string): TaskBuilder {
 	return new TaskBuilder(name)
 }
-function parameterBoolean(name: string, description: string) {
+/**
+ * Creates a new boolean typed parameter
+ * @param name the name
+ * @param description the description
+ * @returns the value of the parameter or false
+ */
+function parameterBoolean(name: string, description: string): boolean {
 	ScriptHook.registerParameter(name, description, undefined, ParameterType.BOOLEAN)
 	return process.argv.indexOf(`--${name}`) > -1
 }
-function parameterString(name: string, description: string, vDefault: string) {
+/**
+ * Creates a new string typed parameter
+ * @param name the name
+ * @param description the description
+ * @returns the value of the parameter or the default
+ */
+function parameterString(name: string, description: string, vDefault: string): string {
 	ScriptHook.registerParameter(name, description, vDefault, ParameterType.STRING)
 	const index = process.argv.indexOf(`--${name}`)
 	if (index > -1) {
@@ -110,7 +182,13 @@ function parameterString(name: string, description: string, vDefault: string) {
 
 	return vDefault
 }
-function parameterNumber(name: string, description: string, vDefault: number | string) {
+/**
+ * Creates a new number typed parameter
+ * @param name the name
+ * @param description the description
+ * @returns the value of the parameter or the default
+ */
+function parameterNumber(name: string, description: string, vDefault: number): number {
 	ScriptHook.registerParameter(name, description, vDefault, ParameterType.NUMBER)
 	const index = process.argv.indexOf(`--${name}`)
 	if (index > -1) {
@@ -129,6 +207,10 @@ function parameterNumber(name: string, description: string, vDefault: number | s
 	return vDefault
 }
 
+/**
+ * Prints to the console
+ * @param msg the msg to print
+ */
 function print(...msg: any[]) {
 	if (msg.length < 1 || (msg.length == 1 && !msg[0])) {
 		console.log()
@@ -141,15 +223,31 @@ function print(...msg: any[]) {
 	Logger.script(msg.join(' '))
 }
 
+/**
+ * Import a external plugin into this buildscript
+ * @param name the name of the plugin
+ * @param dir the directory containing the plugin
+ * @returns the default export of the plugin
+ */
 async function importPlugin(name: string, dir?: string): Promise<any> {
 	if (dir == undefined) return await ScriptHook.importPlugin(name)
 	return await ScriptHook.importPluginFromFile(name, dir)
 }
 
+/**
+ * Get a project or workspace property
+ * @param name the key of the property
+ * @returns the value of the property
+ */
 function getProperty(name: string) {
 	return ScriptHook.getProperty(name)
 }
 
+/**
+ * A project declerator to set properties on a specific project
+ * @param filter the project to filter for
+ * @param func the funct to set properties for the project
+ */
 function project(filter: RegExp | string | string[], func: () => void) {
 	let type: ProjectDecleratorType = undefined
 
@@ -503,19 +601,34 @@ export default class ScriptHook {
 
 // Projects
 ScriptHook.registerScriptProperty('namespace', ScriptPropertyScope.PROJECT)
+/**
+ * The namespace of your project
+ */
 let namespace = undefined
 
 ScriptHook.registerScriptProperty('version', ScriptPropertyScope.PROJECT)
+/**
+ * The version of your project
+ */
 let version = undefined
 
 ScriptHook.registerScriptProperty('author', ScriptPropertyScope.PROJECT)
+/**
+ * The author of your project
+ */
 let author = undefined
 
 // Common
 ScriptHook.registerScriptProperty('name', ScriptPropertyScope.COMMON)
+/**
+ * The name of your project
+ */
 let name = undefined
 
 // Main
 ScriptHook.registerScriptProperty('appName', ScriptPropertyScope.MAIN)
+/**
+ * The name of your workspace
+ */
 let appName = undefined
 // #MANILA_EXPOSE_FLAGS_END

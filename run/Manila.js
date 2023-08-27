@@ -7,12 +7,6 @@ const test = parameterBoolean('test', 'Run tests')
 
 appName = 'GenesisEngine'
 
-async function sleep(dur) {
-	return new Promise((res, rej) => {
-		setTimeout(res, dur)
-	})
-}
-
 // Specify a project where you want to customize your settings
 // use regex for multiple projects or use an array for multiple specific projects:
 // 'project': Only project
