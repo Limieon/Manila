@@ -18,7 +18,7 @@ import BuildSystem, {
 	ScriptProperty,
 	ScriptPropertyScope
 } from './BuildSystem.js'
-import FileNames from './FileNames.js'
+import FileUtils from './FileUtils.js'
 
 import ManilaWrapper from './ManilaWrapper.js'
 
@@ -272,7 +272,7 @@ export default class ScriptHook {
 		return (await import(path)).default
 	}
 	static async importPluginFromFile(name: string, dir: string): Promise<any> {
-		const indexFile = FileNames.pluginIndexFile(dir)
+		const indexFile = FileUtils.getPluginIndexFileFromRoot(dir)
 
 		if (!FS.existsSync(dir)) throw new Error(`Directory ${dir} does not exist!`)
 		if (indexFile == undefined)

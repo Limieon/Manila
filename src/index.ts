@@ -9,9 +9,6 @@ import Semver from 'semver'
 
 import minimist from 'minimist'
 
-import { simpleGit } from 'simple-git'
-const Git = simpleGit()
-
 import BuildSystem, { PluginIndexFile } from './BuildSystem.js'
 import ScriptHook from './ScriptHook.js'
 import Logger from './Logger.js'
@@ -67,7 +64,14 @@ app.registerCommand({
 			type: 'string'
 		}
 	],
-	callback: Commands.install
+	options: [
+		{
+			name: 'force',
+			alias: 'f',
+			description: 'Forcefully installs a plugin'
+		}
+	],
+	callback: (args, opts) => Commands.install(args['plugin'], opts)
 })
 app.registerCommand({
 	name: 'link',

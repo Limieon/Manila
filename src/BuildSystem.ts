@@ -1,6 +1,7 @@
 import FS, { copyFile } from 'fs'
 import Path from 'path'
 import YAML from 'yaml'
+import FileUtils from './FileUtils.js'
 
 export type ProjectParameters = {
 	name: string
@@ -49,6 +50,7 @@ export type PluginIndex = {
 }
 export type PluginIndexFile = {
 	name: string
+	gitRepo: string
 	plugins: { [key: string]: PluginIndex }
 }
 
@@ -122,7 +124,7 @@ dotnet: 7.0
 
 export default class BuildSystem {
 	static init() {
-		let settingsFileName = this.#getSettingsFileName()
+		let settingsFileName = FileUtils.getSettingsFileFromRootDir()
 		this.#settings = settingsFileName != undefined ? YAML.parse(FS.readFileSync(settingsFileName, { encoding: 'utf-8' })) : {}
 		this.#plugins = FS.existsSync('./.manila/plugins.manila.json')
 			? JSON.parse(FS.readFileSync('./.manila/plugins.manila.json', { encoding: 'utf-8' }))
@@ -145,14 +147,6 @@ export default class BuildSystem {
 	}
 	static getPluginsConfig(): PluginConfig {
 		return this.#plugins
-	}
-
-	static #getSettingsFileName(): string {
-		const fileNames = ['./.manila/settings.manila', './.manila/settings.manila.yaml', './.manila/settings.manila.yml']
-		for (const f of fileNames) {
-			if (FS.existsSync(f)) return f
-		}
-		return undefined
 	}
 
 	static getSetting(key: string, vDefault: any = undefined): any {

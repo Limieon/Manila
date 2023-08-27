@@ -1,7 +1,8 @@
 node_modules/
 
+.manila/
 run/.manila/plugins/
-run/.manila/tmp/
+run/.manila/temp/
 
 test
 
