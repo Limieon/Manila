@@ -2,7 +2,7 @@ import FS, { Dirent, copyFileSync } from 'fs'
 import Chalk from 'chalk'
 import { Command } from 'commander'
 import Path from 'path'
-import { VM } from 'vm2'
+import { NodeVM } from 'vm2'
 
 import Logger from './Logger.js'
 import Utils from './Utils.js'
@@ -270,7 +270,13 @@ function properties(values: object) {
 }
 
 const VM_SANDBOX = {
+	// Classes
 	Manila,
+
+	// Node Modules,
+	Chalk,
+
+	// Functions
 	task,
 	parameterBoolean,
 	parameterNumber,
@@ -282,7 +288,7 @@ const VM_SANDBOX = {
 	properties
 }
 
-const userVM = new VM({ sandbox: VM_SANDBOX })
+const userVM = new NodeVM({ sandbox: VM_SANDBOX, allowAsync: true, strict: true })
 
 // Script Hook Class
 export default class ScriptHook {
@@ -338,7 +344,6 @@ export default class ScriptHook {
 		this.#lastFileNames.push(file)
 		try {
 			//await eval(`(async () => { ${FS.readFileSync(file, { encoding: 'utf-8' })} })()`)
-
 			await userVM.runFile(file)
 		} catch (e) {
 			throw e
@@ -601,9 +606,9 @@ export default class ScriptHook {
 		for (const k of Object.keys(values)) this.#pendingProjectProperties[k] = values[k]
 	}
 
-	static registerScriptProperty(name: string, scope: ScriptPropertyScope) {
+	static registerScriptProperty(name: string, description: string, scope: ScriptPropertyScope) {
 		console.log(this.#scriptProperties)
-		this.#scriptProperties.push({ name, scope })
+		this.#scriptProperties.push({ name, description, scope })
 	}
 
 	static getProperty(name: string) {
@@ -650,12 +655,12 @@ export default class ScriptHook {
 }
 
 // Projects
-ScriptHook.registerScriptProperty('namespace', ScriptPropertyScope.PROJECT)
-ScriptHook.registerScriptProperty('version', ScriptPropertyScope.PROJECT)
-ScriptHook.registerScriptProperty('author', ScriptPropertyScope.PROJECT)
+ScriptHook.registerScriptProperty('namespace', 'the default namespace', ScriptPropertyScope.PROJECT)
+ScriptHook.registerScriptProperty('version', 'the version', ScriptPropertyScope.PROJECT)
+ScriptHook.registerScriptProperty('author', 'the name of the author', ScriptPropertyScope.PROJECT)
+ScriptHook.registerScriptProperty('name', 'name of the project', ScriptPropertyScope.PROJECT)
 
 // Main
-ScriptHook.registerScriptProperty('appName', ScriptPropertyScope.MAIN)
+ScriptHook.registerScriptProperty('appName', 'the workspace name', ScriptPropertyScope.MAIN)
 
 // Common
-ScriptHook.registerScriptProperty('name', ScriptPropertyScope.COMMON)

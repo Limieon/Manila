@@ -74,6 +74,7 @@ export enum ScriptPropertyScope {
 export type ScriptProperty = {
 	scope: ScriptPropertyScope
 	name: string
+	description: string
 }
 
 const dummyProjectTemplate = `// This is your main Manila BuildScipt
