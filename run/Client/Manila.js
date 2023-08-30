@@ -1,4 +1,4 @@
-const ManilaCS = await importPlugin('manila.cs')
+//const ManilaCS = await importPlugin('manila.cs')
 
 const workspace = Manila.getWorkspace()
 const project = Manila.getProject()

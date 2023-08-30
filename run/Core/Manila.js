@@ -1,4 +1,4 @@
-
+ 
 task('compile')
 	.executes(() => {
 		print('Author:', getProperty('author'))

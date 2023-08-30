@@ -2,6 +2,7 @@ import FS, { Dirent, copyFileSync } from 'fs'
 import Chalk from 'chalk'
 import { Command } from 'commander'
 import Path from 'path'
+import { VM } from 'vm2'
 
 import Logger from './Logger.js'
 import Utils from './Utils.js'
@@ -21,8 +22,6 @@ import BuildSystem, {
 import FileUtils from './FileUtils.js'
 
 import ManilaWrapper, { ManilaConfig, ManilaDirectory, ManilaFile, ManilaProject, ManilaWorkspace } from './ManilaWrapper.js'
-
-// #MANILA_EXPOSE_API_BEGIN
 
 // This exposes the api given from 'ManilaWrapper'
 class Manila {
@@ -266,7 +265,24 @@ function project(filter: RegExp | string | string[], func: () => void) {
 	ScriptHook.addProjectDeclerator({ filter, func, type })
 }
 
-// #MANILA_EXPOSE_API_END
+function properties(values: object) {
+	ScriptHook.setProperties(values)
+}
+
+const VM_SANDBOX = {
+	Manila,
+	task,
+	parameterBoolean,
+	parameterNumber,
+	parameterString,
+	print,
+	getProperty,
+	project,
+	importPlugin,
+	properties
+}
+
+const userVM = new VM({ sandbox: VM_SANDBOX })
 
 // Script Hook Class
 export default class ScriptHook {
@@ -279,6 +295,8 @@ export default class ScriptHook {
 		this.#lastFileNames = []
 		this.#projectDeclarators = []
 		this.#projectProperties = {}
+
+		this.#pendingProjectProperties = {}
 
 		if (!FS.existsSync('./Manila.js')) {
 			console.log(Chalk.red('Could not find Manila.js BuildScript!'))
@@ -319,13 +337,13 @@ export default class ScriptHook {
 
 		this.#lastFileNames.push(file)
 		try {
-			await eval(`(async () => { ${FS.readFileSync(file, { encoding: 'utf-8' })} })()`)
+			//await eval(`(async () => { ${FS.readFileSync(file, { encoding: 'utf-8' })} })()`)
+
+			await userVM.runFile(file)
 		} catch (e) {
 			throw e
 		}
 		this.#lastFileNames.pop()
-
-		if (this.#fileIsProjectFile) this.setProjectParameters(namespace, version)
 	}
 
 	static registerTask(task: TaskBuilder) {
@@ -537,18 +555,50 @@ export default class ScriptHook {
 
 	// __name__ to not overwrite any script property that is named 'name'
 	static addProjectProperties(__name__: string) {
-		let obj = {}
-		this.#scriptProperties.forEach(p => {
-			if (p.scope === ScriptPropertyScope.PROJECT || p.scope === ScriptPropertyScope.COMMON) eval(`obj['${p.name}'] = ${p.name}`)
-		})
-		this.#projectProperties[__name__] = obj
+		if (this.#projectProperties[__name__] == undefined) this.#projectProperties[__name__] = {}
+
+		for (const key of Object.keys(this.#pendingProjectProperties)) {
+			let prop: ScriptProperty = undefined
+			for (const p of this.#scriptProperties) {
+				if (p.name == key) {
+					prop = p
+					break
+				}
+			}
+
+			if (prop == undefined) throw new Error(`Property '${key}' is not registered!`)
+			if (prop.scope != ScriptPropertyScope.PROJECT && prop.scope != ScriptPropertyScope.COMMON)
+				throw new Error(`Property '${key}' is not avilable in project or common scope!`)
+
+			this.#projectProperties[__name__][key] = this.#pendingProjectProperties[key]
+		}
+
+		this.#pendingProjectProperties = {}
 	}
 	static addMainProperties() {
-		let obj = {}
-		this.#scriptProperties.forEach(p => {
-			if (p.scope === ScriptPropertyScope.MAIN || p.scope === ScriptPropertyScope.COMMON) eval(`obj['${p.name}'] = ${p.name}`)
-		})
-		this.#projectProperties['_'] = obj
+		if (this.#projectProperties['_'] == undefined) this.#projectProperties['_'] = {}
+
+		for (const key of Object.keys(this.#pendingProjectProperties)) {
+			let prop: ScriptProperty = undefined
+			for (const p of this.#scriptProperties) {
+				if (p.name == key) {
+					prop = p
+					break
+				}
+			}
+
+			if (prop == undefined) throw new Error(`Property '${key}' is not registered!`)
+			if (prop.scope != ScriptPropertyScope.MAIN && prop.scope != ScriptPropertyScope.COMMON)
+				throw new Error(`Property '${key}' is not avilable in main or common scope!`)
+
+			this.#projectProperties['_'][key] = this.#pendingProjectProperties[key]
+		}
+
+		this.#pendingProjectProperties = {}
+	}
+
+	static setProperties(values: object) {
+		for (const k of Object.keys(values)) this.#pendingProjectProperties[k] = values[k]
 	}
 
 	static registerScriptProperty(name: string, scope: ScriptPropertyScope) {
@@ -594,41 +644,18 @@ export default class ScriptHook {
 	static #projectDeclarators: ProjectDeclarator[]
 	static #scriptProperties: ScriptProperty[] = []
 	static #projectProperties: { [key: string]: object }
-}
 
-// #MANILA_EXPOSE_FLAGS_BEGIN
-// Global Variables that have to be defined by scripts
+	// Properties are written to this and then copied to the project
+	static #pendingProjectProperties: object
+}
 
 // Projects
 ScriptHook.registerScriptProperty('namespace', ScriptPropertyScope.PROJECT)
-/**
- * The namespace of your project
- */
-let namespace = undefined
-
 ScriptHook.registerScriptProperty('version', ScriptPropertyScope.PROJECT)
-/**
- * The version of your project
- */
-let version = undefined
-
 ScriptHook.registerScriptProperty('author', ScriptPropertyScope.PROJECT)
-/**
- * The author of your project
- */
-let author = undefined
-
-// Common
-ScriptHook.registerScriptProperty('name', ScriptPropertyScope.COMMON)
-/**
- * The name of your project
- */
-let name = undefined
 
 // Main
 ScriptHook.registerScriptProperty('appName', ScriptPropertyScope.MAIN)
-/**
- * The name of your workspace
- */
-let appName = undefined
-// #MANILA_EXPOSE_FLAGS_END
+
+// Common
+ScriptHook.registerScriptProperty('name', ScriptPropertyScope.COMMON)
