@@ -22,6 +22,7 @@ task('print')
 		print('Author:', project.author)
 	})
 
+
 task('compile')
 	.executes(() => {
 		ManilaCS.compile({
