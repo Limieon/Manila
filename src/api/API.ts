@@ -139,8 +139,22 @@ export function print(...msg: any[]) {
  * @param dir the directory containing the plugin
  * @returns the default export of the plugin
  */
-export function importPlugin(name: string): any {
-	return ScriptHook.getPlugin(name).default
+export function importPlugin(name: string, ...members: string[]): any {
+	const plugin = ScriptHook.getPlugin(name)
+	console.log(members)
+
+	if (members.length > 1) {
+		const obj = {}
+		for (const m of members) {
+			obj[m] = plugin[m]
+		}
+		return obj
+	}
+	if (members == undefined || members.length < 1) {
+		return plugin.default
+	}
+
+	return plugin[members[0]]
 }
 
 /**
