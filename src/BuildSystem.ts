@@ -214,6 +214,10 @@ export default class BuildSystem {
 
 	static installPlugin(name: string, silent: boolean) {}
 
+	static getPlugins() {
+		return this.#plugins
+	}
+
 	static #settings: object
 	static #plugins: { [key: string]: Plugin }
 }

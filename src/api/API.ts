@@ -1,7 +1,7 @@
 import ScriptHook from '../ScriptHook.js'
 import ImpManilaAPI, { ManilaProject, ManilaWorkspace, ManilaConfig } from './Manila.js'
 import Logger from '../Logger.js'
-import { ParameterType, ProjectDecleratorType } from '../BuildSystem.js'
+import BuildSystem, { ParameterType, ProjectDecleratorType } from '../BuildSystem.js'
 import TaskBuilder from './Task.js'
 
 import { ManilaDirectory, ManilaFile } from './FileSystem.js'
@@ -139,9 +139,8 @@ export function print(...msg: any[]) {
  * @param dir the directory containing the plugin
  * @returns the default export of the plugin
  */
-async function importPlugin(name: string, dir?: string): Promise<any> {
-	if (dir == undefined) return await ScriptHook.importPlugin(name)
-	return await ScriptHook.importPluginFromFile(name, dir)
+export function importPlugin(name: string): any {
+	return ScriptHook.getPlugin(name).default
 }
 
 /**

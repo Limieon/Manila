@@ -1,9 +1,12 @@
 //const ManilaCS = await importPlugin('manila.cs')
+const ManilaCPP = importPlugin('manila.cpp')
 
 const headless = parameterBoolean('headless', 'Enables compilation flags for headless running')
 const graphicsApi = parameterString('gapi', 'Choose a graphics api', 'opengl')
 const year = parameterNumber('year', 'Enter a year', 2023)
 const test = parameterBoolean('test', 'Run tests')
+
+ManilaCPP.abc()
 
 properties({ appName: 'GenesisEngine' })
 

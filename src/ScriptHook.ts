@@ -1,7 +1,7 @@
-import FS from 'fs'
+import FS, { openAsBlob } from 'fs'
 import Chalk from 'chalk'
 import Path from 'path'
-import { NodeVM } from 'vm2'
+import { NodeVM, VM } from 'vm2'
 
 import Utils from './Utils.js'
 import BuildSystem, {
@@ -25,8 +25,7 @@ import TaskBuilder from './api/Task.js'
 
 // Import API to make it available in the VM
 import * as API from './api/API.js'
-
-const userVM = new NodeVM({ sandbox: API, allowAsync: true, strict: true })
+let VM_SANDBOX = {}
 
 // Script Hook Class
 export default class ScriptHook {
@@ -35,6 +34,7 @@ export default class ScriptHook {
 		this.#rootDir = process.cwd()
 		this.#projects = []
 		this.#plugins = BuildSystem.getPluginsConfig()
+		this.#pluginModules = {}
 		this.#parameters = []
 		this.#lastFileNames = []
 		this.#projectDeclarators = []
@@ -46,6 +46,23 @@ export default class ScriptHook {
 			console.log(Chalk.red('Could not find Manila.js BuildScript!'))
 			return -1
 		}
+
+		for (const k of Object.keys(this.#plugins)) {
+			const plugin = this.#plugins[k]
+			const file = `file://${Path.join(this.#rootDir, plugin.location, plugin.indexFile)}`
+			this.#pluginModules[k] = await import(file)
+		}
+
+		for (const k of Object.keys(API)) {
+			VM_SANDBOX[k] = API[k]
+		}
+		console.log(VM_SANDBOX)
+
+		this.#scriptVM = new NodeVM({
+			sandbox: VM_SANDBOX,
+			allowAsync: true,
+			strict: true
+		})
 
 		await this.runFile(Path.join(process.cwd(), './Manila.js'))
 		this.addMainProperties()
@@ -82,7 +99,7 @@ export default class ScriptHook {
 		this.#lastFileNames.push(file)
 		try {
 			//await eval(`(async () => { ${FS.readFileSync(file, { encoding: 'utf-8' })} })()`)
-			await userVM.runFile(file)
+			await this.#scriptVM.runFile(file)
 		} catch (e) {
 			throw e
 		}
@@ -375,8 +392,14 @@ export default class ScriptHook {
 		return undefined
 	}
 
+	static getPlugin(name: string) {
+		if (this.#pluginModules[name] == undefined) throw new Error(`Could not find plugin '${name}'!`)
+		return this.#pluginModules[name]
+	}
+
 	static #currentProject: string = undefined
 	static #plugins: { [key: string]: Plugin }
+	static #pluginModules: { [key: string]: any }
 	static #parameters: Parameter[]
 	static #projects: Project[]
 	static #fileIsProjectFile: boolean
@@ -386,6 +409,8 @@ export default class ScriptHook {
 	static #projectDeclarators: ProjectDeclarator[]
 	static #scriptProperties: ScriptProperty[] = []
 	static #projectProperties: { [key: string]: object }
+
+	static #scriptVM: NodeVM
 
 	// Properties are written to this and then copied to the project
 	static #pendingProjectProperties: object
