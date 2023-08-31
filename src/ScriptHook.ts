@@ -19,7 +19,7 @@ import BuildSystem, {
 } from './BuildSystem.js'
 import FileUtils from './FileUtils.js'
 
-import ManilaAPI from './api/Manila.js'
+import ImpManilaAPI from './api/Manila.js'
 
 /**
  * A task that can be executed
@@ -122,7 +122,7 @@ export default class ScriptHook {
 		await this.runFile(Path.join(process.cwd(), './Manila.js'))
 		this.addMainProperties()
 
-		ManilaAPI.setWorkspace(this.#projectProperties._['appName'], this.#rootDir)
+		ImpManilaAPI.setWorkspace(this.#projectProperties._['appName'], this.#rootDir)
 
 		await this.runSubFiles(process.cwd(), true)
 	}
@@ -137,7 +137,7 @@ export default class ScriptHook {
 					this.addProjectProperties(projectName)
 
 					const props = this.#projectProperties[projectName]
-					ManilaAPI.setProject(projectName, props['name'], props['namespace'], dir, props['author'])
+					ImpManilaAPI.setProject(projectName, props['name'], props['namespace'], dir, props['author'])
 
 					await this.runFile(Path.join(dir, 'Manila.js'))
 					this.addProjectProperties(projectName)

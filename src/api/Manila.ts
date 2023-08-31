@@ -41,7 +41,7 @@ export class ManilaWorkspace {
 	location: string
 }
 
-export default class ManilaAPI {
+export default class ImpManilaAPI {
 	static init(config: string = 'Debug') {
 		this.#conig = new ManilaConfig(config)
 	}

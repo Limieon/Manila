@@ -1,5 +1,5 @@
 import ScriptHook, { TaskBuilder } from '../ScriptHook.js'
-import ManilaAPI, { ManilaProject, ManilaWorkspace, ManilaConfig } from './Manila.js'
+import ImpManilaAPI, { ManilaProject, ManilaWorkspace, ManilaConfig } from './Manila.js'
 import Logger from '../Logger.js'
 import { ParameterType, Project, ProjectDeclarator, ProjectDecleratorType } from '../BuildSystem.js'
 
@@ -9,25 +9,25 @@ import Chalk from 'chalk'
 
 export default {}
 
-// This exposes the api given from 'ManilaWrapper'
+// This exposes the api given from 'ImpManilaAPI'
 export class Manila {
 	/**
 	 * Returns the current project
 	 */
 	static getProject(): ManilaProject {
-		return ManilaAPI.getProject()
+		return ImpManilaAPI.getProject()
 	}
 	/**
 	 * Returns the current workspace
 	 */
 	static getWorkspace(): ManilaWorkspace {
-		return ManilaAPI.getWorkspace()
+		return ImpManilaAPI.getWorkspace()
 	}
 	/**
 	 * Returns the current build configuration
 	 */
 	static getConfig(): ManilaConfig {
-		return ManilaAPI.getConfig()
+		return ImpManilaAPI.getConfig()
 	}
 
 	/**
@@ -36,7 +36,7 @@ export class Manila {
 	 * @returns ManilaFile
 	 */
 	static file(...path: string[]): ManilaFile {
-		return ManilaAPI.file(...path)
+		return ImpManilaAPI.file(...path)
 	}
 
 	/**
@@ -45,7 +45,7 @@ export class Manila {
 	 * @returns ManilaDirectory
 	 */
 	static dir(...path: string[]): ManilaDirectory {
-		return ManilaAPI.directory(...path)
+		return ImpManilaAPI.directory(...path)
 	}
 	/**
 	 * Returns a new directory instance
@@ -53,7 +53,7 @@ export class Manila {
 	 * @returns ManilaDirectory
 	 */
 	static directory(...path: string[]): ManilaDirectory {
-		return ManilaAPI.directory(...path)
+		return ImpManilaAPI.directory(...path)
 	}
 }
 
