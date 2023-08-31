@@ -1,10 +1,8 @@
-import FS, { Dirent, copyFileSync } from 'fs'
+import FS from 'fs'
 import Chalk from 'chalk'
-import { Command } from 'commander'
 import Path from 'path'
 import { NodeVM } from 'vm2'
 
-import Logger from './Logger.js'
 import Utils from './Utils.js'
 import BuildSystem, {
 	Parameter,
@@ -21,7 +19,7 @@ import BuildSystem, {
 } from './BuildSystem.js'
 import FileUtils from './FileUtils.js'
 
-import ManilaWrapper, { ManilaConfig, ManilaDirectory, ManilaFile, ManilaProject, ManilaWorkspace } from './ManilaWrapper.js'
+import ManilaAPI from './api/Manila.js'
 
 /**
  * A task that can be executed
@@ -124,7 +122,7 @@ export default class ScriptHook {
 		await this.runFile(Path.join(process.cwd(), './Manila.js'))
 		this.addMainProperties()
 
-		ManilaWrapper.setWorkspace(this.#projectProperties._['appName'], this.#rootDir)
+		ManilaAPI.setWorkspace(this.#projectProperties._['appName'], this.#rootDir)
 
 		await this.runSubFiles(process.cwd(), true)
 	}
@@ -139,7 +137,7 @@ export default class ScriptHook {
 					this.addProjectProperties(projectName)
 
 					const props = this.#projectProperties[projectName]
-					ManilaWrapper.setProject(projectName, props['name'], props['namespace'], dir, props['author'])
+					ManilaAPI.setProject(projectName, props['name'], props['namespace'], dir, props['author'])
 
 					await this.runFile(Path.join(dir, 'Manila.js'))
 					this.addProjectProperties(projectName)
@@ -419,7 +417,6 @@ export default class ScriptHook {
 	}
 
 	static registerScriptProperty(name: string, description: string, scope: ScriptPropertyScope) {
-		console.log(this.#scriptProperties)
 		this.#scriptProperties.push({ name, description, scope })
 	}
 
