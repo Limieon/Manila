@@ -1,7 +1,8 @@
-import ScriptHook, { TaskBuilder } from '../ScriptHook.js'
+import ScriptHook from '../ScriptHook.js'
 import ImpManilaAPI, { ManilaProject, ManilaWorkspace, ManilaConfig } from './Manila.js'
 import Logger from '../Logger.js'
-import { ParameterType, Project, ProjectDeclarator, ProjectDecleratorType } from '../BuildSystem.js'
+import { ParameterType, ProjectDecleratorType } from '../BuildSystem.js'
+import TaskBuilder from './Task.js'
 
 import { ManilaDirectory, ManilaFile } from './FileSystem.js'
 
