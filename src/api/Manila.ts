@@ -32,13 +32,13 @@ export class ManilaProject {
 	name: string
 	id: string
 	namespace: string
-	location: string
+	location: ManilaDirectory
 	author: string
 }
 
 export class ManilaWorkspace {
 	name: string
-	location: string
+	location: ManilaDirectory
 }
 
 export default class ImpManilaAPI {
@@ -46,14 +46,14 @@ export default class ImpManilaAPI {
 		this.#conig = new ManilaConfig(config)
 	}
 	static setWorkspace(name: string, location: string) {
-		this.#workspace = { name, location }
+		this.#workspace = { name, location: new ManilaDirectory(location) }
 	}
 	static setProject(id: string, name: string, namespace: string, location: string, author: string) {
 		this.#project = {
 			id,
 			name,
 			namespace,
-			location,
+			location: new ManilaDirectory(location),
 			author
 		}
 	}

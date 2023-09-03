@@ -3,6 +3,8 @@ node_modules/
 .manila/
 run/.manila/plugins/
 run/.manila/temp/
+run/bin/
+run/bin-int/
 
 test
 

@@ -313,9 +313,8 @@ export default class ScriptHook {
 		})
 	}
 
-	// __name__ to not overwrite any script property that is named 'name'
-	static addProjectProperties(__name__: string) {
-		if (this.#projectProperties[__name__] == undefined) this.#projectProperties[__name__] = {}
+	static addProjectProperties(name: string) {
+		if (this.#projectProperties[name] == undefined) this.#projectProperties[name] = {}
 
 		for (const key of Object.keys(this.#pendingProjectProperties)) {
 			let prop: ScriptProperty = undefined
@@ -330,7 +329,7 @@ export default class ScriptHook {
 			if (prop.scope != ScriptPropertyScope.PROJECT && prop.scope != ScriptPropertyScope.COMMON)
 				throw new Error(`Property '${key}' is not avilable in project or common scope!`)
 
-			this.#projectProperties[__name__][key] = this.#pendingProjectProperties[key]
+			this.#projectProperties[name][key] = this.#pendingProjectProperties[key]
 		}
 
 		this.#pendingProjectProperties = {}

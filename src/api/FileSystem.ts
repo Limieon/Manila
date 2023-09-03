@@ -150,17 +150,28 @@ export class ManilaDirectory {
 	 * Gets the files contained in the directory
 	 * @param recursive also searches in sub-directories
 	 */
-	files(recursive: boolean = false): string[] {
-		if (!recursive) return FS.readdirSync(this.#path)
+	files(recursive: boolean = false, predicate: (f: string) => boolean): ManilaFile[] {
+		const out: ManilaFile[] = []
+		if (!recursive) {
+			for (const f of FS.readdirSync(this.#path)) {
+				out.push(new ManilaFile(this.#path, f))
+			}
+			return out
+		}
 
-		const out = []
 		function rec(root: string, path: string) {
 			const files = FS.readdirSync(path)
 			for (const file of files) {
 				const dir = Path.join(path, file)
 				const stat = FS.lstatSync(dir)
 				if (stat.isDirectory()) rec(root, dir)
-				else if (stat.isFile()) out.push(Path.relative(root, dir))
+				else if (stat.isFile()) {
+					if (predicate != undefined) {
+						if (predicate(Path.relative(root, dir))) out.push(new ManilaFile(dir))
+					} else {
+						out.push(new ManilaFile(dir))
+					}
+				}
 			}
 		}
 
