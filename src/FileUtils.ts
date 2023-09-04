@@ -2,10 +2,9 @@ import FS from 'fs'
 import Path from 'path'
 
 const PLUGIN_INDEX_FILE_NAMES = ['index.manila', 'index.manila.json']
-
 const SETTINGS_FILE_NAMES = ['settings.manila', 'settings.manila.yml', 'settings.manila.yaml']
-
 const PLUGIN_FILE_NAMES = ['plugins.manila.json', 'plugins.manila']
+const SECRET_FILE_NAMES = ['secrets.manila.json', 'secrets.manila']
 
 export default class FileUtils {
 	static pluginIndexFile(dir: string = './') {
@@ -16,6 +15,9 @@ export default class FileUtils {
 	}
 	static pluginFile(dir: string = './') {
 		for (const f of PLUGIN_FILE_NAMES) if (FS.existsSync(Path.join(dir, f))) return f
+	}
+	static secretsFile(dir: string = './') {
+		for (const f of SECRET_FILE_NAMES) if (FS.existsSync(Path.join(dir, f))) return f
 	}
 
 	static getPluginIndexFileFromRoot(dir: string = './') {
@@ -30,5 +32,8 @@ export default class FileUtils {
 		const file = this.pluginFile(Path.join(dir, '.manila'))
 		if (!file) return undefined
 		return Path.join('.manila', file)
+	}
+	static getSecretFileFromRootDir(dir: string = './') {
+		return this.secretsFile(dir)
 	}
 }

@@ -1,5 +1,5 @@
 //const ManilaCS = await importPlugin('manila.cs')
-const ManilaCPP = importPlugin('manila.cpp')
+//const ManilaCPP = importPlugin('manila.cpp')
 
 const headless = parameterBoolean('headless', 'Enables compilation flags for headless running')
 const graphicsApi = parameterString('gapi', 'Choose a graphics api', 'opengl')
@@ -47,6 +47,6 @@ project(':client', async () => {
 	//// Here you can declare dependencies
 	//dependencies([
 	//	implemenatation(project(':core'))
-	//  implementatiopn(nuget('Silk.NET.Core', '2.17.1'))
+	//  implemenatation(nuget('Silk.NET.Core', '2.17.1'))
 	//])
 })

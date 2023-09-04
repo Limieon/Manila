@@ -56,6 +56,10 @@ export class Manila {
 	static directory(...path: string[]): ManilaDirectory {
 		return ImpManilaAPI.directory(...path)
 	}
+
+	static getSecrets(): object {
+		return ScriptHook.getSecrets()
+	}
 }
 
 /**

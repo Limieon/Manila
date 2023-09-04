@@ -1,7 +1,7 @@
 {
-    "manila.cpp": {
+    "maniladc": {
         "indexFile": "index.ts",
-        "location": "..\\..\\Manila-Plugins\\manila.cpp",
+        "location": "..\\..\\Manila-Plugins\\maniladc",
         "version": "1.0.0"
     }
 }

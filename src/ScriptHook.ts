@@ -39,6 +39,7 @@ export default class ScriptHook {
 		this.#lastFileNames = []
 		this.#projectDeclarators = []
 		this.#projectProperties = {}
+		this.#secrets = {}
 
 		this.#pendingProjectProperties = {}
 
@@ -63,6 +64,9 @@ export default class ScriptHook {
 			allowAsync: true,
 			strict: true
 		})
+
+		let secretsFile = FileUtils.getSecretFileFromRootDir()
+		if (secretsFile) this.#secrets = JSON.parse(FS.readFileSync(secretsFile, { encoding: 'utf-8' }))
 
 		await this.runFile(Path.join(process.cwd(), './Manila.js'))
 		this.addMainProperties()
@@ -138,7 +142,7 @@ export default class ScriptHook {
 	static hasTask(name: string): boolean {
 		return this.#tasks[name] != undefined
 	}
-	static runTask(name: string): boolean {
+	static async runTask(name: string): Promise<boolean> {
 		const task = this.#tasks[name]
 		if (task == undefined) return false
 
@@ -151,7 +155,7 @@ export default class ScriptHook {
 		dependencies.add(task.getName())
 		let taskNum = 1
 
-		dependencies.forEach(t => {
+		for (const t of dependencies) {
 			if (taskNum == dependencies.size) {
 				console.log(
 					`${Chalk.green(taskNum++)}${Chalk.gray('/')}${Chalk.cyan(dependencies.size)} ${Chalk.gray('>')} ${Chalk.blue(t)}`
@@ -162,11 +166,11 @@ export default class ScriptHook {
 				)
 			}
 			try {
-				this.#tasks[t].getCallback()()
+				await this.#tasks[t].getCallback()()
 			} catch (e) {
 				throw new Error(`Could not execute task ${Chalk.blue(name)}! (${e})`)
 			}
-		})
+		}
 
 		return true
 	}
@@ -396,6 +400,10 @@ export default class ScriptHook {
 		return this.#pluginModules[name]
 	}
 
+	static getSecrets(): object {
+		return this.#secrets
+	}
+
 	static #currentProject: string = undefined
 	static #plugins: { [key: string]: Plugin }
 	static #pluginModules: { [key: string]: any }
@@ -408,6 +416,7 @@ export default class ScriptHook {
 	static #projectDeclarators: ProjectDeclarator[]
 	static #scriptProperties: ScriptProperty[] = []
 	static #projectProperties: { [key: string]: object }
+	static #secrets: object
 
 	static #scriptVM: NodeVM
 

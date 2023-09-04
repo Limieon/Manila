@@ -1,9 +1,12 @@
 //const ManilaCS = importPlugin('manila.cs')
-const ManilaCPP = importPlugin('manila.cpp')
+//const ManilaCPP = importPlugin('manila.cpp')
+const ManilaDC = importPlugin('maniladc')
 
 const workspace = Manila.getWorkspace()
 const project = Manila.getProject()
 const config = Manila.getConfig()
+
+async function sleep(ms) {return new Promise((res, rej) => {setTimeout(res, ms)})}
 
 task('print')
 	.executes(() => {
@@ -23,15 +26,10 @@ task('print')
 		print('Author:', project.author)
 	})
 
-
 task('compile')
-	.executes(() => {
-		const srcDir = Manila.dir(project.location.getPath()).concat('src')
-
-		const flags = ManilaCPP.clangFlags()
-			.outDir(Manila.dir(workspace.location.getPath()).concat('bin', config.platform, `${config.config}-${config.arch}`, project.name))
-			.objDir(Manila.dir(workspace.location.getPath()).concat('bin-int', config.platform, `${config.config}-${config.arch}`, project.name))
-			.files(srcDir.files(true, f => f.endsWith('.cpp') || f.endsWith('.c')))
-
-		const result = ManilaCPP.clangCompile(project, workspace, flags)
+	.executes(async () => {
+		const wh = ManilaDC.webhook(Manila.getSecrets().discord.webhook)
+		await wh.send('Compiling...')
+		await sleep(2000)
+		await wh.send('Compiled Successfully!')
 	})
