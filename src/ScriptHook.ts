@@ -364,7 +364,7 @@ export default class ScriptHook {
 		for (const k of Object.keys(values)) this.#pendingProjectProperties[k] = values[k]
 	}
 
-	static registerScriptProperty(name: string, description: string, scope: ScriptPropertyScope) {
+	static registerScriptProperty(name: string, description: string, scope: number) {
 		this.#scriptProperties.push({ name, description, scope })
 	}
 
@@ -425,12 +425,12 @@ export default class ScriptHook {
 }
 
 // Projects
-ScriptHook.registerScriptProperty('namespace', 'the default namespace', ScriptPropertyScope.PROJECT)
-ScriptHook.registerScriptProperty('version', 'the version', ScriptPropertyScope.PROJECT)
-ScriptHook.registerScriptProperty('author', 'the name of the author', ScriptPropertyScope.PROJECT)
-ScriptHook.registerScriptProperty('name', 'name of the project', ScriptPropertyScope.PROJECT)
+ScriptHook.registerScriptProperty('namespace', 'the default namespace', 0)
+ScriptHook.registerScriptProperty('version', 'the version', 0)
+ScriptHook.registerScriptProperty('author', 'the name of the author', 0)
+ScriptHook.registerScriptProperty('name', 'name of the project', 0)
 
 // Main
-ScriptHook.registerScriptProperty('appName', 'the workspace name', ScriptPropertyScope.MAIN)
+ScriptHook.registerScriptProperty('appName', 'the workspace name', 1)
 
 // Common

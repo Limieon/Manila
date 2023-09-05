@@ -1,13 +1,13 @@
 import ScriptHook from '../ScriptHook.js'
 import ImplManilaAPI, { ManilaProject, ManilaWorkspace, ManilaConfig } from './Manila.js'
 import Logger from '../Logger.js'
-import { ParameterType, ProjectDecleratorType } from '../BuildSystem.js'
 import TaskBuilder from './Task.js'
 
 import { ManilaDirectory, ManilaFile } from './FileSystem.js'
 
 import Chalk from 'chalk'
 import ManilaTimer from './Utils.js'
+import { ParameterType, ProjectDecleratorType } from '../BuildSystem.js'
 
 export default {}
 
@@ -87,6 +87,24 @@ export class Manila {
 	 */
 	static formatDuration(duration: number): string {
 		return ImplManilaAPI.formatDuration(duration)
+	}
+
+	/**
+	 * Waits a given amount of time
+	 *
+	 * @param duration the amount to wait
+	 */
+	static async sleep(duration: number) {
+		return new Promise<void>((res, rej) => {
+			setTimeout(res, duration)
+		})
+	}
+
+	static getStorage(id: string): object {
+		return ImplManilaAPI.getStorage(id)
+	}
+	static setStorage(id: string, data: object) {
+		return ImplManilaAPI.setStorage(id, data)
 	}
 }
 

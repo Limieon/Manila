@@ -66,13 +66,13 @@ export type ProjectDeclarator = {
 	type: ProjectDecleratorType
 }
 
-export enum ScriptPropertyScope {
-	COMMON,
-	PROJECT,
-	MAIN
+export const ScriptPropertyScope = {
+	COMMON: 2,
+	PROJECT: 0,
+	MAIN: 1
 }
 export type ScriptProperty = {
-	scope: ScriptPropertyScope
+	scope: number
 	name: string
 	description: string
 }

@@ -3,6 +3,7 @@ import FS from 'fs'
 
 import { ManilaDirectory, ManilaFile } from './FileSystem.js'
 import ManilaTimer from './Utils.js'
+import ScriptHook from '../ScriptHook.js'
 import Utils from '../Utils.js'
 
 export const OS_NAMES = {
@@ -45,6 +46,10 @@ export class ManilaWorkspace {
 
 export default class ImplManilaAPI {
 	static init(config: string = 'Debug') {
+		this.#storages = FS.existsSync(Path.join(process.cwd(), '.manila', 'storage.manila'))
+			? JSON.parse(FS.readFileSync(Path.join(process.cwd(), '.manila', 'storage.manila'), { encoding: 'utf-8' }))
+			: {}
+
 		this.#conig = new ManilaConfig(config)
 	}
 	static setWorkspace(name: string, location: string) {
@@ -85,7 +90,17 @@ export default class ImplManilaAPI {
 		return Utils.stringifyDuration(duration)
 	}
 
+	static getStorage(id: string): object {
+		if (this.#storages[id] == undefined) this.#storages[id] = {}
+		return this.#storages[id]
+	}
+	static setStorage(id: string, data: object) {
+		this.#storages[id] = { ...data }
+		FS.writeFileSync(Path.join(ScriptHook.getRootDir(), '.manila', 'storage.manila'), JSON.stringify(this.#storages))
+	}
+
 	static #conig: ManilaConfig
 	static #workspace: ManilaWorkspace
 	static #project: ManilaProject
+	static #storages: { [key: string]: object }
 }
