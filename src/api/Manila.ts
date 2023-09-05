@@ -2,6 +2,8 @@ import Path from 'path'
 import FS from 'fs'
 
 import { ManilaDirectory, ManilaFile } from './FileSystem.js'
+import ManilaTimer from './Utils.js'
+import Utils from '../Utils.js'
 
 export const OS_NAMES = {
 	aix: 'aix',
@@ -41,7 +43,7 @@ export class ManilaWorkspace {
 	location: ManilaDirectory
 }
 
-export default class ImpManilaAPI {
+export default class ImplManilaAPI {
 	static init(config: string = 'Debug') {
 		this.#conig = new ManilaConfig(config)
 	}
@@ -74,6 +76,13 @@ export default class ImpManilaAPI {
 	}
 	static directory(...dir: string[]): ManilaDirectory {
 		return new ManilaDirectory(...dir)
+	}
+	static timer(): ManilaTimer {
+		return new ManilaTimer()
+	}
+
+	static formatDuration(duration: number): string {
+		return Utils.stringifyDuration(duration)
 	}
 
 	static #conig: ManilaConfig

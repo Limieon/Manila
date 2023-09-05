@@ -9,8 +9,13 @@ export default class TaskBuilder {
 	 * @param name the name of the task
 	 */
 	constructor(name: string) {
-		this.#name = `${ScriptHook.getCurrentProject().name}:${name}`
-		this.#project = ScriptHook.getCurrentProject()
+		if (ScriptHook.getCurrentProject() == undefined) {
+			this.#name = `:${name}`
+			this.#project = undefined
+		} else {
+			this.#name = `${ScriptHook.getCurrentProject().name}:${name}`
+			this.#project = ScriptHook.getCurrentProject()
+		}
 
 		this.#dependencies = new Set()
 		ScriptHook.registerTask(this)

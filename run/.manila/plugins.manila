@@ -3,5 +3,10 @@
         "indexFile": "index.ts",
         "location": "..\\..\\Manila-Plugins\\maniladc",
         "version": "1.0.0"
+    },
+	"manila.cpp": {
+        "indexFile": "index.ts",
+        "location": "..\\..\\Manila-Plugins\\manila.cpp",
+        "version": "1.0.0"
     }
 }

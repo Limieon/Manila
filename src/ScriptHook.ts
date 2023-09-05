@@ -19,13 +19,13 @@ import BuildSystem, {
 } from './BuildSystem.js'
 import FileUtils from './FileUtils.js'
 
-import ImpManilaAPI from './api/Manila.js'
+import ImplManilaAPI from './api/Manila.js'
 
 import TaskBuilder from './api/Task.js'
 
 // Import API to make it available in the VM
 import * as API from './api/API.js'
-let VM_SANDBOX = {}
+let VM_SANDBOX = { Chalk }
 
 // Script Hook Class
 export default class ScriptHook {
@@ -71,7 +71,7 @@ export default class ScriptHook {
 		await this.runFile(Path.join(process.cwd(), './Manila.js'))
 		this.addMainProperties()
 
-		ImpManilaAPI.setWorkspace(this.#projectProperties._['appName'], this.#rootDir)
+		ImplManilaAPI.setWorkspace(this.#projectProperties._['appName'], this.#rootDir)
 
 		await this.runSubFiles(process.cwd(), true)
 	}
@@ -86,7 +86,7 @@ export default class ScriptHook {
 					this.addProjectProperties(projectName)
 
 					const props = this.#projectProperties[projectName]
-					ImpManilaAPI.setProject(projectName, props['name'], props['namespace'], dir, props['author'])
+					ImplManilaAPI.setProject(projectName, props['name'], props['namespace'], dir, props['author'])
 
 					await this.runFile(Path.join(dir, 'Manila.js'))
 					this.addProjectProperties(projectName)

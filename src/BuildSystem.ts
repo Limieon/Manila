@@ -2,7 +2,7 @@ import FS, { copyFile } from 'fs'
 import Path from 'path'
 import YAML from 'yaml'
 import FileUtils from './FileUtils.js'
-import ImpManilaAPI from './api/Manila.js'
+import ImplManilaAPI from './api/Manila.js'
 
 export type ProjectParameters = {
 	name: string
@@ -132,7 +132,7 @@ export default class BuildSystem {
 			? JSON.parse(FS.readFileSync(FileUtils.getPluginFileFromRootDir(), { encoding: 'utf-8' }))
 			: {}
 
-		ImpManilaAPI.init()
+		ImplManilaAPI.init()
 	}
 
 	static dirContainsBuildFile() {

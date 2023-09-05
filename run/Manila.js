@@ -1,5 +1,6 @@
 //const ManilaCS = await importPlugin('manila.cs')
 //const ManilaCPP = importPlugin('manila.cpp')
+const ManilaDC = importPlugin('maniladc')
 
 const headless = parameterBoolean('headless', 'Enables compilation flags for headless running')
 const graphicsApi = parameterString('gapi', 'Choose a graphics api', 'opengl')

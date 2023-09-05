@@ -1,5 +1,5 @@
 import ScriptHook from '../ScriptHook.js'
-import ImpManilaAPI, { ManilaProject, ManilaWorkspace, ManilaConfig } from './Manila.js'
+import ImplManilaAPI, { ManilaProject, ManilaWorkspace, ManilaConfig } from './Manila.js'
 import Logger from '../Logger.js'
 import { ParameterType, ProjectDecleratorType } from '../BuildSystem.js'
 import TaskBuilder from './Task.js'
@@ -7,58 +7,86 @@ import TaskBuilder from './Task.js'
 import { ManilaDirectory, ManilaFile } from './FileSystem.js'
 
 import Chalk from 'chalk'
+import ManilaTimer from './Utils.js'
 
 export default {}
 
-// This exposes the api given from 'ImpManilaAPI'
+// This exposes the api given from 'ImplManilaAPI'
 export class Manila {
 	/**
 	 * Returns the current project
 	 */
 	static getProject(): ManilaProject {
-		return ImpManilaAPI.getProject()
+		return ImplManilaAPI.getProject()
 	}
 	/**
 	 * Returns the current workspace
 	 */
 	static getWorkspace(): ManilaWorkspace {
-		return ImpManilaAPI.getWorkspace()
+		return ImplManilaAPI.getWorkspace()
 	}
 	/**
 	 * Returns the current build configuration
 	 */
 	static getConfig(): ManilaConfig {
-		return ImpManilaAPI.getConfig()
+		return ImplManilaAPI.getConfig()
 	}
 
 	/**
 	 * Returns a new file instance
+	 *
 	 * @param path the path of the file
 	 * @returns ManilaFile
 	 */
 	static file(...path: string[]): ManilaFile {
-		return ImpManilaAPI.file(...path)
+		return ImplManilaAPI.file(...path)
 	}
 
 	/**
 	 * Returns a new directory instance
+	 *
 	 * @param path the path of the directory
 	 * @returns ManilaDirectory
 	 */
 	static dir(...path: string[]): ManilaDirectory {
-		return ImpManilaAPI.directory(...path)
+		return ImplManilaAPI.directory(...path)
 	}
 	/**
 	 * Returns a new directory instance
+	 *
 	 * @param path the path of the directory
 	 * @returns ManilaDirectory
 	 */
 	static directory(...path: string[]): ManilaDirectory {
-		return ImpManilaAPI.directory(...path)
+		return ImplManilaAPI.directory(...path)
 	}
 
+	/**
+	 * Gets the secrets object from the secrets file
+	 *
+	 * @returns the secrets object
+	 */
 	static getSecrets(): object {
 		return ScriptHook.getSecrets()
+	}
+
+	/**
+	 * Creates a new timer
+	 *
+	 * @returns ManilaTiemr
+	 */
+	static timer(): ManilaTimer {
+		return ImplManilaAPI.timer()
+	}
+
+	/**
+	 * Formats a given duration as a string
+	 *
+	 * @param duration the duration in ms
+	 * @returns formatted duration (such as 2m04s324ms)
+	 */
+	static formatDuration(duration: number): string {
+		return ImplManilaAPI.formatDuration(duration)
 	}
 }
 
