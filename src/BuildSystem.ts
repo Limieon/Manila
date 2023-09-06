@@ -3,11 +3,14 @@ import Path from 'path'
 import YAML from 'yaml'
 import FileUtils from './FileUtils.js'
 import ImplManilaAPI from './api/Manila.js'
+import GitUtils from './GitUtils.js'
+import { simpleGit } from 'simple-git'
 
 export type ProjectParameters = {
 	name: string
 	namespace: string
 	dummy: boolean
+	git: string
 }
 
 export type ModuleParameters = {
@@ -124,6 +127,13 @@ pluginRepositories:
 dotnet: 7.0
 `
 
+const gitIgnoreTemplate = `# Manila Files/Dirs
+.manila/
+secrets.manila
+
+# Here you can add your own ignores:
+`
+
 export default class BuildSystem {
 	static init() {
 		let settingsFileName = FileUtils.getSettingsFileFromRootDir()
@@ -196,10 +206,17 @@ export default class BuildSystem {
 		FS.writeFileSync('./.manila/settings.manila', this.parseTemplate(settingsTemplate, {}), { encoding: 'utf-8' })
 	}
 
-	static createProject(p: ProjectParameters) {
+	static async createGitRepo(url: string) {
+		const git = simpleGit()
+		await git.init().addRemote('origin', url)
+	}
+
+	static async createProject(p: ProjectParameters) {
 		if (!FS.existsSync('.manila')) FS.mkdirSync('.manila')
 		this.createDefaultManilaJSFile(p.name, p.namespace, '.', p.dummy)
 		this.createDefaultSettingsFile(p.name, p.namespace)
+
+		if (p.git) await this.createGitRepo(p.git)
 	}
 	static createModule(p: ModuleParameters) {
 		if (!FS.existsSync(p.dir)) FS.mkdirSync(p.dir, { recursive: true })

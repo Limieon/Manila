@@ -13,7 +13,7 @@ import * as Prompts from '@clack/prompts'
 export async function init(opts: object) {
 	Prompts.intro(Gradient.vice('Init Manila App'))
 
-	const { name, dir, namespace, modules } = await Prompts.group({
+	const { name, dir, namespace, moduleName, git } = await Prompts.group({
 		name: () =>
 			Prompts.text({
 				message: 'Enter the name of your project',
@@ -21,7 +21,7 @@ export async function init(opts: object) {
 			}),
 		dir: () =>
 			Prompts.text({
-				message: 'Enther the root of your project',
+				message: 'Enter the root of your project',
 				validate: val => {
 					if (FS.existsSync(Path.join(process.cwd(), val))) return 'Path does already exist'
 				}
@@ -30,23 +30,20 @@ export async function init(opts: object) {
 			Prompts.text({
 				message: 'Enter the prefix of your namespace'
 			}),
-		modules: () =>
-			Prompts.confirm({
-				message: 'Do you want to create a module (sub-project)?'
+		git: () =>
+			Prompts.text({
+				message: 'Enter the url to your git repository (leave blank for none)'
+			}),
+		moduleName: () =>
+			Prompts.text({
+				message: 'Enter the name of your module (leave blank for none)'
 			})
 	})
 
 	if (!FS.existsSync(dir)) FS.mkdirSync(dir)
 	process.chdir(dir)
 
-	if (modules) {
-		const { moduleName } = await Prompts.group({
-			moduleName: () =>
-				Prompts.text({
-					message: 'Etner the name of your module'
-				})
-		})
-
+	if (moduleName) {
 		BuildSystem.createModule({
 			name: moduleName,
 			namespace: `${namespace}`,
@@ -54,11 +51,14 @@ export async function init(opts: object) {
 		})
 	}
 
-	BuildSystem.createProject({
+	await BuildSystem.createProject({
 		name,
 		namespace,
-		dummy: modules
+		dummy: moduleName == '',
+		git
 	})
+
+	Prompts.outro(Chalk.cyan(`${Chalk.yellow(name)} has been successfully created!`))
 }
 
 export async function install(pluginName: string, opts: object) {
