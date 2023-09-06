@@ -35,8 +35,17 @@ task('compile')
 			.outDir(Manila.dir(workspace.location.getPath()).concat('bin', config.platform, `${config.config}-${config.arch}`, project.name))
 			.objDir(Manila.dir(workspace.location.getPath()).concat('bin-int', config.platform, `${config.config}-${config.arch}`, project.name))
 			.files(srcDir.files(true, f => f.endsWith('.cpp') || f.endsWith('.c')))
+			.force()
+			.silent()
 
-		const result = ManilaCPP.clangCompile(project, workspace, flags)
+		const result = ManilaCPP.clangCompile(project, workspace, flags, (e) => {
+			if(e.type === 'compileFile') {
+				print(e.current, '/', e.total, e.in.getPathRelative(project.location), '=>', e.out.getPathRelative(project.location))
+			} else if(e.type === 'compileBinary') {
+				print('Linking', e.in.length, 'Object Files into', e.out.getPathRelative(project.location))
+			}
+		})
+		print('Compiled as', result.binaryFile.getPath())
 
 		if(result.success) {
 			await wh.send(`Build Successful! Took ${Manila.formatDuration(result.duration)}`)

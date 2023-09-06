@@ -69,8 +69,9 @@ export class ManilaFile {
 	 * Gets the relative path to this file from a given origin
 	 * @param from origin of your path
 	 */
-	getPathRelative(from: string): string {
-		return Path.relative(from, this.#path)
+	getPathRelative(from: string | ManilaDirectory): string {
+		let path = typeof from === 'string' ? from : from.getPath()
+		return Path.relative(path, this.#path)
 	}
 	/**
 	 * Gets the directory this file is placed in
@@ -189,8 +190,9 @@ export class ManilaDirectory {
 	 * Gets the relative path to this directory from a given origin
 	 * @param from origin of your path
 	 */
-	getPathRelative(from: string): string {
-		return Path.relative(from, this.#path)
+	getPathRelative(from: string | ManilaDirectory): string {
+		let path = typeof from === 'string' ? from : from.getPath()
+		return Path.relative(path, this.#path)
 	}
 	/**
 	 * Gets the last directory name (basename)
