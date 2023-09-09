@@ -8,10 +8,11 @@ namespace Manila {
 				new CLI.App("manila", "manila buildsystem")
 					.setDefaultCommand(new CommandManila())
 					.addCommand(new CommandInit())
-					.parse(args)
-				;
+					.parse(args);
 			} catch (CLI.Exceptions.ParameterNotProivdedException e) {
 				Console.WriteLine("Missing Parameter '" + e.parameter.name + "' on Command '" + e.command.name + "'!");
+			} catch (CLI.Exceptions.ParameterProvidedWrongTypeException e) {
+				Console.WriteLine("Paremeter '" + e.parameter.name + "' has wrong type (" + e.parameter.type.ToString().ToLower() + " required)!");
 			}
 		}
 	}

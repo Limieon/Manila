@@ -24,7 +24,7 @@ namespace Manila.CLI {
 		}
 
 		public void parse(string[] args) {
-			List<object> parameters = new List<object>();
+			List<string> parameters = new List<string>();
 			Dictionary<string, object> options = new Dictionary<string, object>();
 
 			{
@@ -61,7 +61,7 @@ namespace Manila.CLI {
 					}
 
 					for (int i = 0; i < c.parameters.Count; ++i) {
-						parsedParams.Add(c.parameters[i].name, parameters[i + 1]);
+						parsedParams.Add(c.parameters[i].name, c.parameters[i].parse(parameters[i + 1]));
 					}
 
 					c.onExecute(parsedParams, options);
