@@ -4,12 +4,12 @@ namespace Manila.CLI {
 		public string name { get; private set; }
 		public string description { get; private set; }
 		public List<Parameter> parameters { get; private set; }
-		public List<Option> options { get; private set; }
+		public Dictionary<string, Option> options { get; private set; }
 
 		public Command(string name, string description) {
 			this.name = name;
 			this.description = description;
-			this.options = new List<Option>();
+			this.options = new Dictionary<string, Option>();
 			this.parameters = new List<Parameter>();
 		}
 
@@ -18,7 +18,7 @@ namespace Manila.CLI {
 			return this;
 		}
 		public Command addOption(Option option) {
-			options.Add(option);
+			options.Add(option.name, option);
 			return this;
 		}
 

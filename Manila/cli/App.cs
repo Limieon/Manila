@@ -1,5 +1,5 @@
 
-using System.Runtime.InteropServices;
+using Manila.CLI.Exceptions;
 
 namespace Manila.CLI {
 	public class App {
@@ -34,10 +34,14 @@ namespace Manila.CLI {
 
 					if (arg.StartsWith("--")) {
 						string? nextArg = args.Length > i + 1 ? args[i + 1] : null;
-						if (nextArg != null) options.Add(arg.Substring(2), nextArg);
-						else options.Add(arg.Substring(2), true);
+						if (nextArg != null && !nextArg.StartsWith("-")) {
+							options.Add(arg.Substring(2), nextArg);
+							i += 2;
+						} else {
+							options.Add(arg[2..], true);
+							i++;
+						}
 
-						i += 2;
 						continue;
 					}
 
@@ -55,13 +59,29 @@ namespace Manila.CLI {
 			foreach (Command c in commands) {
 				if (c.name == cmd) {
 					Dictionary<string, object> parsedParams = new Dictionary<string, object>();
+					Dictionary<string, object> parsedOpts = new Dictionary<string, object>();
 
 					if ((parameters.Count - 1) < c.parameters.Count) {
-						throw new Exceptions.ParameterNotProivdedException(c.parameters[parameters.Count - 1], c);
+						throw new ParameterNotProivdedException(c.parameters[parameters.Count - 1], c);
 					}
 
 					for (int i = 0; i < c.parameters.Count; ++i) {
 						parsedParams.Add(c.parameters[i].name, c.parameters[i].parse(parameters[i + 1]));
+					}
+					foreach (KeyValuePair<string, object> entry in options) {
+						parsedOpts.Add(entry.Key, c.options[entry.Key].parse(entry.Value));
+					}
+
+					foreach (KeyValuePair<string, object> entry in options) {
+						bool found = false;
+						foreach (KeyValuePair<string, Option> oEntry in c.options) {
+							if (entry.Key == oEntry.Key) {
+								found = true;
+								break;
+							}
+						}
+
+						if (!found) throw new OptionProvidedNotFoundExceptions(c, entry.Key);
 					}
 
 					c.onExecute(parsedParams, options);

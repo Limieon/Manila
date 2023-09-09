@@ -1,4 +1,6 @@
 
+using Manila.CLI.Exceptions;
+
 namespace Manila.CLI {
 	public class Option {
 		public enum Type {
@@ -7,10 +9,27 @@ namespace Manila.CLI {
 			FLAG
 		}
 
-		private Type type { get; }
-		private string name { get; }
-		private string description { get; }
-		private string alias { get; }
+		public Type type { get; private set; }
+		public string name { get; private set; }
+		public string description { get; private set; }
+		public string alias { get; private set; }
+
+		public object parse(object value) {
+			if (this.type == Type.STRING) return (string)value;
+			if (this.type == Type.FLAG) {
+				if (value.GetType() == typeof(bool)) return true;
+				throw new OptionProvidedWrongTypeException(this, Type.STRING, (string)value);
+			}
+			if (this.type == Type.NUMBER) {
+				try {
+					return int.Parse((string)value);
+				} catch (Exception) {
+					throw new OptionProvidedWrongTypeException(this, value.GetType() == typeof(bool) ? Type.FLAG : Type.STRING, (string)value);
+				}
+			}
+
+			return null;
+		}
 
 		public Option(string name, string description, string alias = "", Type type = Type.FLAG) {
 			this.name = name;

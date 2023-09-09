@@ -13,6 +13,8 @@ namespace Manila {
 				Console.WriteLine("Missing Parameter '" + e.parameter.name + "' on Command '" + e.command.name + "'!");
 			} catch (CLI.Exceptions.ParameterProvidedWrongTypeException e) {
 				Console.WriteLine("Paremeter '" + e.parameter.name + "' has wrong type (" + e.parameter.type.ToString().ToLower() + " required)!");
+			} catch (CLI.Exceptions.OptionProvidedNotFoundExceptions e) {
+				Console.WriteLine("Could not find option '" + e.option + "' on command '" + e.command.name + "'!");
 			}
 		}
 	}
