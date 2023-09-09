@@ -1,16 +1,3 @@
-node_modules/
-
-.manila/
-run/.manila/plugins/
-run/.manila/temp/
-run/bin/
-run/bin-int/
-run/secrets.manila
-
-test
-
-package-lock.json
-
-README.md
-
-.VSCodeCounter/
+# Binaries
+**/bin/
+**/obj/
