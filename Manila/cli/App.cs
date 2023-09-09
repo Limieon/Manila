@@ -68,9 +68,6 @@ namespace Manila.CLI {
 					for (int i = 0; i < c.parameters.Count; ++i) {
 						parsedParams.Add(c.parameters[i].name, c.parameters[i].parse(parameters[i + 1]));
 					}
-					foreach (KeyValuePair<string, object> entry in options) {
-						parsedOpts.Add(entry.Key, c.options[entry.Key].parse(entry.Value));
-					}
 
 					foreach (KeyValuePair<string, object> entry in options) {
 						bool found = false;
@@ -84,7 +81,14 @@ namespace Manila.CLI {
 						if (!found) throw new OptionProvidedNotFoundExceptions(c, entry.Key);
 					}
 
-					c.onExecute(parsedParams, options);
+					foreach (KeyValuePair<string, object> entry in options) {
+						parsedOpts.Add(entry.Key, c.options[entry.Key].parse(entry.Value));
+					}
+					foreach (KeyValuePair<string, Option> entry in c.options) {
+						if (!parsedOpts.ContainsKey(entry.Key)) parsedOpts.Add(entry.Key, entry.Value.vDefault);
+					}
+
+					c.onExecute(parsedParams, parsedOpts);
 				}
 			}
 		}

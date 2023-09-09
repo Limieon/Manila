@@ -6,9 +6,9 @@ namespace Manila.Commands {
 			addParameter(new CLI.Parameter("output", "the output", CLI.Parameter.Type.STRING));
 			addParameter(new CLI.Parameter("amount", "the amount", CLI.Parameter.Type.NUMBER));
 
-			addOption(new CLI.Option("dir", "changes working directory", "d", CLI.Option.Type.STRING));
-			addOption(new CLI.Option("repeat", "how many times to repet", "r", CLI.Option.Type.NUMBER));
-			addOption(new CLI.Option("verbose", "enable verbose logging", "v", CLI.Option.Type.FLAG));
+			addOption(new CLI.Option("dir", "changes working directory", ".", "d", CLI.Option.Type.STRING));
+			addOption(new CLI.Option("repeat", "how many times to repet", 5, "r", CLI.Option.Type.NUMBER));
+			addOption(new CLI.Option("verbose", "enable verbose logging", false, "v", CLI.Option.Type.FLAG));
 		}
 
 		public override void onExecute(Dictionary<string, object> p, Dictionary<string, object> o) {

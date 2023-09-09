@@ -13,6 +13,7 @@ namespace Manila.CLI {
 		public string name { get; private set; }
 		public string description { get; private set; }
 		public string alias { get; private set; }
+		public object vDefault { get; private set; }
 
 		public object parse(object value) {
 			if (this.type == Type.STRING) return (string)value;
@@ -31,13 +32,14 @@ namespace Manila.CLI {
 			return null;
 		}
 
-		public Option(string name, string description, string alias = "", Type type = Type.FLAG) {
+		public Option(string name, string description, object vDefault, string alias = "", Type type = Type.FLAG) {
 			this.name = name;
 			this.description = description;
 			this.alias = alias;
 			this.type = type;
+			this.vDefault = vDefault;
 		}
-		public Option(string name, string description, Type type) : this(name, description, "", type) {
+		public Option(string name, string description, object vDefault, Type type) : this(name, description, vDefault, "", type) {
 		}
 	}
 }
