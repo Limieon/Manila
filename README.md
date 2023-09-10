@@ -11,7 +11,7 @@ As this project was getting more advanced, I tried to bundle the TypeScript Sour
 So I decided to switch to C# after I found out about [ClearScript](https://github.com/microsoft/ClearScript), a JavaScript Engine for C#. 
 ClearScript also allows support for other Scripting Languages, but that is something for the future.
 
-The old TypeScript Code can currently be viewed under the archive/TS branch
+The old TypeScript Code can currently be viewed under the old/TS branch
 
 ## Features
 - **Simplicity**: When it is more work to write Build Scripts then just to compile your code using your Compiler's CLI, a Build System gets pretty useless.  
