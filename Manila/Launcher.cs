@@ -1,11 +1,13 @@
 ﻿
-using System.Reflection;
 using Manila.Commands;
+using Manila.Scripting;
 
 namespace Manila {
 	class Launcher {
 		public static void Main(String[] args) {
 			Directory.SetCurrentDirectory("../run/");
+
+			if (args.Length > 0 && args[0].StartsWith(":")) ScriptEngine.getInstance().run().getTask(args[0][1..]).execute();
 
 			try {
 				new CLI.App("Manila", "A Build System written in [green4]C#[/] using [yellow]JavaScript[/] as Build Scripts")
