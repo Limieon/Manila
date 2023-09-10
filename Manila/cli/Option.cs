@@ -2,7 +2,7 @@
 using Manila.CLI.Exceptions;
 
 namespace Manila.CLI {
-	public class Option {
+	class Option {
 		public enum Type {
 			STRING,
 			NUMBER,

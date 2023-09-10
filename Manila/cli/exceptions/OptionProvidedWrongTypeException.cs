@@ -1,6 +1,6 @@
 
 namespace Manila.CLI.Exceptions {
-	public class OptionProvidedWrongTypeException : Exception {
+	class OptionProvidedWrongTypeException : Exception {
 		public Option option { get; private set; }
 		public string provided { get; private set; }
 		public Option.Type typeProivded { get; private set; }

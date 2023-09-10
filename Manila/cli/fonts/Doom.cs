@@ -1,4 +1,11 @@
-flf2a$ 8 6 14 15 16
+
+using System.Runtime.InteropServices;
+
+namespace Manila.CLI.Fonts {
+      // The Doom.flf Figlet Font (http://www.figlet.org/fontdb_example.cgi?font=doom.flf)
+      class Doom {
+            public static string get() {
+                  return @"flf2a$ 8 6 14 15 16
 DOOM by Frans P. de Vries <fpv@xymph.iaf.nl>  18 Jun 1996
 based on Big by Glenn Chappell 4/93 -- based on Standard
 figlet release 2.1 -- 12 Aug 1994
@@ -6,9 +13,9 @@ Permission is hereby given to modify this font, as long as the
 modifier's name is placed on a comment line.
 
 Explanation of first line:
-flf2 - "magic number" for file identification
+flf2 - ""magic number"" for file identification
 a    - should always be `a', for now
-$    - the "hardblank" -- prints as a blank, but can't be smushed
+$    - the ""hardblank"" -- prints as a blank, but can't be smushed
 8    - height of a character
 6    - height of a character, not including descenders
 14   - max line length (excluding comment lines) + a fudge factor
@@ -831,3 +838,7 @@ __   @
 | ||_/ @
 \_|    @
        @@
+";
+            }
+      }
+}

@@ -1,9 +1,12 @@
 ﻿
+using System.Reflection;
 using Manila.Commands;
 
 namespace Manila {
-	public class Launcher {
+	class Launcher {
 		public static void Main(String[] args) {
+			Directory.SetCurrentDirectory("../run/");
+
 			try {
 				new CLI.App("Manila", "A Build System written in [green4]C#[/] using [yellow]JavaScript[/] as Build Scripts")
 					.setDefaultCommand(new CommandManila())

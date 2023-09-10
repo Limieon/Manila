@@ -1,6 +1,6 @@
 
 namespace Manila.CLI.Exceptions {
-	public class ParameterNotProivdedException : Exception {
+	class ParameterNotProivdedException : Exception {
 		public Parameter parameter { get; private set; }
 		public Command command { get; private set; }
 

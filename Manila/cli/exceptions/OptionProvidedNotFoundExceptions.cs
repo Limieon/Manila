@@ -1,6 +1,6 @@
 
 namespace Manila.CLI.Exceptions {
-	public class OptionProvidedNotFoundExceptions : Exception {
+	class OptionProvidedNotFoundExceptions : Exception {
 		public Command command { get; private set; }
 		public string option { get; private set; }
 

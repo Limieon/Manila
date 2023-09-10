@@ -1,6 +1,6 @@
 
 namespace Manila.CLI {
-	public abstract class Command {
+	abstract class Command {
 		public string name { get; private set; }
 		public string description { get; private set; }
 		public List<Parameter> parameters { get; private set; }

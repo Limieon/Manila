@@ -1,6 +1,4 @@
 
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Xml.Xsl;
 using Spectre.Console;
 
 namespace Manila.Commands {
@@ -18,7 +16,7 @@ namespace Manila.Commands {
 			return o;
 		}
 		private void printLogo() {
-			AnsiConsole.Write(new FigletText(FigletFont.Load("res/doom.flf"), "Manila").LeftJustified().Color(Color.DodgerBlue3));
+			AnsiConsole.Write(new FigletText(FigletFont.Parse(CLI.Fonts.Doom.get()), "Manila").LeftJustified().Color(Color.DodgerBlue3));
 		}
 
 		public override void printHelp(CLI.App a) {

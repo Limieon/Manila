@@ -1,0 +1,8 @@
+{
+	"profiles": {
+		"Manila": {
+			"commandName": "Project",
+			"workingDirectory": "E:\\dev\\Manila\\run"
+		}
+	}
+}

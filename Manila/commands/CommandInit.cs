@@ -1,6 +1,6 @@
 
 namespace Manila.Commands {
-	public class CommandInit : CLI.Command {
+	class CommandInit : CLI.Command {
 		public CommandInit() : base("init", "Initializes a new manila project") {
 			addParameter(new CLI.Parameter("input", "the input", CLI.Parameter.Type.STRING));
 			addParameter(new CLI.Parameter("output", "the output", CLI.Parameter.Type.STRING));
