@@ -1,4 +1,6 @@
 
+using System.Linq.Expressions;
+using System.Reflection;
 using Manila.Scripting.Exceptions;
 using Microsoft.ClearScript.V8;
 
@@ -13,8 +15,8 @@ namespace Manila.Scripting {
 		private static readonly ScriptEngine instance = new();
 		private ScriptEngine() {
 			engine = new V8ScriptEngine();
-			engine.AddHostType("Console", typeof(Console));
-			engine.AddHostType("Manila", typeof(API.Manila));
+			engine.AddHostTypes(typeof(API.Manila));
+			API.Functions.addToEngine(engine);
 
 			tasks = new List<API.Task>();
 		}
