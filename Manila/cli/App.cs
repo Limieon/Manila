@@ -3,10 +3,11 @@ using Manila.CLI.Exceptions;
 
 namespace Manila.CLI {
 	public class App {
-		private string name { get; }
-		private string description { get; }
+		public string name { get; private set; }
+		public string description { get; private set; }
 		public Command? defaultCommand { get; private set; }
-		private List<Command> commands;
+		public CommandHelp? helpCommand { get; private set; }
+		public List<Command> commands { get; private set; }
 
 		public App(string name, string description) {
 			this.name = name;
@@ -16,6 +17,10 @@ namespace Manila.CLI {
 
 		public App setDefaultCommand(Command command) {
 			this.defaultCommand = command;
+			return this;
+		}
+		public App setHelpCommand(CommandHelp command) {
+			this.helpCommand = command;
 			return this;
 		}
 		public App addCommand(Command command) {
@@ -55,11 +60,33 @@ namespace Manila.CLI {
 				return;
 			}
 
-			string cmd = args[0];
+			string cmd = args[0].ToLower();
+			if (cmd == "help") {
+				this.helpCommand?.printHelp(this);
+				return;
+			}
+
 			foreach (Command c in commands) {
 				if (c.name == cmd) {
 					Dictionary<string, object> parsedParams = new Dictionary<string, object>();
 					Dictionary<string, object> parsedOpts = new Dictionary<string, object>();
+
+					foreach (KeyValuePair<string, Option> entry in c.options) {
+						if (!parsedOpts.ContainsKey(entry.Key)) parsedOpts.Add(entry.Key, entry.Value.vDefault);
+					}
+
+					foreach (KeyValuePair<string, object> entry in options) {
+						if (c.options.ContainsKey(entry.Key)) {
+							parsedOpts.Add(entry.Key, c.options[entry.Key].parse(entry.Value));
+						} else {
+							parsedOpts.Add(entry.Key, entry.Value);
+						}
+					}
+
+					if (parsedOpts.ContainsKey("help")) {
+						this.helpCommand?.printHelp(c);
+						return;
+					}
 
 					if ((parameters.Count - 1) < c.parameters.Count) {
 						throw new ParameterNotProivdedException(c.parameters[parameters.Count - 1], c);
@@ -67,25 +94,6 @@ namespace Manila.CLI {
 
 					for (int i = 0; i < c.parameters.Count; ++i) {
 						parsedParams.Add(c.parameters[i].name, c.parameters[i].parse(parameters[i + 1]));
-					}
-
-					foreach (KeyValuePair<string, object> entry in options) {
-						bool found = false;
-						foreach (KeyValuePair<string, Option> oEntry in c.options) {
-							if (entry.Key == oEntry.Key) {
-								found = true;
-								break;
-							}
-						}
-
-						if (!found) throw new OptionProvidedNotFoundExceptions(c, entry.Key);
-					}
-
-					foreach (KeyValuePair<string, object> entry in options) {
-						parsedOpts.Add(entry.Key, c.options[entry.Key].parse(entry.Value));
-					}
-					foreach (KeyValuePair<string, Option> entry in c.options) {
-						if (!parsedOpts.ContainsKey(entry.Key)) parsedOpts.Add(entry.Key, entry.Value.vDefault);
 					}
 
 					c.onExecute(parsedParams, parsedOpts);

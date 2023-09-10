@@ -5,8 +5,9 @@ namespace Manila {
 	public class Launcher {
 		public static void Main(String[] args) {
 			try {
-				new CLI.App("manila", "manila buildsystem")
+				new CLI.App("Manila", "A Build System written in [green4]C#[/] using [yellow]JavaScript[/] as Build Scripts")
 					.setDefaultCommand(new CommandManila())
+					.setHelpCommand(new CommandHelp())
 					.addCommand(new CommandInit())
 					.parse(args);
 			} catch (CLI.Exceptions.ParameterNotProivdedException e) {
