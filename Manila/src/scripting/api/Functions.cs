@@ -7,7 +7,7 @@ namespace Manila.Scripting.API {
 	/// Default functions provided by the api
 	/// </summary>
 	public static class Functions {
-		public static void addToEngine(V8ScriptEngine e) {
+		internal static void addToEngine(V8ScriptEngine e) {
 			e.AddHostObject("task", task);
 			e.AddHostObject("print", print);
 			e.AddHostObject("markup", markup);
@@ -22,18 +22,18 @@ namespace Manila.Scripting.API {
 			return new Task(name);
 		}
 		/// <summary>
-		/// Prints text to console
+		/// Prints text to stdout
 		/// </summary>
-		/// <param name="msg">the text to print</param>
-		public static void print(params string[] msg) {
-			AnsiConsole.WriteLine(string.Join(" ", msg));
+		/// <param name="text">the text to print</param>
+		public static void print(params dynamic[] text) {
+			AnsiConsole.WriteLine(string.Join(" ", text));
 		}
 		/// <summary>
-		/// Prints markup formatted text to console
+		/// Prints text to stdout (with markup suppor (visit: https://spectreconsole.net/markup))
 		/// </summary>
-		/// <param name="msg">the text to print</param>
-		public static void markup(params string[] msg) {
-			AnsiConsole.MarkupLine(string.Join(" ", msg));
+		/// <param name="text">the text to print</param>
+		public static void markup(params dynamic[] text) {
+			AnsiConsole.MarkupLine(string.Join(" ", text));
 		}
 	}
 }

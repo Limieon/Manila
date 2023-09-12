@@ -47,6 +47,11 @@ namespace Manila.Scripting.API {
 			return this;
 		}
 
+		/// <summary>
+		/// Executes this task
+		/// </summary>
+		/// <returns>false: task returned false, true: task did not return false</returns>
+		/// <exception cref="TaskNotFoundException"></exception>
 		public bool execute() {
 			var se = ScriptEngine.getInstance();
 
@@ -56,7 +61,7 @@ namespace Manila.Scripting.API {
 			}
 
 			// Function cannot be null, as task only gets registered when the functon has been set
-			return this.func.Invoke();
+			return func.Invoke();
 		}
 	}
 }

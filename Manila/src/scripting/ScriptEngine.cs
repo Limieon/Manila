@@ -1,7 +1,7 @@
 
-using System.Linq.Expressions;
-using System.Reflection;
 using Manila.Scripting.Exceptions;
+using Microsoft.ClearScript;
+using Microsoft.ClearScript.JavaScript;
 using Microsoft.ClearScript.V8;
 
 namespace Manila.Scripting {
@@ -15,6 +15,7 @@ namespace Manila.Scripting {
 		private static readonly ScriptEngine instance = new();
 		private ScriptEngine() {
 			engine = new V8ScriptEngine();
+			engine.DocumentSettings.AccessFlags = DocumentAccessFlags.EnableFileLoading;
 			engine.AddHostTypes(typeof(API.Manila));
 			API.Functions.addToEngine(engine);
 
@@ -26,7 +27,7 @@ namespace Manila.Scripting {
 		/// </summary>
 		/// <returns>ScriptEngine instance</returns>
 		public ScriptEngine run() {
-			engine.Execute(File.ReadAllText("./Manila.js"));
+			engine.ExecuteDocument("./Manila.js", ModuleCategory.Standard);
 			return this;
 		}
 
