@@ -5,6 +5,10 @@ using Manila.Scripting;
 namespace Manila {
 	class Launcher {
 		public static void Main(string[] args) {
+#if DEBUG
+			Directory.SetCurrentDirectory("../run/");
+#endif
+
 			if (args.Length > 0 && args[0].StartsWith(":")) ScriptEngine.getInstance().run().getTask(args[0][1..]).execute();
 
 			try {
