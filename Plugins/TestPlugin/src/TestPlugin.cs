@@ -10,7 +10,12 @@ public class TestPlugin : Plugin {
 		instance = this;
 	}
 
+	public static void testPluginFunc() {
+		Console.WriteLine("Executed from Script!");
+	}
+
 	public override void init() {
 		markup("Initializing [purple]Test Plugin[/]...");
+		addObject("scriptExec", testPluginFunc);
 	}
 }

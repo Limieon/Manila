@@ -1,4 +1,6 @@
 
+using Manila.Scripting;
+
 using Spectre.Console;
 
 namespace Manila.Plugin.API;
@@ -28,6 +30,13 @@ public abstract class Plugin {
 	public void markup(bool prefix, params dynamic[] data) {
 		if (prefix) AnsiConsole.Markup($"[gray][[[/][cyan]{name}[/][gray]]]:[/] ");
 		AnsiConsole.MarkupLine(string.Join(" ", data));
+	}
+
+	public void addObject(string name, object obj) {
+		ScriptEngine.getInstance().addObject(name, obj);
+	}
+	public void addType(Type type) {
+		ScriptEngine.getInstance().addType(type);
 	}
 
 	public abstract void init();

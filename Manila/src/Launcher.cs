@@ -9,7 +9,7 @@ namespace Manila {
 #if DEBUG
 			Directory.SetCurrentDirectory("../run/");
 #endif
-
+			System.Console.WriteLine("Initilizing Script Engine...");
 			Console.WriteLine("Loading Plugins...");
 			Console.WriteLine($"[DEBUG]: Plugin Root: {PluginManager.PLUGIN_ROOT.getPath()}");
 			PluginManager.loadPlugins();

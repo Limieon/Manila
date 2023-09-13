@@ -22,6 +22,13 @@ namespace Manila.Scripting {
 			tasks = new List<API.Task>();
 		}
 
+		public void addObject(string name, object obj) {
+			engine.AddHostObject(name, obj);
+		}
+		public void addType(Type type) {
+			engine.AddHostType(type);
+		}
+
 		/// <summary>
 		/// Runs the main scripts
 		/// </summary>
