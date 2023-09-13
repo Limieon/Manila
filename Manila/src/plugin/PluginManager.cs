@@ -53,5 +53,8 @@ public static class PluginManager {
 	}
 
 	public static void shutdown() {
+		foreach(var p in plugins) {
+			p.shutdown();
+		}
 	}
 }

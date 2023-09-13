@@ -18,4 +18,7 @@ public class TestPlugin : Plugin {
 		markup("Initializing [purple]Test Plugin[/]...");
 		addObject("scriptExec", testPluginFunc);
 	}
+	public override void shutdown() {
+		print("Shutting down...");
+	}
 }
