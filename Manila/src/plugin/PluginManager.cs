@@ -1,13 +1,23 @@
 
 using System.Reflection;
 using Manila.Scripting.API;
+using Manila.Scripting.Exceptions;
+using Manila.Utils;
 
 namespace Manila.Plugin;
 
 public static class PluginManager {
+	public class Meta {
+		public string name { get; set; }
+		public string description { get; set; }
+		public List<string> authors { get; set; }
+		public string version { get; set; }
+	}
+
 	public static readonly ManilaDirectory PLUGIN_ROOT = new ManilaDirectory(".manila/plugins");
 
 	public static List<API.Plugin> plugins { get; private set; }
+	private static Dictionary<string, Meta> pluginMetas;
 
 	public static void loadPlugins() {
 		plugins = PLUGIN_ROOT.files().SelectMany(f => {
@@ -17,9 +27,23 @@ public static class PluginManager {
 	}
 
 	public static void init() {
+		if (!FileUtils.pluginsFile.exists()) { FileUtils.pluginsFile.write("{}"); }
+		pluginMetas = FileUtils.pluginsFile.deserializeJSON<Dictionary<string, Meta>>();
+		FileUtils.pluginsFile.serializeJSON(pluginMetas, true);
+
 		foreach (var p in plugins) {
 			p.init();
 		}
+	}
+
+	/// <summary>
+	/// Gets the metadata for a plugin
+	/// </summary>
+	/// <param name="id">the plugin id</param>
+	/// <exception cref="PluginNotFoundException"></exception>
+	public static Meta getMeta(string id) {
+		if (!pluginMetas.ContainsKey(id)) throw new PluginNotFoundException(id);
+		return pluginMetas[id];
 	}
 
 	private static Assembly loadPlugin(string relPath) {
@@ -53,7 +77,7 @@ public static class PluginManager {
 	}
 
 	public static void shutdown() {
-		foreach(var p in plugins) {
+		foreach (var p in plugins) {
 			p.shutdown();
 		}
 	}

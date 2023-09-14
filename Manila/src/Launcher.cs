@@ -23,6 +23,8 @@ class Launcher {
 		var rootDir = Scripting.API.Manila.dir(Directory.GetCurrentDirectory());
 		Logger.debug("Root Dir:", rootDir.getPath());
 		FileUtils.init(rootDir);
+		PluginManager.loadPlugins();
+		PluginManager.init();
 		if (args.Length > 0 && args[0].StartsWith(":")) {
 			ScriptEngine.getInstance().run().getTask(args[0][1..]).execute();
 		}

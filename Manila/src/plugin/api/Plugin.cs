@@ -6,21 +6,20 @@ using Spectre.Console;
 namespace Manila.Plugin.API;
 
 public abstract class Plugin {
-	public string name { get; }
-	public string description { get; }
-	public string version { get; }
+	public string id { get; }
+	public PluginManager.Meta meta { get; }
 
-	public Plugin(string name, string description, string version) {
-		this.name = name;
-		this.description = description;
-		this.version = version;
+	public Plugin(string id) {
+		this.id = id;
+		var meta = PluginManager.getMeta(id);
+		this.meta = meta;
 	}
 
 	public void print(params dynamic[] data) {
 		print(true, data);
 	}
 	public void print(bool prefix, params dynamic[] data) {
-		if (prefix) AnsiConsole.Markup($"[gray][[[/][cyan]{name}[/][gray]]]:[/] ");
+		if (prefix) AnsiConsole.Markup($"[gray][[[/][cyan]{id}[/][gray]]]:[/] ");
 		AnsiConsole.WriteLine(string.Join(" ", data));
 	}
 
@@ -28,7 +27,7 @@ public abstract class Plugin {
 		markup(true, data);
 	}
 	public void markup(bool prefix, params dynamic[] data) {
-		if (prefix) AnsiConsole.Markup($"[gray][[[/][cyan]{name}[/][gray]]]:[/] ");
+		if (prefix) AnsiConsole.Markup($"[gray][[[/][cyan]{id}[/][gray]]]:[/] ");
 		AnsiConsole.MarkupLine(string.Join(" ", data));
 	}
 
