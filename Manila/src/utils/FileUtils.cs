@@ -13,6 +13,8 @@ public static class FileUtils {
 	public static void init(ManilaDirectory rootDir) {
 		manilaDirectory = rootDir.join(".manila");
 
+		manilaDirectory.create();
+
 		Logger.debug("Manila Dir:", manilaDirectory.getPath());
 	}
 }

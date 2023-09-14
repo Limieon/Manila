@@ -226,6 +226,16 @@ namespace Manila.Scripting.API {
 		}
 
 		/// <summary>
+		/// Checks if the directory exists
+		/// </summary>
+		public bool exists() { return Directory.Exists(path); }
+
+		/// <summary>
+		/// Creates the directory if it does not exist
+		/// </summary>
+		public void create() { if (!exists()) Directory.CreateDirectory(path); }
+
+		/// <summary>
 		/// Gets the full parsed path (will remove navigators like ../)
 		/// </summary>
 		public string getPath() { return Path.GetFullPath(path); }
