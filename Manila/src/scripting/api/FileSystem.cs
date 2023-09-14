@@ -1,4 +1,5 @@
 
+using Newtonsoft.Json;
 using Microsoft.ClearScript;
 
 namespace Manila.Scripting.API {
@@ -61,6 +62,7 @@ namespace Manila.Scripting.API {
 			if (File.Exists(path)) File.Delete(path);
 			return this;
 		}
+
 		/// <summary>
 		/// Checks if a file exists
 		/// </summary>
@@ -73,6 +75,29 @@ namespace Manila.Scripting.API {
 		public string read() {
 			return File.ReadAllText(path);
 		}
+
+		/// <summary>
+		/// Deserializes a json file to an object
+		/// </summary>
+		/// <typeparam name="T">the type of the object</typeparam>
+		/// <returns>the value of the object</returns>
+		/// <exception cref="FileNotFoundException"></exception>
+		internal T deserializeJSON<T>() where T : new() {
+			if (!exists()) throw new FileNotFoundException("File '" + getPath() + "' does not exist!");
+			T? res = JsonConvert.DeserializeObject<T>(read());
+			if (res == null) return new T();
+			return res;
+		}
+		/// <summary>
+		/// Serializes an object as a JSON file
+		/// </summary>
+		/// <param name="data">the object to serialize</param>
+		/// <param name="format">if the json file should be formatted</param>
+		internal ManilaFile serializeJSON(object data, bool format = false) {
+			write(JsonConvert.SerializeObject(data, format ? Formatting.Indented : Formatting.None));
+			return this;
+		}
+
 		/// <summary>
 		/// Renames a file
 		/// </summary>
@@ -209,5 +234,20 @@ namespace Manila.Scripting.API {
 		/// </summary>
 		/// <param name="to">the destination path (default is current directory)</param>
 		public string getPathRelative(string to = ".") { return Path.GetRelativePath(to, path); }
+
+		/// <summary>
+		/// Gets a ManilaFile handle to the specified file
+		/// </summary>
+		/// <param name="files">files to search</param>
+		/// <returns>the file handle from the found file (if none is found, it retruns the first)</returns>
+		public ManilaFile file(params string[] files) {
+			if (files.Length < 1) throw new ArgumentException("Argument 'files' requires at least one filename!");
+
+			foreach (var f in files) {
+				ManilaFile handle = Manila.file(getPath(), f);
+				if (handle.exists()) return handle;
+			}
+			return Manila.file(getPath(), files[0]);
+		}
 	}
 }
