@@ -176,7 +176,7 @@ namespace Manila.Scripting.API {
 			}
 
 			this.path = inPath;
-			if (Directory.Exists(this.path) && File.GetAttributes(this.path) != FileAttributes.Directory) throw new ArgumentException("The path '" + this.path + "' is not a directory!");
+			//if (Directory.Exists(this.path) && File.GetAttributes(this.path) != FileAttributes.Directory) throw new ArgumentException("The path '" + this.path + "' is not a directory!");
 		}
 		/// <summary>
 		/// Joins a path to the current path

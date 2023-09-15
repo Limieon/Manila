@@ -1,8 +1,8 @@
 {
 	"files.exclude": {
-		"**/bin/": true,
-		"**/bin-int/": true,
-		"**/obj/": true,
-		"**/Properties/": true
+		"**/bin/": false,
+		"**/bin-int/": false,
+		"**/obj/": false,
+		"**/Properties/": false
 	}
 }

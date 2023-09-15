@@ -2,7 +2,7 @@
 using Manila.CLI.Exceptions;
 
 namespace Manila.CLI {
-	class App {
+	public class App {
 		public string name { get; private set; }
 		public string description { get; private set; }
 		public Command? defaultCommand { get; private set; }
