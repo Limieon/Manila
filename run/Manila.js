@@ -1,9 +1,9 @@
-Manila.task('compile').onExecute(() => {
-	Console.WriteLine('Compiling...')
+task('compile').onExecute(() => {
+	print('Compiling...')
 })
 
-Manila.task('run')
+task('run')
 	.dependsOn('compile')
 	.onExecute(() => {
-		Console.WriteLine('Running...')
+		print('Running...')
 	})
