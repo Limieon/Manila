@@ -1,4 +1,5 @@
 
+using Manila.Core;
 using Manila.Scripting.Exceptions;
 using Microsoft.ClearScript;
 using Microsoft.ClearScript.JavaScript;

@@ -18,6 +18,8 @@ public static class FileUtils {
 		pluginsDirectory = manilaDirectory.join("plugins");
 		pluginsFile = manilaDirectory.file("plugins.manila");
 
+		manilaDirectory.create();
+
 		Logger.debug("Manila Dir:", manilaDirectory.getPath());
 		Logger.debug("Plugins Dir:", pluginsDirectory.getPath());
 		Logger.debug("Plugins File:", pluginsFile.getPath());

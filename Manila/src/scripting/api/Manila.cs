@@ -1,4 +1,8 @@
 
+using System.Text.RegularExpressions;
+using Manila.Core;
+using Microsoft.ClearScript;
+
 namespace Manila.Scripting.API {
 	/// <summary>
 	/// The main Manila Build System API
