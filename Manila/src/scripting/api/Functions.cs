@@ -1,4 +1,5 @@
 
+using System.Text.RegularExpressions;
 using Microsoft.ClearScript.V8;
 using Spectre.Console;
 
@@ -11,6 +12,7 @@ namespace Manila.Scripting.API {
 			e.AddHostObject("task", task);
 			e.AddHostObject("print", print);
 			e.AddHostObject("markup", markup);
+			e.AddHostObject("regex", regex);
 		}
 
 		/// <summary>
@@ -34,6 +36,10 @@ namespace Manila.Scripting.API {
 		/// <param name="text">the text to print</param>
 		public static void markup(params dynamic[] text) {
 			AnsiConsole.MarkupLine(string.Join(" ", text));
+		}
+
+		public static Regex regex(string exp) {
+			return new Regex(exp);
 		}
 	}
 }
