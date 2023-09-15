@@ -9,11 +9,11 @@ namespace Manila.Core;
 /// <remarks>
 /// A workspace is a container for organizing projects and applying project filters.
 /// </remarks>
-public class Workspace : SriptInstance {
+public class Workspace : ScriptInstance {
 	/// <summary>
 	/// Gets the name of the workspace.
 	/// </summary>
-	public string name { get; }
+	public string name { get; set; }
 
 	/// <summary>
 	/// Gets the location of the workspace.
@@ -30,10 +30,9 @@ public class Workspace : SriptInstance {
 	/// <summary>
 	/// Initializes a new instance of the <see cref="Workspace"/> class.
 	/// </summary>
-	/// <param name="name">The name of the workspace.</param>
 	/// <param name="location">The location of the workspace.</param>
-	public Workspace(string name, ManilaDirectory location) {
-		this.name = name;
+	public Workspace(ManilaDirectory location) {
+		name = "";
 		this.location = location;
 
 		projects = new List<Project>();
@@ -61,5 +60,17 @@ public class Workspace : SriptInstance {
 	/// </summary>
 	public void runFilters() {
 		foreach (var f in projectFilters) { foreach (var p in projects) { f.run(p); } }
+	}
+
+	public override void addProperties(Dictionary<string, dynamic> properties) {
+		foreach (var e in properties) {
+			switch (e.Key) {
+				case "name":
+					name = e.Value;
+					break;
+			}
+		}
+
+		base.addProperties(properties);
 	}
 }

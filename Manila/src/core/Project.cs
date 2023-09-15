@@ -1,4 +1,5 @@
 
+using System.Collections.Immutable;
 using Manila.Scripting.API;
 
 namespace Manila.Core;
@@ -10,16 +11,16 @@ namespace Manila.Core;
 /// A project is defined by its name, version, location, and associated workspace.
 /// It also allows the addition and retrieval of custom properties.
 /// </remarks>
-public class Project : SriptInstance {
+public class Project : ScriptInstance {
 	/// <summary>
 	/// Gets the name of the project.
 	/// </summary>
-	public string name { get; }
+	public string name { get; set; }
 
 	/// <summary>
 	/// Gets the version of the project.
 	/// </summary>
-	public string version { get; }
+	public string version { get; set; }
 
 	/// <summary>
 	/// Gets the location of the project.
@@ -38,10 +39,25 @@ public class Project : SriptInstance {
 	/// <param name="version">The version of the project.</param>
 	/// <param name="location">The location of the project.</param>
 	/// <param name="workspace">The associated workspace for the project.</param>
-	public Project(string name, string version, ManilaDirectory location, Workspace workspace) : base() {
-		this.name = name;
-		this.version = version;
+	public Project(ManilaDirectory location, Workspace workspace) : base() {
+		name = "";
+		version = "";
 		this.location = location;
 		this.workspace = workspace;
+	}
+
+	public override void addProperties(Dictionary<string, dynamic> properties) {
+		foreach (var e in properties) {
+			switch (e.Key) {
+				case "name":
+					name = e.Value;
+					break;
+				case "version":
+					version = e.Value;
+					break;
+			}
+		}
+
+		base.addProperties(properties);
 	}
 }

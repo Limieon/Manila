@@ -1,3 +1,11 @@
+/*Manila.project('core', () => {
+	print('Execute!')
+})*/
+
+properties({
+	name: 'TestWorkspace'
+})
+
 task('compile').onExecute(() => {
 	print('Compiling...')
 })

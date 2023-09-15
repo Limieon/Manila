@@ -157,6 +157,7 @@ namespace Manila.Scripting.API {
 		/// Gets the path where the file is located in
 		/// </summary>
 		public string getFileDir() { return Path.GetDirectoryName(path); }
+		public ManilaDirectory getFileDirHandle() { return new ManilaDirectory(getFileDir()); }
 	}
 
 	/// <summary>
@@ -216,6 +217,34 @@ namespace Manila.Scripting.API {
 
 			return result;
 		}
+
+		/// <summary>
+		/// Gets the list of files contained in a directory
+		/// </summary>
+		/// <param name="func">the function to filter the files files</param>
+		/// <param name="deep">flag to indicate whether subdirectories should also be searched</param>
+		public List<ManilaFile> files(bool deep, Func<string, bool> func) {
+			List<ManilaFile> result = new List<ManilaFile>();
+
+			if (deep) {
+				var files = Directory.GetFiles(path, "*", SearchOption.AllDirectories);
+				foreach (var file in files) {
+					if (func == null || func(file)) {
+						result.Add(Manila.file(file));
+					}
+				}
+			} else {
+				var files = Directory.GetFiles(path);
+				foreach (var file in files) {
+					if (func == null || func(file)) {
+						result.Add(Manila.file(file));
+					}
+				}
+			}
+
+			return result;
+		}
+
 		/// <summary>
 		/// Gets the list of files contained in a directory
 		/// </summary>

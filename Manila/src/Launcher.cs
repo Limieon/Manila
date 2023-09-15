@@ -4,6 +4,7 @@ using Manila.Plugin;
 using Manila.Scripting;
 using Manila.Utils;
 using Manila.CLI.Exceptions;
+using Manila.Core;
 
 namespace Manila;
 
@@ -22,13 +23,16 @@ class Launcher {
 
 		var rootDir = Scripting.API.Manila.dir(Directory.GetCurrentDirectory());
 		var app = new CLI.App("Manila", "A Build System written in [green4]C#[/] using [yellow]JavaScript[/] as Build Scripts");
-		
+
 		Logger.debug("Root Dir:", rootDir.getPath());
 		FileUtils.init(rootDir);
 		PluginManager.init();
 		PluginManager.loadPlugins(app);
+
+		ScriptManager.init();
+		ScriptManager.runWorkspaceFile();
 		if (args.Length > 0 && args[0].StartsWith(":")) {
-			ScriptEngine.getInstance().run().getTask(args[0][1..]).execute();
+			ScriptManager.getTask(args[0][1..]).execute();
 		}
 
 		try {

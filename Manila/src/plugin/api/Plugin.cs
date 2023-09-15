@@ -1,4 +1,5 @@
 
+using Manila.Core;
 using Manila.Scripting;
 using Manila.Utils;
 
@@ -106,7 +107,7 @@ public abstract class Plugin {
 	/// <param name="name">The name of the object.</param>
 	/// <param name="obj">The object to add.</param>
 	public void addObject(string name, object obj) {
-		ScriptEngine.getInstance().addObject(name, obj);
+		ScriptManager.addObject(name, obj);
 	}
 
 	/// <summary>
@@ -114,7 +115,7 @@ public abstract class Plugin {
 	/// </summary>
 	/// <param name="type">The type to add.</param>
 	public void addType(Type type) {
-		ScriptEngine.getInstance().addType(type);
+		ScriptManager.addType(type);
 	}
 
 	/// <summary>

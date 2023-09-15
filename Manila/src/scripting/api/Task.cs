@@ -1,5 +1,6 @@
 
 using System.Runtime.CompilerServices;
+using Manila.Core;
 using Manila.Scripting.Exceptions;
 using Microsoft.ClearScript;
 
@@ -36,7 +37,7 @@ namespace Manila.Scripting.API {
 				if (res.GetType() != typeof(bool)) return true;
 				return res;
 			};
-			ScriptEngine.getInstance().registerTask(this);
+			ScriptManager.registerTask(this);
 		}
 		/// <summary>
 		/// Adds a dependecy task to this task
@@ -53,11 +54,9 @@ namespace Manila.Scripting.API {
 		/// <returns>false: task returned false, true: task did not return false</returns>
 		/// <exception cref="TaskNotFoundException"></exception>
 		public bool execute() {
-			var se = ScriptEngine.getInstance();
-
 			foreach (string s in dependencies) {
-				if (!se.hasTask(s)) throw new TaskNotFoundException(s, this);
-				se.getTask(s).execute();
+				if (!ScriptManager.hasTask(s)) throw new TaskNotFoundException(s, this);
+				ScriptManager.getTask(s).execute();
 			}
 
 			// Function cannot be null, as task only gets registered when the functon has been set

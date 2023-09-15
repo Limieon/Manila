@@ -14,4 +14,13 @@ public static class ScriptUtils {
 		}
 		return l.ToArray();
 	}
+
+	public static Dictionary<string, T> toMap<T>(ScriptObject obj) {
+		Dictionary<string, T> o = new Dictionary<string, T>();
+		foreach (var p in obj.PropertyNames) {
+			o.Add(p, (T) obj[p]);
+		}
+
+		return o;
+	}
 }

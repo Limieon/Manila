@@ -1,5 +1,8 @@
 
 using System.Text.RegularExpressions;
+using Manila.Core;
+using Manila.Utils;
+using Microsoft.ClearScript;
 using Microsoft.ClearScript.V8;
 using Spectre.Console;
 
@@ -13,6 +16,7 @@ namespace Manila.Scripting.API {
 			e.AddHostObject("print", print);
 			e.AddHostObject("markup", markup);
 			e.AddHostObject("regex", regex);
+			e.AddHostObject("properties", properties);
 		}
 
 		/// <summary>
@@ -40,6 +44,11 @@ namespace Manila.Scripting.API {
 
 		public static Regex regex(string exp) {
 			return new Regex(exp);
+		}
+
+		public static void properties(ScriptObject obj) {
+			if (ScriptManager.currentScriptInstance == null) throw new Exception("Cannot set properties in the current context!");
+			ScriptManager.currentScriptInstance.addProperties(ScriptUtils.toMap<dynamic>(obj));
 		}
 	}
 }

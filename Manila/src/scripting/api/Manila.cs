@@ -1,6 +1,7 @@
 
 using System.Text.RegularExpressions;
 using Manila.Core;
+using Manila.Utils;
 using Microsoft.ClearScript;
 
 namespace Manila.Scripting.API {
@@ -56,6 +57,16 @@ namespace Manila.Scripting.API {
 		/// <returns>the directory handle</returns>
 		public static ManilaDirectory directory(ManilaDirectory dir) {
 			return new ManilaDirectory(dir.path);
+		}
+
+		public static Project getProject() { return (Project) ScriptManager.currentScriptInstance; }
+		public static Workspace getWorkspace() { return ScriptManager.workspace; }
+
+		public static void project(string filter, ScriptObject func) {
+		}
+		public static void project(Regex filter, ScriptObject func) {
+		}
+		public static void project(ScriptObject filter, ScriptObject func) {
 		}
 	}
 }
