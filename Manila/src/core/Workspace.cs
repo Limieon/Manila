@@ -9,7 +9,7 @@ namespace Manila.Core;
 /// <remarks>
 /// A workspace is a container for organizing projects and applying project filters.
 /// </remarks>
-public class Workspace {
+public class Workspace : SriptInstance {
 	/// <summary>
 	/// Gets the name of the workspace.
 	/// </summary>
