@@ -12,6 +12,11 @@ public static class ScriptManager {
 		INITIALIZING,
 		RUNNING
 	}
+	public enum Scope {
+		NONE,
+		WORKSPACE,
+		PROJECT
+	}
 
 	internal static List<Scripting.API.Task> tasks = new List<Scripting.API.Task>();
 	internal static Workspace? workspace;
@@ -21,9 +26,11 @@ public static class ScriptManager {
 	internal static readonly ScriptEngine engine = new ScriptEngine();
 
 	internal static State state { get; private set; }
+	internal static Scope scope { get; private set; }
 
 	internal static void init() {
 		state = State.INITIALIZING;
+		scope = Scope.NONE;
 	}
 
 	internal static void runWorkspaceFile() {
@@ -31,15 +38,19 @@ public static class ScriptManager {
 
 		workspace = new Workspace(new ManilaDirectory("."));
 		currentScriptInstance = workspace;
+		scope = Scope.WORKSPACE;
 		engine.run("Manila.js");
 		workspace.name = (string) currentScriptInstance.getProperty("name");
 
 		Logger.debug("Workspace Name:", workspace.name);
 
+		scope = Scope.PROJECT;
 		runProjectFiles();
+		scope = Scope.NONE;
 	}
 	private static void runProjectFiles() {
 		Logger.debug("Running project files...");
+
 		var files = workspace.location.files(true, (f) => {
 			return f.EndsWith("Manila.js") && (new ManilaFile(f).getPathRelative(workspace.location.getPath()) != "Manila.js");
 		});
@@ -53,8 +64,12 @@ public static class ScriptManager {
 
 	private static void runProjectFile(ManilaFile file) {
 		Logger.debug("Running project file", file.getPathRelative(workspace.location.getPath()));
-		Project p = new Project(file.getFileDirHandle(), workspace);
+		Project p = new Project(":" + file.getFileDirHandle().getPathRelative(workspace.location.getPath()).Replace(Path.PathSeparator, ':'), file.getFileDirHandle(), workspace);
 		currentScriptInstance = p;
+
+		Logger.debug($"ID: '{p.id}'");
+
+		workspace.runFilters(p);
 
 		engine.run(file.getPath());
 		p.name = currentScriptInstance.getProperty("name");

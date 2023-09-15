@@ -58,9 +58,10 @@ public class Workspace : ScriptInstance {
 	/// <summary>
 	/// Runs all project filters on the projects in the workspace.
 	/// </summary>
-	public void runFilters() {
-		foreach (var f in projectFilters) { foreach (var p in projects) { f.run(p); } }
+	public void runFilters(Project p) {
+		foreach (var f in projectFilters) f.run(p);
 	}
+
 
 	public override void addProperties(Dictionary<string, dynamic> properties) {
 		foreach (var e in properties) {

@@ -63,10 +63,16 @@ namespace Manila.Scripting.API {
 		public static Workspace getWorkspace() { return ScriptManager.workspace; }
 
 		public static void project(string filter, ScriptObject func) {
+			if (ScriptManager.scope != ScriptManager.Scope.WORKSPACE) throw new Exception("Function 'project' is only available in the workspace scope!");
+			ScriptManager.workspace.addProjectFilter(new ProjectFilter.SpecificFilter(filter, func));
 		}
 		public static void project(Regex filter, ScriptObject func) {
+			if (ScriptManager.scope != ScriptManager.Scope.WORKSPACE) throw new Exception("Function 'project' is only available in the workspace scope!");
+			ScriptManager.workspace.addProjectFilter(new ProjectFilter.RegexFilter(filter, func));
 		}
 		public static void project(ScriptObject filter, ScriptObject func) {
+			if (ScriptManager.scope != ScriptManager.Scope.WORKSPACE) throw new Exception("Function 'project' is only available in the workspace scope!");
+			ScriptManager.workspace.addProjectFilter(new ProjectFilter.ArrayFilter(ScriptUtils.toArray<string>(filter), func));
 		}
 	}
 }

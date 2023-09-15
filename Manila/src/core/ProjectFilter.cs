@@ -45,7 +45,7 @@ public abstract class ProjectFilter {
 		public RegexFilter(Regex filter, ScriptObject func) : base(func) { this.filter = filter; }
 
 		/// <inheritdoc />
-		public override bool predicate(Project project) { return filter.IsMatch(project.name); }
+		public override bool predicate(Project project) { return filter.IsMatch(project.id); }
 	}
 
 	/// <summary>
@@ -61,7 +61,7 @@ public abstract class ProjectFilter {
 		public ArrayFilter(string[] filter, ScriptObject func) : base(func) { this.filter = filter; }
 
 		/// <inheritdoc />
-		public override bool predicate(Project project) { return filter.Contains(project.name); }
+		public override bool predicate(Project project) { return filter.Contains(project.id); }
 	}
 
 	/// <summary>
@@ -77,32 +77,6 @@ public abstract class ProjectFilter {
 		public SpecificFilter(string filter, ScriptObject func) : base(func) { this.filter = filter; }
 
 		/// <inheritdoc />
-		public override bool predicate(Project project) { return project.name == filter; }
+		public override bool predicate(Project project) { return project.id == filter; }
 	}
-}
-
-/// <summary>
-/// A factory class for creating instances of ProjectFilter.
-/// </summary>
-public static class ProjectFilterFactory {
-	/// <summary>
-	/// Creates a ProjectFilter instance based on a regular expression filter.
-	/// </summary>
-	/// <param name="filter">The regular expression pattern used for filtering.</param>
-	/// <returns>A ProjectFilter instance based on the regular expression filter.</returns>
-	public static ProjectFilter create(Regex filter, ScriptObject func) { return new ProjectFilter.RegexFilter(filter, func); }
-
-	/// <summary>
-	/// Creates a ProjectFilter instance based on an array of string filters.
-	/// </summary>
-	/// <param name="filter">The array of string filters used for matching.</param>
-	/// <returns>A ProjectFilter instance based on the array of string filters.</returns>
-	public static ProjectFilter create(string[] filter, ScriptObject func) { return new ProjectFilter.ArrayFilter(filter, func); }
-
-	/// <summary>
-	/// Creates a ProjectFilter instance based on a specific string filter.
-	/// </summary>
-	/// <param name="filter">The specific string filter used for matching.</param>
-	/// <returns>A ProjectFilter instance based on the specific string filter.</returns>
-	public static ProjectFilter create(string filter, ScriptObject func) { return new ProjectFilter.SpecificFilter(filter, func); }
 }

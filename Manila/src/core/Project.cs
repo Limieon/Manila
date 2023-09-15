@@ -12,6 +12,8 @@ namespace Manila.Core;
 /// It also allows the addition and retrieval of custom properties.
 /// </remarks>
 public class Project : ScriptInstance {
+	public readonly string id;
+
 	/// <summary>
 	/// Gets the name of the project.
 	/// </summary>
@@ -39,9 +41,10 @@ public class Project : ScriptInstance {
 	/// <param name="version">The version of the project.</param>
 	/// <param name="location">The location of the project.</param>
 	/// <param name="workspace">The associated workspace for the project.</param>
-	public Project(ManilaDirectory location, Workspace workspace) : base() {
+	public Project(string id, ManilaDirectory location, Workspace workspace) : base() {
 		name = "";
 		version = "";
+		this.id = id;
 		this.location = location;
 		this.workspace = workspace;
 	}
