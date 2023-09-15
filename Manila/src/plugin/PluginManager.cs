@@ -19,21 +19,22 @@ public static class PluginManager {
 	public static List<API.Plugin> plugins { get; private set; }
 	private static Dictionary<string, Meta> pluginMetas;
 
-	public static void loadPlugins() {
+	public static void loadPlugins(CLI.App app) {
 		plugins = PLUGIN_ROOT.files().SelectMany(f => {
 			Assembly pluginAssembly = loadPlugin(f.getPath());
 			return createPlugins(pluginAssembly);
 		}).ToList();
+
+		foreach (var p in plugins) {
+			p.init();
+			p.commands(app);
+		}
 	}
 
 	public static void init() {
 		if (!FileUtils.pluginsFile.exists()) { FileUtils.pluginsFile.write("{}"); }
 		pluginMetas = FileUtils.pluginsFile.deserializeJSON<Dictionary<string, Meta>>();
 		FileUtils.pluginsFile.serializeJSON(pluginMetas, true);
-
-		foreach (var p in plugins) {
-			p.init();
-		}
 	}
 
 	/// <summary>

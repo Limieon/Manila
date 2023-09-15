@@ -1,0 +1,10 @@
+{
+  "manilacpp": {
+    "name": "Manila C++ Plugin",
+    "description": "Provides Clang Support for Manila",
+    "authors": [
+      "Limieon"
+    ],
+    "version": "1.0.0"
+  }
+}

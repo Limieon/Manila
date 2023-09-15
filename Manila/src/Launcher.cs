@@ -21,17 +21,18 @@ class Launcher {
 		Logger.init(verbose);
 
 		var rootDir = Scripting.API.Manila.dir(Directory.GetCurrentDirectory());
+		var app = new CLI.App("Manila", "A Build System written in [green4]C#[/] using [yellow]JavaScript[/] as Build Scripts");
+		
 		Logger.debug("Root Dir:", rootDir.getPath());
 		FileUtils.init(rootDir);
-		PluginManager.loadPlugins();
 		PluginManager.init();
+		PluginManager.loadPlugins(app);
 		if (args.Length > 0 && args[0].StartsWith(":")) {
 			ScriptEngine.getInstance().run().getTask(args[0][1..]).execute();
 		}
 
 		try {
-			new CLI.App("Manila", "A Build System written in [green4]C#[/] using [yellow]JavaScript[/] as Build Scripts")
-				.setDefaultCommand(new CommandManila())
+			app.setDefaultCommand(new CommandManila())
 				.setHelpCommand(new CommandHelp())
 				.addCommand(new CommandInit())
 				.parse(args);

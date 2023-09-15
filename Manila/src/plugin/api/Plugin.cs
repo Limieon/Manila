@@ -1,5 +1,6 @@
 
 using Manila.Scripting;
+using Manila.Utils;
 
 using Spectre.Console;
 
@@ -15,20 +16,36 @@ public abstract class Plugin {
 		this.meta = meta;
 	}
 
-	public void print(params dynamic[] data) {
-		print(true, data);
+	public void debug(params dynamic[] data) {
+		Logger.pluginDebug(id, data);
 	}
-	public void print(bool prefix, params dynamic[] data) {
-		if (prefix) AnsiConsole.Markup($"[gray][[[/][cyan]{id}[/][gray]]]:[/] ");
-		AnsiConsole.WriteLine(string.Join(" ", data));
+	public void debug(bool prefix, params dynamic[] data) {
+		if(prefix) Logger.pluginDebug(id, data);
+		else Logger.debug(data);
 	}
 
-	public void markup(params dynamic[] data) {
-		markup(true, data);
+	public void info(params dynamic[] data) {
+		Logger.pluginInfo(id, data);
 	}
-	public void markup(bool prefix, params dynamic[] data) {
-		if (prefix) AnsiConsole.Markup($"[gray][[[/][cyan]{id}[/][gray]]]:[/] ");
-		AnsiConsole.MarkupLine(string.Join(" ", data));
+	public void info(bool prefix, params dynamic[] data) {
+		if(prefix) Logger.pluginInfo(id, data);
+		else Logger.info(data);
+	}
+
+	public void markupDebug(params dynamic[] data) {
+		Logger.pluginDebug(id, data);
+	}
+	public void markupDebug(bool prefix, params dynamic[] data) {
+		if(prefix) Logger.pluginMarkupDebug(id, data);
+		else Logger.debugMarkup(data);
+	}
+
+	public void markupInfo(params dynamic[] data) {
+		Logger.pluginMarkupInfo(id, data);
+	}
+	public void markupInfo(bool prefix, params dynamic[] data) {
+		if(prefix) Logger.pluginMarkupInfo(id, data);
+		else Logger.infoMarkup(data);
 	}
 
 	public void addObject(string name, object obj) {
@@ -38,6 +55,8 @@ public abstract class Plugin {
 		ScriptEngine.getInstance().addType(type);
 	}
 
-	public abstract void init();
-	public abstract void shutdown();
+	public virtual void init() {}
+	public virtual void shutdown() {}
+
+	public virtual void commands(CLI.App app) {}
 }
