@@ -1,4 +1,5 @@
 
+using System.Net;
 using Manila.Core;
 using Manila.Scripting;
 using Manila.Utils;
@@ -18,6 +19,8 @@ public abstract class Plugin {
 	/// Gets the metadata associated with the plugin.
 	/// </summary>
 	public PluginManager.Meta meta { get; }
+
+	internal readonly Dictionary<string, Storage> storages = new Dictionary<string, Storage>();
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="Plugin"/> class.
@@ -126,12 +129,20 @@ public abstract class Plugin {
 	/// <summary>
 	/// Initializes the plugin.
 	/// </summary>
-	public virtual void init() { }
+	public virtual void init() {
+		foreach (var e in storages) {
+			var file = FileUtils.getStorage(e.Value, this);
+			if (!file.exists()) file.write("{}");
+			e.Value.deserialize(file);
+		}
+	}
 
 	/// <summary>
 	/// Shuts down the plugin.
 	/// </summary>
-	public virtual void shutdown() { }
+	public virtual void shutdown() {
+		foreach (var e in storages) { e.Value.serialize(FileUtils.getStorage(e.Value, this)); }
+	}
 
 	/// <summary>
 	/// Defines commands for the plugin within a CLI application.

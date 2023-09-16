@@ -49,6 +49,9 @@ class Launcher {
 		} catch (OptionProvidedNotFoundExceptions e) {
 			Console.WriteLine("Could not find option '" + e.option + "' on command '" + e.command.name + "'!");
 			Logger.exception(e);
+		} finally {
+			PluginManager.shutdown();
+			ScriptManager.shutdown();
 		}
 	}
 }

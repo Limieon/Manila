@@ -61,7 +61,7 @@ public static class Logger {
 	}
 
 	internal static void pluginDebug(string id, params dynamic[] data) {
-		if(!verbose) return;
+		if (!verbose) return;
 		AnsiConsole.Markup($"[cyan][[{id}/DEBUG]][/]: ");
 		AnsiConsole.WriteLine(string.Join(" ", data));
 	}
@@ -71,12 +71,12 @@ public static class Logger {
 	}
 
 	internal static void pluginMarkupDebug(string id, params dynamic[] data) {
-		if(!verbose) return;
+		if (!verbose) return;
 		AnsiConsole.Markup($"[cyan][[{id}/DEBUG]][/]: ");
 		AnsiConsole.MarkupLine(string.Join(" ", data));
 	}
 	internal static void pluginMarkupInfo(string id, params dynamic[] data) {
 		AnsiConsole.Markup($"[cyan][[{id}]][/]: ");
-		AnsiConsole.WriteLine(string.Join(" ", data));
+		AnsiConsole.MarkupLine(string.Join(" ", data));
 	}
 }
