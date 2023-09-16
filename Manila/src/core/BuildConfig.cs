@@ -3,9 +3,22 @@ using System.Runtime.InteropServices;
 
 namespace Manila.Core;
 
+/// <summary>
+/// Represents the base of a build configuration
+/// </summary>
 public class BuildConfig {
+	/// <summary>
+	/// Gets the name of the platform (e.g., "windows", "linux", "osx", "freebsd", or "unknown").
+	/// </summary>
 	public readonly string platform;
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="BuildConfig"/> class.
+	/// </summary>
+	/// <remarks>
+	/// This constructor parses command-line arguments prefixed with "--c:" and assigns values to corresponding fields in this class.
+	/// Supported field types include string, int, float, double, and enum types.
+	/// </remarks>
 	public BuildConfig() {
 		platform = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "windows" :
 			RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? "linux" :
@@ -24,6 +37,12 @@ public class BuildConfig {
 				if (field.FieldType.IsEnum) {
 					var func = GetType().GetMethod(field.FieldType.Name.ToLower() + "FromString");
 					field.SetValue(this, func.Invoke(null, new object[] { val }));
+				} else if (field.FieldType == typeof(int)) {
+					field.SetValue(this, int.Parse(val));
+				} else if (field.FieldType == typeof(float)) {
+					field.SetValue(this, float.Parse(val));
+				} else if (field.FieldType == typeof(double)) {
+					field.SetValue(this, double.Parse(val));
 				} else {
 					field.SetValue(this, val);
 				}
