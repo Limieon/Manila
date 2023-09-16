@@ -1,22 +1,9 @@
 
 using System.Runtime.InteropServices;
-using Manila.Utils;
 
 namespace Manila.Core;
 
 public class BuildConfig {
-	public enum Architecture {
-		x86,
-		x64
-	}
-	public static Architecture architectureFromString(string str) {
-		if (str.ToLower() == "x86") return Architecture.x86;
-		if (str.ToLower() == "x64") return Architecture.x64;
-		throw new ArgumentException("String '" + str + "' could not be converted to " + typeof(Architecture).FullName + "!");
-	}
-
-	public string config;
-	public Architecture arch;
 	public readonly string platform;
 
 	public BuildConfig() {
@@ -35,7 +22,7 @@ public class BuildConfig {
 				var field = GetType().GetField(key);
 				if (field == null) throw new FieldAccessException($"Field '{key}' was not found on '{GetType().FullName}'!");
 				if (field.FieldType.IsEnum) {
-					var func = typeof(BuildConfig).GetMethod(field.FieldType.Name.ToLower() + "FromString");
+					var func = GetType().GetMethod(field.FieldType.Name.ToLower() + "FromString");
 					field.SetValue(this, func.Invoke(null, new object[] { val }));
 				} else {
 					field.SetValue(this, val);

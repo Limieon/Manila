@@ -118,6 +118,11 @@ public abstract class Plugin {
 		ScriptManager.addType(type);
 	}
 
+	public void setBuildConfig(BuildConfig config) {
+		if (ScriptManager.buildConfig != null) throw new Exception("Build config has already been set!");
+		ScriptManager.buildConfig = config;
+	}
+
 	/// <summary>
 	/// Initializes the plugin.
 	/// </summary>
