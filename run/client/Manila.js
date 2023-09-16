@@ -7,7 +7,6 @@ task('compile').onExecute(() => {
 	print('Platform:', config.platform)
 	print('Config:', config.config)
 	print('Arch:', config.arch)
-	print('Abc:', config.abc)
 })
 
 task('run')
