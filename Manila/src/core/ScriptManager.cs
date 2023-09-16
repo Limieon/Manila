@@ -20,6 +20,7 @@ public static class ScriptManager {
 
 	internal static List<Scripting.API.Task> tasks = new List<Scripting.API.Task>();
 	internal static Workspace? workspace;
+	internal static BuildConfig? buildConfig;
 
 	internal static ScriptInstance? currentScriptInstance { get; set; }
 
@@ -31,6 +32,9 @@ public static class ScriptManager {
 	internal static void init() {
 		state = State.INITIALIZING;
 		scope = Scope.NONE;
+
+		buildConfig = new BuildConfig();
+		Logger.debug("OS:", buildConfig.platform);
 	}
 
 	internal static void runWorkspaceFile() {
@@ -47,6 +51,10 @@ public static class ScriptManager {
 		scope = Scope.PROJECT;
 		runProjectFiles();
 		scope = Scope.NONE;
+
+		Logger.debug("Platform:", buildConfig.platform);
+		Logger.debug("Config:", buildConfig.config);
+		Logger.debug("Arch:", buildConfig.arch);
 	}
 	private static void runProjectFiles() {
 		Logger.debug("Running project files...");

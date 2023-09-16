@@ -1,3 +1,7 @@
+properties({
+	name: 'TestWorkspace'
+})
+
 Manila.project(regex('.*'), () => {
 	properties({})
 })
@@ -14,8 +18,4 @@ Manila.project(':core', () => {
 		name: 'Core',
 		version: '1.0.0'
 	})
-})
-
-properties({
-	name: 'TestWorkspace'
 })

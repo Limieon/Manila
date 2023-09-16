@@ -61,6 +61,7 @@ namespace Manila.Scripting.API {
 
 		public static Project getProject() { return (Project) ScriptManager.currentScriptInstance; }
 		public static Workspace getWorkspace() { return ScriptManager.workspace; }
+		public static BuildConfig getConfig() { return ScriptManager.buildConfig; }
 
 		public static void project(string filter, ScriptObject func) {
 			if (ScriptManager.scope != ScriptManager.Scope.WORKSPACE) throw new Exception("Function 'project' is only available in the workspace scope!");
