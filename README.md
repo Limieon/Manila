@@ -5,7 +5,7 @@ Manila is a Build System written in C# using JavaScript as it's Build Scripts
 Originally, Manila was intended to be written in TypeScript and used for C# Applications. This is also the origin of the name Manila, as my goal was to implement the Roslyn Compiler Platform into my Build System.
 
 This goal has been changed to support C++ and other programming langues (as long anyone writes a plugin for it).
-z
+
 As this project was getting more advanced, I tried to bundle the TypeScript Sources into an executeable. This was not really possible because I dynamically loaded modules into my project and I cannot mutate an EXE after it has ben built. Also I had compability errors between CommonJS and ModuleJS.
 
 So I decided to switch to C# after I found out about [ClearScript](https://github.com/microsoft/ClearScript), a JavaScript Engine for C#. 
