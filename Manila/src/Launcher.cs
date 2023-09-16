@@ -32,7 +32,7 @@ class Launcher {
 		ScriptManager.init();
 		ScriptManager.runWorkspaceFile();
 		if (args.Length > 0 && args[0].StartsWith(":")) {
-			ScriptManager.getTask(args[0][1..]).execute();
+			ScriptManager.getTask(args[0]).execute();
 		}
 
 		try {

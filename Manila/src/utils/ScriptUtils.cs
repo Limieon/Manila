@@ -23,4 +23,9 @@ public static class ScriptUtils {
 
 		return o;
 	}
+
+	public static string getTaskName(Scripting.API.Task task) {
+		if (task.project == null) { return task.name; }
+		return task.project.id + task.name;
+	}
 }

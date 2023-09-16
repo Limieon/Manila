@@ -98,7 +98,17 @@ public static class ScriptManager {
 	/// <param name="task">The name</param>
 	/// <returns>the Task</returns>
 	public static Scripting.API.Task getTask(string task) {
-		foreach (Scripting.API.Task t in tasks) { if (t.name == task) return t; }
+		List<string> tasks = new List<string>();
+		foreach (var t in ScriptManager.tasks) {
+			if (ScriptUtils.getTaskName(t) == task) return t;
+			if (t.name == task || ScriptUtils.getTaskName(t) == task) tasks.Add(ScriptUtils.getTaskName(t));
+		}
+
+		if (tasks.Count == 0) throw new TaskNotFoundException(task);
+		if (tasks.Count > 1) throw new Exception("Task '" + task + "' is not unique!");
+
+		foreach (Scripting.API.Task t in ScriptManager.tasks) { if (ScriptUtils.getTaskName(t) == tasks[0]) return t; }
+
 		throw new TaskNotFoundException(task);
 	}
 	/// <summary>
@@ -107,14 +117,10 @@ public static class ScriptManager {
 	/// <param name="task">the task name</param>
 	/// <returns>true: exists</returns>
 	public static bool hasTask(string task) {
-		bool found = false;
-		foreach (Scripting.API.Task t in tasks) {
-			if (t.name == task) {
-				found = true;
-				break;
-			}
+		foreach (var t in ScriptManager.tasks) {
+			if (t.name == task || ScriptUtils.getTaskName(t) == task) return true;
 		}
-		return found;
+		return false;
 	}
 	/// <summary>
 	/// Runs a task by it's name

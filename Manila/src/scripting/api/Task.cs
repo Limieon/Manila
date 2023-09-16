@@ -16,12 +16,16 @@ namespace Manila.Scripting.API {
 		private List<string> dependencies;
 		private Func<bool>? func;
 
+		internal readonly Project? project;
+
 		/// <summary>
 		/// Creates a new task
 		/// </summary>
 		/// <param name="name">the name of the task</param>
 		public Task(string name) {
-			this.name = name;
+			if (ScriptManager.scope == ScriptManager.Scope.PROJECT) project = (Project) ScriptManager.currentScriptInstance;
+
+			this.name = ":" + name;
 			dependencies = new List<string>();
 		}
 

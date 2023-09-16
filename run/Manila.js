@@ -19,13 +19,3 @@ Manila.project(':core', () => {
 properties({
 	name: 'TestWorkspace'
 })
-
-task('compile').onExecute(() => {
-	print('Compiling...')
-})
-
-task('run')
-	.dependsOn('compile')
-	.onExecute(() => {
-		print('Running...')
-	})
