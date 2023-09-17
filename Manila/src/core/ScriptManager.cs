@@ -151,12 +151,26 @@ public static class ScriptManager {
 		}
 		return false;
 	}
+
+	public static List<Scripting.API.Task> getTasksRec(Scripting.API.Task task, List<Scripting.API.Task> tasks = null) {
+		if (tasks == null) tasks = new List<Scripting.API.Task>();
+
+		foreach (var d in task.getDependencies())
+			if (!tasks.Contains(d)) tasks = getTasksRec(d, tasks);
+
+		if (!tasks.Contains(task)) tasks.Add(task);
+
+		return tasks;
+	}
+
 	/// <summary>
-	/// Runs a task by it's name
+	/// Executes a task by it's name (also runs dependant tasks)
 	/// </summary>
-	/// <param name="task">the name of the task</param>
+	/// <param name="task">the task to execute</param>
 	/// <returns>true: task succeded, false: task failed</returns>
-	public static bool runTask(string task) {
+	public static bool executeTask(Scripting.API.Task task) {
+		var order = getTasksRec(task);
+		foreach (var o in order) o.execute();
 		return true;
 	}
 

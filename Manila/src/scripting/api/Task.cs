@@ -57,12 +57,20 @@ public class Task {
 	/// <returns>false: task returned false, true: task did not return false</returns>
 	/// <exception cref="TaskNotFoundException"></exception>
 	public bool execute() {
-		foreach (string s in dependencies) {
-			if (!ScriptManager.hasTask(s)) throw new TaskNotFoundException(s, this);
-			ScriptManager.getTask(s).execute();
-		}
-
 		// Function cannot be null, as task only gets registered when the functon has been set
 		return func.Invoke();
+	}
+
+	/// <summary>
+	/// Returns a list of directly dependant tasks
+	/// </summary>
+	/// <exception cref="TaskNotFoundException"></exception>
+	public List<Task> getDependencies() {
+		List<Task> res = new List<Task>();
+		foreach (var d in dependencies) {
+			if (!ScriptManager.hasTask(d)) throw new TaskNotFoundException(d, this);
+			res.Add(ScriptManager.getTask(d));
+		}
+		return res;
 	}
 }

@@ -13,9 +13,9 @@ Manila.project(':client', () => {
 	})
 })
 
-Manila.project(':core', () => {
+Manila.project(':tests:client', () => {
 	properties({
-		name: 'Core',
+		name: 'Client-Tests',
 		version: '1.0.0'
 	})
 })

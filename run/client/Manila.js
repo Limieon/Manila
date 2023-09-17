@@ -1,5 +1,5 @@
 task('compile').onExecute(() => {
-	print('Compiling...')
+	print('Compiling Client...')
 
 	const config = Manila.getConfig()
 	print('Platform:', config.platform)
@@ -9,6 +9,7 @@ task('compile').onExecute(() => {
 
 task('run')
 	.dependsOn(':client:compile')
+	.dependsOn(':tests:client:run')
 	.onExecute(() => {
 		print('Running...')
 	})

@@ -60,7 +60,7 @@ class Launcher {
 				}
 
 				try {
-					ScriptManager.getTask(args[0]).execute();
+					ScriptManager.executeTask(ScriptManager.getTask(args[0]));
 				} catch (TaskNotFoundException e) {
 					Logger.infoMarkup($"[red]Task[/] [yellow]{e.name}[/] [red]could not be found![/]");
 					Logger.exception(e);

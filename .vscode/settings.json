@@ -4,5 +4,9 @@
 		"**/bin-int/": false,
 		"**/obj/": false,
 		"**/Properties/": false
+	},
+	"files.associations": {
+		"*.embeddedhtml": "html",
+		"iostream": "cpp"
 	}
 }
