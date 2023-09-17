@@ -1,14 +1,12 @@
 ﻿
 using Manila.Commands;
 using Manila.Plugin;
-using Manila.Scripting;
 using Manila.Utils;
 using Manila.CLI.Exceptions;
 using Manila.Core;
 using Spectre.Console;
-using Manila.Scripting.API;
-using Manila.Data;
 using Manila.Scripting.Exceptions;
+using Manila.Core.Exceptions;
 
 namespace Manila;
 
@@ -48,8 +46,8 @@ class Launcher {
 					Logger.exception(e);
 
 					return;
-				} catch (KeyNotFoundException e) {
-					Logger.infoMarkup($"{e.Message.Replace("Object", "Project")}");
+				} catch (PropertyNotFoundException e) {
+					Logger.infoMarkup($"[red]Project[/] [blue]{e.project.id}[/] [red]does not contain property[/] [blue]{e.property}[/][red]![/]");
 					Logger.exception(e);
 
 					return;

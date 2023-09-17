@@ -1,4 +1,6 @@
 
+using System.Text.RegularExpressions;
+using Manila.Core.Exceptions;
 using Manila.Data;
 using Manila.Scripting;
 using Manila.Scripting.API;
@@ -78,7 +80,15 @@ public static class ScriptManager {
 
 	private static void runProjectFile(ManilaFile file) {
 		Logger.debug("Running project file", file.getPathRelative(workspace.location.getPath()));
-		Project p = new Project(":" + file.getFileDirHandle().getPathRelative(workspace.location.getPath()).Replace(Path.PathSeparator, ':'), file.getFileDirHandle(), workspace);
+		var projectID = file.getFileDirHandle().getPathRelative(workspace.location.getPath());
+		while (projectID.Contains('/')) {
+			projectID = projectID.Replace('/', ':');
+		}
+		while (projectID.Contains('\\')) {
+			projectID = projectID.Replace('\\', ':');
+		}
+
+		Project p = new Project(":" + projectID, file.getFileDirHandle(), workspace);
 		currentScriptInstance = p;
 
 		Logger.debug($"ID: '{p.id}'");
@@ -86,8 +96,13 @@ public static class ScriptManager {
 		workspace.runFilters(p);
 
 		engine.run(file.getPath());
-		p.name = currentScriptInstance.getProperty("name");
-		p.version = currentScriptInstance.getProperty("version");
+
+		try {
+			p.name = currentScriptInstance.getProperty("name");
+			p.version = currentScriptInstance.getProperty("version");
+		} catch (KeyNotFoundException e) {
+			throw new PropertyNotFoundException(p, new Regex("'(.*?)'").Match(e.Message).Captures[0].Value);
+		}
 
 		Logger.debug("Name:", p.name);
 		Logger.debug("Version:", p.version);
@@ -131,7 +146,7 @@ public static class ScriptManager {
 	/// <param name="task">the task name</param>
 	/// <returns>true: exists</returns>
 	public static bool hasTask(string task) {
-		foreach (var t in ScriptManager.tasks) {
+		foreach (var t in tasks) {
 			if (t.name == task || ScriptUtils.getTaskName(t) == task) return true;
 		}
 		return false;
