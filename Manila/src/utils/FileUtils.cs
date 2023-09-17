@@ -12,18 +12,20 @@ public static class FileUtils {
 
 	public static ManilaDirectory dataDirectory { get; private set; }
 
+	public static ManilaFile workspaceFile { get; private set; }
+
 	/// <summary>
 	/// Initilizes the File Utilites
 	/// </summary>
 	/// <param name="rootDir">the working directory</param>
 	public static void init(ManilaDirectory rootDir) {
+		workspaceFile = rootDir.file("workspace.manila");
+
 		manilaDirectory = rootDir.join(".manila");
 		pluginsDirectory = manilaDirectory.join("plugins");
 		dataDirectory = manilaDirectory.join("data");
 
 		pluginsFile = manilaDirectory.file("plugins.manila");
-
-		manilaDirectory.create();
 
 		Logger.debug("Manila Dir:", manilaDirectory.getPath());
 		Logger.debug("Plugins Dir:", pluginsDirectory.getPath());

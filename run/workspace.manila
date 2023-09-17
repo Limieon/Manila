@@ -1,0 +1,5 @@
+{
+  "name": "TestWorkspace",
+  "authors": ["Limieon"],
+  "projects": ["client"]
+}

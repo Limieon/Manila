@@ -1,4 +1,5 @@
 
+using Manila.Data;
 using Manila.Scripting;
 using Manila.Scripting.API;
 using Manila.Scripting.Exceptions;
@@ -20,8 +21,10 @@ public static class ScriptManager {
 	}
 
 	internal static List<Scripting.API.Task> tasks = new List<Scripting.API.Task>();
-	internal static Workspace? workspace;
+	internal static Core.Workspace? workspace;
 	internal static BuildConfig? buildConfig = null;
+
+	public static Data.Workspace? workspaceData = null;
 
 	internal static ScriptInstance? currentScriptInstance { get; set; }
 
@@ -30,7 +33,9 @@ public static class ScriptManager {
 	internal static State state { get; private set; }
 	internal static Scope scope { get; private set; }
 
-	internal static void init() {
+	internal static void init(Data.Workspace workspace) {
+		workspaceData = workspace;
+
 		state = State.INITIALIZING;
 		scope = Scope.NONE;
 	}
@@ -58,9 +63,12 @@ public static class ScriptManager {
 	private static void runProjectFiles() {
 		Logger.debug("Running project files...");
 
-		var files = workspace.location.files(true, (f) => {
-			return f.EndsWith("Manila.js") && (new ManilaFile(f).getPathRelative(workspace.location.getPath()) != "Manila.js");
-		});
+		var files = new List<ManilaFile>();
+		foreach (var p in workspaceData.data.projects) {
+			var f = new ManilaFile(p, "Manila.js");
+			if (!f.exists()) throw new FileNotFoundException("Project located in '" + f.getFileDir() + "' does not contain a Manila.js buildfile!");
+			files.Add(f);
+		}
 
 		foreach (var f in files) {
 			runProjectFile(f);
