@@ -5,6 +5,7 @@ using Manila.Scripting;
 using Manila.Utils;
 using Manila.CLI.Exceptions;
 using Manila.Core;
+using Spectre.Console;
 
 namespace Manila;
 
@@ -13,6 +14,7 @@ class Launcher {
 #if DEBUG
 		Directory.SetCurrentDirectory("../run/");
 #endif
+		AnsiConsole.Write(new FigletText(FigletFont.Parse(CLI.Fonts.Doom.get()), "Manila").LeftJustified().Color(Color.DodgerBlue3));
 
 		var verbose = false;
 		foreach (var s in args) {
@@ -25,19 +27,21 @@ class Launcher {
 		var app = new CLI.App("Manila", "A Build System written in [green4]C#[/] using [yellow]JavaScript[/] as Build Scripts");
 
 		Logger.debug("Root Dir:", rootDir.getPath());
-		FileUtils.init(rootDir);
-		PluginManager.init();
-		PluginManager.loadPlugins(app);
+		if (rootDir.join(".manila").exists()) {
+			FileUtils.init(rootDir);
+			PluginManager.init();
+			PluginManager.loadPlugins(app);
 
-		ScriptManager.init();
-		ScriptManager.runWorkspaceFile();
-		if (args.Length > 0 && args[0].StartsWith(":")) {
-			ScriptManager.getTask(args[0]).execute();
+			ScriptManager.init();
+			ScriptManager.runWorkspaceFile();
+			if (args.Length > 0 && args[0].StartsWith(":")) {
+				ScriptManager.getTask(args[0]).execute();
+			}
 		}
 
 		try {
 			app.setDefaultCommand(new CommandManila())
-				.setHelpCommand(new CommandHelp())
+				.setHelpCommand(new Commands.CommandHelp())
 				.addCommand(new CommandInit())
 				.parse(args);
 		} catch (ParameterNotProivdedException e) {

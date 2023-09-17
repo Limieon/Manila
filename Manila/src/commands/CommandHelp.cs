@@ -16,12 +16,8 @@ internal class CommandHelp : CLI.CommandHelp {
 		}
 		return o;
 	}
-	private void printLogo() {
-		AnsiConsole.Write(new FigletText(FigletFont.Parse(CLI.Fonts.Doom.get()), "Manila").LeftJustified().Color(Color.DodgerBlue3));
-	}
 
 	public override void printHelp(CLI.App a) {
-		printLogo();
 		AnsiConsole.MarkupLine($"{a.description}\n");
 
 		AnsiConsole.MarkupLine($"[purple]Usage:[/] {a.name.ToLower()} [gray][[[/][deepskyblue3_1]command[/][gray]]][/] [gray][[[/][deepskyblue3_1]options[/][gray]]][/]\n");
@@ -37,7 +33,6 @@ internal class CommandHelp : CLI.CommandHelp {
 		AnsiConsole.Write(table);
 	}
 	public override void printHelp(CLI.Command c) {
-		printLogo();
 		AnsiConsole.MarkupLine($"{c.description}\n");
 
 		AnsiConsole.MarkupLine($"[purple]Usage:[/] {c.name} {parseParameters(c)} [gray][[[/][deepskyblue3_1]options[/][gray]]][/]\n");

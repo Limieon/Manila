@@ -19,6 +19,8 @@ public static class PluginManager {
 	public static List<API.Plugin> plugins { get; private set; }
 	private static Dictionary<string, Meta> pluginMetas;
 
+	private static bool initialized { get; set; }
+
 	public static void loadPlugins(CLI.App app) {
 		plugins = PLUGIN_ROOT.files().SelectMany(f => {
 			Assembly pluginAssembly = loadPlugin(f.getPath());
@@ -35,6 +37,8 @@ public static class PluginManager {
 		if (!FileUtils.pluginsFile.exists()) { FileUtils.pluginsFile.write("{}"); }
 		pluginMetas = FileUtils.pluginsFile.deserializeJSON<Dictionary<string, Meta>>();
 		FileUtils.pluginsFile.serializeJSON(pluginMetas, true);
+
+		initialized = true;
 	}
 
 	/// <summary>
@@ -49,10 +53,10 @@ public static class PluginManager {
 
 	private static Assembly loadPlugin(string relPath) {
 		string root = Path.GetFullPath(relPath);
-		Console.WriteLine(root);
+		Logger.debug("Root:", root);
 
 		string pluginLocation = root;
-		Console.WriteLine($"Loading plugins from: {pluginLocation}");
+		Logger.debug($"Loading plugins from: {pluginLocation}");
 		PluginLoadContext loadContext = new PluginLoadContext(pluginLocation);
 		return loadContext.LoadFromAssemblyName(new AssemblyName(Path.GetFileNameWithoutExtension(pluginLocation)));
 	}
@@ -78,6 +82,7 @@ public static class PluginManager {
 	}
 
 	public static void shutdown() {
+		if (!initialized) return;
 		foreach (var p in plugins) {
 			p.shutdown();
 		}

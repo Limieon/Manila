@@ -23,5 +23,6 @@ public abstract class Command {
 		return this;
 	}
 
-	public abstract void onExecute(Dictionary<string, object> parameters, Dictionary<string, object> options);
+	public virtual void onExecute(Dictionary<string, object> parameters, Dictionary<string, object> options) { }
+	public virtual void onExecute(Dictionary<string, object> parameters, Dictionary<string, object> options, App app) { }
 }

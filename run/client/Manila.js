@@ -1,5 +1,3 @@
-print('Name:', Manila.getProject().name)
-
 task('compile').onExecute(() => {
 	print('Compiling...')
 

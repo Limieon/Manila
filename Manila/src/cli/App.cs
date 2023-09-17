@@ -28,6 +28,10 @@ namespace Manila.CLI {
 			return this;
 		}
 
+		public void runHelpCommand() {
+			helpCommand?.printHelp(this);
+		}
+
 		public void parse(string[] args) {
 			List<string> parameters = new List<string>();
 			Dictionary<string, object> options = new Dictionary<string, object>();
@@ -56,7 +60,8 @@ namespace Manila.CLI {
 			}
 
 			if (parameters.Count < 1) {
-				this.defaultCommand?.onExecute(new Dictionary<string, object>(), options);
+				defaultCommand?.onExecute(new Dictionary<string, object>(), options);
+				defaultCommand?.onExecute(new Dictionary<string, object>(), options, this);
 				return;
 			}
 
@@ -77,7 +82,7 @@ namespace Manila.CLI {
 
 					foreach (KeyValuePair<string, object> entry in options) {
 						if (c.options.ContainsKey(entry.Key)) {
-							parsedOpts.Add(entry.Key, c.options[entry.Key].parse(entry.Value));
+							parsedOpts[entry.Key] = c.options[entry.Key].parse(entry.Value);
 						} else {
 							parsedOpts.Add(entry.Key, entry.Value);
 						}
@@ -97,6 +102,7 @@ namespace Manila.CLI {
 					}
 
 					c.onExecute(parsedParams, parsedOpts);
+					c.onExecute(parsedParams, parsedOpts, this);
 				}
 			}
 		}

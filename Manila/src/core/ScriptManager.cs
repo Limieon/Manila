@@ -10,7 +10,8 @@ public static class ScriptManager {
 	public enum State {
 		NONE,
 		INITIALIZING,
-		RUNNING
+		RUNNING,
+		NO_SCRIPTS
 	}
 	public enum Scope {
 		NONE,
@@ -40,6 +41,11 @@ public static class ScriptManager {
 		workspace = new Workspace(new ManilaDirectory("."));
 		currentScriptInstance = workspace;
 		scope = Scope.WORKSPACE;
+
+		if (!new ManilaFile("Manila.js").exists()) {
+			Logger.debug("No script environment!");
+			return;
+		}
 		engine.run("Manila.js");
 		workspace.name = (string) currentScriptInstance.getProperty("name");
 

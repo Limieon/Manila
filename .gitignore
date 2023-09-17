@@ -3,6 +3,7 @@
 **/bin-int/
 **/obj/
 run/core
+test/
 
 # VSCode
 .VSCodeCounter/
