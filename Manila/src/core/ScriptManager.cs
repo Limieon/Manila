@@ -48,11 +48,10 @@ public static class ScriptManager {
 		scope = Scope.WORKSPACE;
 
 		if (!new ManilaFile("Manila.js").exists()) {
-			Logger.debug("No script environment!");
-			return;
+			throw new Exception("No script environment!");
 		}
 		engine.run("Manila.js");
-		workspace.name = (string) currentScriptInstance.getProperty("name");
+		workspace.name = workspaceData.data.name;
 
 		Logger.debug("Workspace Name:", workspace.name);
 
@@ -66,7 +65,7 @@ public static class ScriptManager {
 		var files = new List<ManilaFile>();
 		foreach (var p in workspaceData.data.projects) {
 			var f = new ManilaFile(p, "Manila.js");
-			if (!f.exists()) throw new FileNotFoundException("Project located in '" + f.getFileDir() + "' does not contain a Manila.js buildfile!");
+			if (!f.exists()) throw new FileNotFoundException("Project located in [blue]" + f.getFileDir() + "[/] does not contain a [yellow]Manila.js buildfile[/]!");
 			files.Add(f);
 		}
 

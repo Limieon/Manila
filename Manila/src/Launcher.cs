@@ -8,6 +8,7 @@ using Manila.Core;
 using Spectre.Console;
 using Manila.Scripting.API;
 using Manila.Data;
+using Manila.Scripting.Exceptions;
 
 namespace Manila;
 
@@ -27,19 +28,47 @@ class Launcher {
 
 		var rootDir = Scripting.API.Manila.dir(Directory.GetCurrentDirectory());
 		var app = new CLI.App("Manila", "A Build System written in [green4]C#[/] using [yellow]JavaScript[/] as Build Scripts");
-		FileUtils.init(rootDir);
 
 		var workspace = new Data.Workspace();
+		FileUtils.init(rootDir, workspace.data.name != null);
 
 		Logger.debug("Root Dir:", rootDir.getPath());
 		if (rootDir.join(".manila").exists() && workspace.data.name != null) {
 			PluginManager.init();
 			PluginManager.loadPlugins(app);
 
-			ScriptManager.init(workspace);
-			ScriptManager.runWorkspaceFile();
+
 			if (args.Length > 0 && args[0].StartsWith(":")) {
-				ScriptManager.getTask(args[0]).execute();
+				ScriptManager.init(workspace);
+
+				try {
+					ScriptManager.runWorkspaceFile();
+				} catch (FileNotFoundException e) {
+					Logger.infoMarkup($"[red]{e.Message}[/]");
+					Logger.exception(e);
+
+					return;
+				} catch (KeyNotFoundException e) {
+					Logger.infoMarkup($"{e.Message.Replace("Object", "Project")}");
+					Logger.exception(e);
+
+					return;
+				} catch (Exception e) {
+					Logger.infoMarkup("[red]Could not find[/] [yellow]Manila.js[/] [red]build script![/]");
+					Logger.infoMarkup("Directory does not seem to be a [blue]script environment[/]!");
+					Logger.exception(e);
+
+					return;
+				}
+
+				try {
+					ScriptManager.getTask(args[0]).execute();
+				} catch (TaskNotFoundException e) {
+					Logger.infoMarkup($"[red]Task[/] [yellow]{e.name}[/] [red]could not be found![/]");
+					Logger.exception(e);
+
+					return;
+				}
 			}
 		}
 

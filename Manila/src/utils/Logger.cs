@@ -58,7 +58,7 @@ public static class Logger {
 	/// <param name="e">the exception</param>
 	public static void exception(Exception e) {
 		if (!verbose) return;
-		AnsiConsole.WriteException(e, ExceptionFormats.Default);
+		AnsiConsole.WriteException(e);
 	}
 
 	internal static void pluginDebug(string id, params dynamic[] data) {

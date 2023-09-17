@@ -18,7 +18,7 @@ public static class FileUtils {
 	/// Initilizes the File Utilites
 	/// </summary>
 	/// <param name="rootDir">the working directory</param>
-	public static void init(ManilaDirectory rootDir) {
+	public static void init(ManilaDirectory rootDir, bool create) {
 		workspaceFile = rootDir.file("workspace.manila");
 
 		manilaDirectory = rootDir.join(".manila");
@@ -30,6 +30,12 @@ public static class FileUtils {
 		Logger.debug("Manila Dir:", manilaDirectory.getPath());
 		Logger.debug("Plugins Dir:", pluginsDirectory.getPath());
 		Logger.debug("Plugins File:", pluginsFile.getPath());
+
+		if (create) {
+			manilaDirectory.create();
+			pluginsDirectory.create();
+			dataDirectory.create();
+		}
 	}
 
 	public static ManilaFile getStorage(Storage storage, Plugin.API.Plugin plugin) {
