@@ -27,9 +27,13 @@ public static class FileUtils {
 
 		pluginsFile = manilaDirectory.file("plugins.manila");
 
+		Logger.debug("--- FileUtils Info ---");
+		Logger.debug("Workspace File:", workspaceFile.getPath());
 		Logger.debug("Manila Dir:", manilaDirectory.getPath());
 		Logger.debug("Plugins Dir:", pluginsDirectory.getPath());
+		Logger.debug("Data Dir:", dataDirectory.getPath());
 		Logger.debug("Plugins File:", pluginsFile.getPath());
+		Logger.debug("--- FileUtils Info ---");
 
 		if (create) {
 			manilaDirectory.create();
