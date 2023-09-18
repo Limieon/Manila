@@ -43,7 +43,14 @@ public class BuildConfig {
 					field.SetValue(this, float.Parse(val));
 				} else if (field.FieldType == typeof(double)) {
 					field.SetValue(this, double.Parse(val));
-				} else {
+				} else if (field.FieldType == typeof(string)) {
+					var validField = GetType().GetField($"{field.Name}_VALID".ToUpper());
+					if (validField != null) {
+						var valid = (List<string>) validField.GetValue(null);
+						foreach (var v in valid) { System.Console.WriteLine(v); }
+
+						if (!valid.Contains(val)) throw new Exception($"Config '{field.Name}' has an invliad value!");
+					}
 					field.SetValue(this, val);
 				}
 			}

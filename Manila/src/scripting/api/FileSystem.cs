@@ -163,6 +163,10 @@ public class ManilaFile {
 	/// </summary>
 	public string getFileDir() { return Path.GetDirectoryName(path); }
 	public ManilaDirectory getFileDirHandle() { return new ManilaDirectory(getFileDir()); }
+
+	public ManilaFile setExtension(string e) {
+		return new ManilaFile(Path.Join(Path.GetDirectoryName(path), $"{Path.GetFileNameWithoutExtension(path)}.{e}"));
+	}
 }
 
 /// <summary>
