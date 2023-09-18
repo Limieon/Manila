@@ -13,7 +13,7 @@ public class ManilaFile {
 	/// </summary>
 	public string path { get; }
 
-	internal ManilaFile(params string[] path) {
+	public ManilaFile(params string[] path) {
 		if (path.Length < 1) throw new ArgumentException("Argument 'path' must contain at least one valid path!");
 		var inPath = Path.IsPathRooted(path[0]) ? "" : Directory.GetCurrentDirectory();
 		foreach (var p in path) {
@@ -24,6 +24,10 @@ public class ManilaFile {
 		else this.path = Path.Join(Directory.GetCurrentDirectory(), inPath);
 
 		if (File.Exists(this.path) && File.GetAttributes(this.path) == FileAttributes.Directory) throw new ArgumentException("The path '" + this.path + "' is a directory!");
+	}
+	public ManilaFile(ManilaDirectory dir, string file) {
+		path = Path.Join(dir.getPath(), file);
+
 	}
 
 	/// <summary>
@@ -170,7 +174,7 @@ public class ManilaDirectory {
 	/// </summary>
 	public string path { get; }
 
-	internal ManilaDirectory(params string[] path) {
+	public ManilaDirectory(params string[] path) {
 		if (path.Length < 1) throw new ArgumentException("Argument 'path' must contain at least one valid path!");
 		var inPath = Path.IsPathRooted(path[0]) ? "" : Directory.GetCurrentDirectory();
 		foreach (var p in path) {
@@ -178,8 +182,10 @@ public class ManilaDirectory {
 		}
 
 		this.path = inPath;
-		//if (Directory.Exists(this.path) && File.GetAttributes(this.path) != FileAttributes.Directory) throw new ArgumentException("The path '" + this.path + "' is not a directory!");
 	}
+	public ManilaDirectory(ManilaDirectory root, params string[] path) : this(Path.Join(root.getPath(), string.Join(Path.PathSeparator, path))) {
+	}
+
 	/// <summary>
 	/// Joins a path to the current path
 	/// </summary>
@@ -197,7 +203,7 @@ public class ManilaDirectory {
 	/// </summary>
 	/// <param name="func">the function to filter the files files</param>
 	/// <param name="deep">flag to indicate whether subdirectories should also be searched</param>
-	public List<ManilaFile> files(ScriptObject? func = null, bool deep = false) {
+	public ManilaFile[] files(ScriptObject? func = null, bool deep = false) {
 		List<ManilaFile> result = new List<ManilaFile>();
 
 		if (deep) {
@@ -216,7 +222,7 @@ public class ManilaDirectory {
 			}
 		}
 
-		return result;
+		return result.ToArray();
 	}
 
 	/// <summary>
@@ -251,7 +257,7 @@ public class ManilaDirectory {
 	/// </summary>
 	/// <param name="func">the function to filter the files files</param>
 	/// <param name="deep">flag to indicate whether subdirectories should also be searched</param>
-	public List<ManilaFile> files(bool deep) {
+	public ManilaFile[] files(bool deep) {
 		return files(null, deep);
 	}
 
