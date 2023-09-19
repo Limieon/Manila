@@ -4,13 +4,7 @@ const workspace = Manila.getWorkspace()
 let binary = undefined
 
 task('compile').onExecute(async () => {
-	Manila.print('Compiling Client...')
-
 	const config = Manila.getConfig()
-	Manila.print('Platform:', config.platform)
-	Manila.print('Config:', config.config)
-	Manila.print('Arch:', config.arch)
-
 	const flags = ManilaCPP.clangFlags()
 	flags.name = project.name
 	flags.binDir = Manila.dir(project.location).join('bin').join(config.platform).join(`${config.config}-${config.arch}`).join(flags.name)
@@ -20,17 +14,30 @@ task('compile').onExecute(async () => {
 		.join(`${config.config}-${config.arch}`)
 		.join(flags.name)
 
-	flags.files = Manila.dir(project.location)
+	const files = Manila.dir(project.location)
 		.join('src')
 		.files(f => f.endsWith('.cpp') || f.endsWith('.c'), true)
 
-	await sleep(5000)
-	const res = ManilaCPP.clangCompile(flags, project, workspace)
-	binary = res.binary
+	const objFiles = []
+	var numFile = 1
+
+	markup(
+		`[gray]Compiling[/] [blue]${workspace.name}[/][gray]/[/][blue]${
+			project.name
+		}[/] [gray]=>[/] [magenta]${flags.binDir.getPath()}[/][gray]...[/]`
+	)
+	for (const file of files) {
+		markup(`[yellow]${numFile}[/][gray]/[/][green]${files.Length}[/] [gray]>[/] [magenta]${file.getFileName()}[/]`)
+
+		objFiles.push(ManilaCPP.clangCompile(flags, project, workspace, file).objFile)
+	}
+	const linkerRes = ManilaCPP.clangLink(flags, project, workspace, objFiles)
+
+	binary = linkerRes.binary
 })
 
 task('run')
 	.dependsOn(':client:compile')
 	.onExecute(async () => {
-		//Manila.print('Executing', binary.getPath())
+		Manila.print('Executing', binary.getPath())
 	})
