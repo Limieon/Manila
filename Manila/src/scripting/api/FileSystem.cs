@@ -13,6 +13,11 @@ public class ManilaFile {
 	/// </summary>
 	public string path { get; }
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="ManilaFile"/> class with one or more file paths
+	/// </summary>
+	/// <param name="path">An array of file paths</param>
+	/// <exception cref="ArgumentException">Thrown if the 'path' argument is empty</exception>
 	public ManilaFile(params string[] path) {
 		if (path.Length < 1) throw new ArgumentException("Argument 'path' must contain at least one valid path!");
 		var inPath = Path.IsPathRooted(path[0]) ? "" : Directory.GetCurrentDirectory();
@@ -25,6 +30,11 @@ public class ManilaFile {
 
 		if (File.Exists(this.path) && File.GetAttributes(this.path) == FileAttributes.Directory) throw new ArgumentException("The path '" + this.path + "' is a directory!");
 	}
+	/// <summary>
+	/// Initializes a new instance of the <see cref="ManilaFile"/> class based on a directory and file name.
+	/// </summary>
+	/// <param name="dir">The directory where the file is located.</param>
+	/// <param name="file">The name of the file.</param>
 	public ManilaFile(ManilaDirectory dir, string file) {
 		path = Path.Join(dir.getPath(), file);
 
@@ -162,8 +172,17 @@ public class ManilaFile {
 	/// Gets the path where the file is located in
 	/// </summary>
 	public string getFileDir() { return Path.GetDirectoryName(path); }
+	/// <summary>
+	/// Gets the directory handle of the file
+	/// </summary>
+	/// <returns>A <see cref="ManilaDirectory"/> representing the directory of the file</returns>
 	public ManilaDirectory getFileDirHandle() { return new ManilaDirectory(getFileDir()); }
 
+	/// <summary>
+	/// Sets the file extension of the current ManilaFile
+	/// </summary>
+	/// <param name="e">The new file extension (without a dot)</param>
+	/// <returns>A new <see cref="ManilaFile"/> instance with the updated file extension</returns>
 	public ManilaFile setExtension(string e) {
 		return new ManilaFile(Path.Join(Path.GetDirectoryName(path), $"{Path.GetFileNameWithoutExtension(path)}.{e}"));
 	}
@@ -178,6 +197,11 @@ public class ManilaDirectory {
 	/// </summary>
 	public string path { get; }
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="ManilaDirectory"/> class with the specified path.
+	/// </summary>
+	/// <param name="path">An array of strings representing the directory path. Must contain at least one valid path.</param>
+	/// <exception cref="ArgumentException">Thrown when the <paramref name="path"/> array is empty.</exception>
 	public ManilaDirectory(params string[] path) {
 		if (path.Length < 1) throw new ArgumentException("Argument 'path' must contain at least one valid path!");
 		var inPath = Path.IsPathRooted(path[0]) ? "" : Directory.GetCurrentDirectory();
@@ -187,6 +211,11 @@ public class ManilaDirectory {
 
 		this.path = inPath;
 	}
+	/// <summary>
+	/// Initializes a new instance of the <see cref="ManilaDirectory"/> class with the specified path relative to a root directory
+	/// </summary>
+	/// <param name="root">The root directory</param>
+	/// <param name="path">An array of strings representing the relative directory path</param>
 	public ManilaDirectory(ManilaDirectory root, params string[] path) : this(Path.Join(root.getPath(), string.Join(Path.PathSeparator, path))) {
 	}
 
@@ -259,7 +288,6 @@ public class ManilaDirectory {
 	/// <summary>
 	/// Gets the list of files contained in a directory
 	/// </summary>
-	/// <param name="func">the function to filter the files files</param>
 	/// <param name="deep">flag to indicate whether subdirectories should also be searched</param>
 	public ManilaFile[] files(bool deep) {
 		return files(null, deep);

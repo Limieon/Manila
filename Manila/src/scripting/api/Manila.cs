@@ -60,18 +60,42 @@ public static class Manila {
 		return new ManilaDirectory(dir.path);
 	}
 
+	/// <summary>
+	/// Gets the current project
+	/// </summary>
 	public static Project getProject() { return (Project) ScriptManager.currentScriptInstance; }
+	/// <summary>
+	/// Gets the current workspace
+	/// </summary>
 	public static Workspace getWorkspace() { return ScriptManager.workspace; }
+	/// <summary>
+	/// Gets the build configuration
+	/// </summary>
 	public static object getConfig() { return ScriptManager.buildConfig; }
 
+	/// <summary>
+	/// Adds a project filter using a string filter
+	/// </summary>
+	/// <param name="filter">The string filter to apply</param>
+	/// <param name="func">The script function to execute</param>
 	public static void project(string filter, ScriptObject func) {
 		if (ScriptManager.scope != ScriptManager.Scope.WORKSPACE) throw new Exception("Function 'project' is only available in the workspace scope!");
 		ScriptManager.workspace.addProjectFilter(new ProjectFilter.SpecificFilter(filter, func));
 	}
+	/// <summary>
+	/// Adds a project filter using a regular expression filter
+	/// </summary>
+	/// <param name="filter">The regular expression filter to apply</param>
+	/// <param name="func">The script function to execute</param>
 	public static void project(Regex filter, ScriptObject func) {
 		if (ScriptManager.scope != ScriptManager.Scope.WORKSPACE) throw new Exception("Function 'project' is only available in the workspace scope!");
 		ScriptManager.workspace.addProjectFilter(new ProjectFilter.RegexFilter(filter, func));
 	}
+	/// <summary>
+	/// Adds a project filter using a string[] filter to allow for multiple projects
+	/// </summary>
+	/// <param name="filter">The script object filter to apply</param>
+	/// <param name="func">The script function to execute</param>
 	public static void project(ScriptObject filter, ScriptObject func) {
 		if (ScriptManager.scope != ScriptManager.Scope.WORKSPACE) throw new Exception("Function 'project' is only available in the workspace scope!");
 		ScriptManager.workspace.addProjectFilter(new ProjectFilter.ArrayFilter(ScriptUtils.toArray<string>(filter), func));

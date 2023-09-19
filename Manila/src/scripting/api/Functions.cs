@@ -59,10 +59,20 @@ public static class Functions {
 		AnsiConsole.MarkupLine(string.Join(" ", text));
 	}
 
+	/// <summary>
+	/// Returns a new regex from a string
+	/// </summary>
+	/// <param name="exp">The regex expression</param>
+	/// <returns></returns>
 	public static Regex regex(string exp) {
 		return new Regex(exp);
 	}
 
+	/// <summary>
+	/// Sets properties to the current ScriptInstance
+	/// </summary>
+	/// <param name="obj">The properties to set</param>
+	/// <exception cref="Exception">Gets thrown when no instance is currently set</exception>
 	public static void properties(ScriptObject obj) {
 		if (ScriptManager.currentScriptInstance == null) throw new Exception("Cannot set properties in the current context!");
 		ScriptManager.currentScriptInstance.addProperties(ScriptUtils.toMap<dynamic>(obj));

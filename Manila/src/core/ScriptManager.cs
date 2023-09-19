@@ -9,16 +9,47 @@ using Manila.Utils;
 
 namespace Manila.Core;
 
+/// <summary>
+/// Provides functionality for managing and running build scripts
+/// </summary>
 public static class ScriptManager {
+	/// <summary>
+	/// Represents the possible states of the script manager
+	/// </summary>
 	public enum State {
+		/// <summary>
+		/// No state
+		/// </summary>
 		NONE,
+		/// <summary>
+		/// Initialization state
+		/// </summary>
 		INITIALIZING,
+		/// <summary>
+		/// Running state
+		/// </summary>
 		RUNNING,
+		/// <summary>
+		/// Not in a script env state
+		/// </summary>
 		NO_SCRIPTS
 	}
+
+	/// <summary>
+	/// Represents the scope of script execution
+	/// </summary>
 	public enum Scope {
+		/// <summary>
+		/// No scope
+		/// </summary>
 		NONE,
+		/// <summary>
+		/// Workspace scope
+		/// </summary>
 		WORKSPACE,
+		/// <summary>
+		/// Project scope
+		/// </summary>
 		PROJECT
 	}
 
@@ -26,6 +57,9 @@ public static class ScriptManager {
 	internal static Core.Workspace? workspace;
 	internal static BuildConfig? buildConfig = null;
 
+	/// <summary>
+	/// The data stored in the workspace.manila file
+	/// </summary>
 	public static Data.Workspace? workspaceData = null;
 
 	internal static ScriptInstance? currentScriptInstance { get; set; }
@@ -152,7 +186,7 @@ public static class ScriptManager {
 		return false;
 	}
 
-	public static List<Scripting.API.Task> getTasksRec(Scripting.API.Task task, List<Scripting.API.Task> tasks = null) {
+	private static List<Scripting.API.Task> getTasksRec(Scripting.API.Task task, List<Scripting.API.Task> tasks = null) {
 		if (tasks == null) tasks = new List<Scripting.API.Task>();
 
 		foreach (var d in task.getDependencies())
@@ -188,12 +222,26 @@ public static class ScriptManager {
 		return true;
 	}
 
+	/// <summary>
+	/// Adds an object to the script engine's host objects.
+	/// </summary>
+	/// <param name="name">The name of the object.</param>
+	/// <param name="obj">The object to add.</param>
 	public static void addObject(string name, object obj) {
 		engine.engine.AddHostObject(name, obj);
 	}
+	/// <summary>
+	/// Adds a type to the script engine's host types.
+	/// </summary>
+	/// <param name="type">The type to add.</param>
 	public static void addType(Type type) {
 		engine.engine.AddHostType(type);
 	}
+	/// <summary>
+	/// Adds a type with a specified name to the script engine's host types.
+	/// </summary>
+	/// <param name="name">The name of the type.</param>
+	/// <param name="type">The type to add.</param>
 	public static void addType(string name, Type type) {
 		engine.engine.AddHostType(type);
 	}
