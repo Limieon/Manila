@@ -62,7 +62,10 @@ public class Workspace : ScriptInstance {
 		foreach (var f in projectFilters) f.run(p);
 	}
 
-
+	/// <summary>
+	/// Adds properties to a workspace
+	/// </summary>
+	/// <param name="properties">The properties to add</param>
 	public override void addProperties(Dictionary<string, dynamic> properties) {
 		foreach (var e in properties) {
 			switch (e.Key) {

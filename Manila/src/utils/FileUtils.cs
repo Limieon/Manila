@@ -4,14 +4,32 @@ using Manila.Scripting.API;
 
 namespace Manila.Utils;
 
+/// <summary>
+/// Provides utility functions to work with files inside the working directory
+/// </summary>
 public static class FileUtils {
+	/// <summary>
+	/// The .manila dir inside the working directory
+	/// </summary>
 	public static ManilaDirectory manilaDirectory { get; private set; }
+	/// <summary>
+	/// The .manila/plugins dir inside the working directory
+	/// </summary>
 	public static ManilaDirectory pluginsDirectory { get; private set; }
 
+	/// <summary>
+	/// The .manila/plugins.manila file inside the working directory
+	/// </summary>
 	public static ManilaFile pluginsFile { get; private set; }
 
+	/// <summary>
+	/// The .manila/data dir inside the working directory
+	/// </summary>
 	public static ManilaDirectory dataDirectory { get; private set; }
 
+	/// <summary>
+	/// The workspace.manila file inside the working directory
+	/// </summary>
 	public static ManilaFile workspaceFile { get; private set; }
 
 	/// <summary>
@@ -42,6 +60,11 @@ public static class FileUtils {
 		}
 	}
 
+	/// <summary>
+	/// Gets the storage file associated to a storage inside a plugin
+	/// </summary>
+	/// <param name="storage">The storage</param>
+	/// <param name="plugin">The plugin</param>
 	public static ManilaFile getStorage(Storage storage, Plugin.API.Plugin plugin) {
 		var pluginData = dataDirectory.join(plugin.id);
 		pluginData.create();

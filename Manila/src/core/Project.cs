@@ -12,35 +12,37 @@ namespace Manila.Core;
 /// It also allows the addition and retrieval of custom properties.
 /// </remarks>
 public class Project : ScriptInstance {
+	/// <summary>
+	/// The id of the project
+	/// </summary>
 	public readonly string id;
 
 	/// <summary>
-	/// Gets the name of the project.
+	/// Gets the name of the project
 	/// </summary>
 	public string name { get; set; }
 
 	/// <summary>
-	/// Gets the version of the project.
+	/// Gets the version of the project
 	/// </summary>
 	public string version { get; set; }
 
 	/// <summary>
-	/// Gets the location of the project.
+	/// Gets the location of the project
 	/// </summary>
 	public ManilaDirectory location { get; }
 
 	/// <summary>
-	/// Gets the associated workspace for the project.
+	/// Gets the associated workspace for the project
 	/// </summary>
 	public Workspace workspace { get; }
 
 	/// <summary>
-	/// Initializes a new instance of the <see cref="Project"/> class.
+	/// Initializes a new instance of the <see cref="Project"/> class
 	/// </summary>
-	/// <param name="name">The name of the project.</param>
-	/// <param name="version">The version of the project.</param>
-	/// <param name="location">The location of the project.</param>
-	/// <param name="workspace">The associated workspace for the project.</param>
+	/// <param name="id">The id of the project</param>
+	/// <param name="location">The location of the project</param>
+	/// <param name="workspace">The associated workspace for the project</param>
 	public Project(string id, ManilaDirectory location, Workspace workspace) : base() {
 		name = "";
 		version = "";
@@ -49,6 +51,10 @@ public class Project : ScriptInstance {
 		this.workspace = workspace;
 	}
 
+	/// <summary>
+	/// Adds properties to the project
+	/// </summary>
+	/// <param name="properties">The properties</param>
 	public override void addProperties(Dictionary<string, dynamic> properties) {
 		foreach (var e in properties) {
 			switch (e.Key) {

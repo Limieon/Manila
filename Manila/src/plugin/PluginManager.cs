@@ -6,22 +6,56 @@ using Manila.Utils;
 
 namespace Manila.Plugin;
 
+/// <summary>
+/// Manges and handles plugin loading
+/// </summary>
 public static class PluginManager {
+	/// <summary>
+	/// Metadata associated to plugins
+	/// </summary>
 	public class Meta {
+		/// <summary>
+		/// The name of the plugin (not id)
+		/// </summary>
 		public string name { get; set; }
+		/// <summary>
+		/// A brief description of the plugin
+		/// </summary>
 		public string description { get; set; }
+		/// <summary>
+		/// The authors that worked on the plugin
+		/// </summary>
 		public List<string> authors { get; set; }
+		/// <summary>
+		/// The installed plugin version
+		/// </summary>
 		public string version { get; set; }
 	}
 
+	/// <summary>
+	/// The directory where plugin files are stored
+	/// </summary>
 	public static readonly ManilaDirectory PLUGIN_ROOT = new ManilaDirectory(".manila/plugins");
 
+	/// <summary>
+	/// The plugins objects that have been loaded
+	/// </summary>
 	public static List<API.Plugin> plugins { get; private set; }
+	/// <summary>
+	/// The metadata associated to plugins
+	/// </summary>
 	private static Dictionary<string, Meta> pluginMetas;
 
 	private static bool initialized { get; set; }
 
-	public static void loadPlugins(CLI.App app) {
+	internal static void init() {
+		if (!FileUtils.pluginsFile.exists()) { FileUtils.pluginsFile.write("{}"); }
+		pluginMetas = FileUtils.pluginsFile.deserializeJSON<Dictionary<string, Meta>>();
+		FileUtils.pluginsFile.serializeJSON(pluginMetas, true);
+
+		initialized = true;
+	}
+	internal static void loadPlugins(CLI.App app) {
 		plugins = PLUGIN_ROOT.files().SelectMany(f => {
 			Assembly pluginAssembly = loadPlugin(f.getPath());
 			return createPlugins(pluginAssembly);
@@ -31,14 +65,6 @@ public static class PluginManager {
 			p.init();
 			p.commands(app);
 		}
-	}
-
-	public static void init() {
-		if (!FileUtils.pluginsFile.exists()) { FileUtils.pluginsFile.write("{}"); }
-		pluginMetas = FileUtils.pluginsFile.deserializeJSON<Dictionary<string, Meta>>();
-		FileUtils.pluginsFile.serializeJSON(pluginMetas, true);
-
-		initialized = true;
 	}
 
 	/// <summary>
@@ -81,7 +107,7 @@ public static class PluginManager {
 		}
 	}
 
-	public static void shutdown() {
+	internal static void shutdown() {
 		if (!initialized) return;
 		foreach (var p in plugins) {
 			p.shutdown();

@@ -38,6 +38,9 @@ public abstract class ProjectFilter {
 	/// Represents a project filter based on regular expressions.
 	/// </summary>
 	public class RegexFilter : ProjectFilter {
+		/// <summary>
+		/// The Regexp to filter for
+		/// </summary>
 		private Regex filter;
 
 		/// <summary>
@@ -54,6 +57,9 @@ public abstract class ProjectFilter {
 	/// Represents a project filter based on an array of string filters.
 	/// </summary>
 	public class ArrayFilter : ProjectFilter {
+		/// <summary>
+		/// The strings to filter for
+		/// </summary>
 		private string[] filter;
 
 		/// <summary>
@@ -70,6 +76,9 @@ public abstract class ProjectFilter {
 	/// Represents a project filter based on a specific string filter.
 	/// </summary>
 	public class SpecificFilter : ProjectFilter {
+		/// <summary>
+		/// The string to filter for
+		/// </summary>
 		public string filter;
 
 		/// <summary>
