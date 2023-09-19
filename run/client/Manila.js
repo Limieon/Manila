@@ -3,7 +3,7 @@ const workspace = Manila.getWorkspace()
 
 let binary = undefined
 
-task('compile').onExecute(() => {
+task('compile').onExecute(async () => {
 	Manila.print('Compiling Client...')
 
 	const config = Manila.getConfig()
@@ -24,12 +24,13 @@ task('compile').onExecute(() => {
 		.join('src')
 		.files(f => f.endsWith('.cpp') || f.endsWith('.c'), true)
 
+	await sleep(5000)
 	const res = ManilaCPP.clangCompile(flags, project, workspace)
 	binary = res.binary
 })
 
 task('run')
 	.dependsOn(':client:compile')
-	.onExecute(() => {
-		Manila.print('Executing', binary.getPath())
+	.onExecute(async () => {
+		//Manila.print('Executing', binary.getPath())
 	})

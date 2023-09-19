@@ -67,7 +67,7 @@ public static class Logger {
 		AnsiConsole.WriteLine(string.Join(" ", data));
 	}
 	internal static void pluginInfo(string id, params dynamic[] data) {
-		AnsiConsole.Markup($"[cyan][[{id}]][/]: ");
+		if (verbose) AnsiConsole.Markup($"[cyan][[{id}/INFO]][/]: ");
 		AnsiConsole.WriteLine(string.Join(" ", data));
 	}
 
@@ -77,7 +77,7 @@ public static class Logger {
 		AnsiConsole.MarkupLine(string.Join(" ", data));
 	}
 	internal static void pluginMarkupInfo(string id, params dynamic[] data) {
-		AnsiConsole.Markup($"[cyan][[{id}]][/]: ");
+		if (verbose) AnsiConsole.Markup($"[cyan][[{id}/INFO]][/]: ");
 		AnsiConsole.MarkupLine(string.Join(" ", data));
 	}
 }

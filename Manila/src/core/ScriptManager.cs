@@ -168,9 +168,23 @@ public static class ScriptManager {
 	/// </summary>
 	/// <param name="task">the task to execute</param>
 	/// <returns>true: task succeded, false: task failed</returns>
-	public static bool executeTask(Scripting.API.Task task) {
+	public static async Task<bool> executeTask(Scripting.API.Task task) {
 		var order = getTasksRec(task);
-		foreach (var o in order) o.execute();
+
+		var taskNum = 1;
+		foreach (var t in order) {
+			if (taskNum == order.Count) {
+				Logger.infoMarkup(
+					$"[green]{taskNum++}[/][gray]/[/][cyan]{order.Count}[/] [gray]>[/] [blue]{ScriptUtils.getTaskName(t)}[/]"
+				);
+			} else {
+				Logger.infoMarkup(
+					$"[yellow]{taskNum++}[/][gray]/[/][cyan]{order.Count}[/] [gray]>[/] [blue]{ScriptUtils.getTaskName(t)}[/]"
+				);
+			}
+
+			await t.execute();
+		}
 		return true;
 	}
 

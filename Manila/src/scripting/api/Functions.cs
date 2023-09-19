@@ -18,6 +18,22 @@ public static class Functions {
 		e.AddHostObject("markup", markup);
 		e.AddHostObject("regex", regex);
 		e.AddHostObject("properties", properties);
+
+		Action<ScriptObject, int> setTimeout = (func, delay) => {
+			var timer = new Timer(_ => func.Invoke(false));
+			timer.Change(delay, Timeout.Infinite);
+		};
+		e.Script._setTimeout = setTimeout;
+
+		e.Execute(@"
+			function setTimeout(func, delay) {
+				let args = Array.prototype.slice.call(arguments, 2);
+				_setTimeout(func.bind(undefined, ...args), delay || 0);
+			}"
+		);
+		e.Execute(@"
+			async function sleep(amount) { return new Promise((res, rej) => { setTimeout(res, amount) })}"
+		);
 	}
 
 	/// <summary>

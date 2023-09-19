@@ -11,7 +11,7 @@ using Manila.Core.Exceptions;
 namespace Manila;
 
 class Launcher {
-	public static void Main(string[] args) {
+	public static async Task<int> Main(string[] args) {
 #if DEBUG
 		Directory.SetCurrentDirectory("../run/");
 #endif
@@ -35,7 +35,6 @@ class Launcher {
 			PluginManager.init();
 			PluginManager.loadPlugins(app);
 
-
 			if (args.Length > 0 && args[0].StartsWith(":")) {
 				ScriptManager.init(workspace);
 
@@ -45,27 +44,39 @@ class Launcher {
 					Logger.infoMarkup($"[red]{e.Message}[/]");
 					Logger.exception(e);
 
-					return;
+					return -1;
 				} catch (PropertyNotFoundException e) {
 					Logger.infoMarkup($"[red]Project[/] [blue]{e.project.id}[/] [red]does not contain property[/] [blue]{e.property}[/][red]![/]");
 					Logger.exception(e);
 
-					return;
+					return -1;
 				} catch (Exception e) {
 					Logger.infoMarkup("[red]Could not find[/] [yellow]Manila.js[/] [red]build script![/]");
 					Logger.infoMarkup("Directory does not seem to be a [blue]script environment[/]!");
 					Logger.exception(e);
 
-					return;
+					return -1;
 				}
 
 				try {
-					ScriptManager.executeTask(ScriptManager.getTask(args[0]));
+					long start = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+					var res = await ScriptManager.executeTask(ScriptManager.getTask(args[0]));
+					long duration = DateTimeOffset.Now.ToUnixTimeMilliseconds() - start;
+
+					if (res) {
+						Logger.info();
+						Logger.infoMarkup($"[green]Task Successful![/] [gray]Took[/] [cyan]{FormattingUtils.stringifyDuration(duration)}[/]");
+						return 0;
+					} else {
+						Logger.info();
+						Logger.infoMarkup($"[red]Task Successful![/] [gray]Took[/] [cyan]{FormattingUtils.stringifyDuration(duration)}[/]");
+						return -1;
+					}
 				} catch (TaskNotFoundException e) {
 					Logger.infoMarkup($"[red]Task[/] [yellow]{e.name}[/] [red]could not be found![/]");
 					Logger.exception(e);
 
-					return;
+					return -1;
 				}
 			}
 		}
@@ -88,5 +99,7 @@ class Launcher {
 			PluginManager.shutdown();
 			ScriptManager.shutdown();
 		}
+
+		return 0;
 	}
 }

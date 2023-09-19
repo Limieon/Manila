@@ -1,6 +1,8 @@
 
 using Manila.Core;
 using Manila.Scripting.Exceptions;
+using Microsoft.ClearScript;
+using Microsoft.ClearScript.JavaScript;
 
 namespace Manila.Scripting.API;
 
@@ -13,7 +15,7 @@ public class Task {
 	/// </summary>
 	public string name { get; private set; }
 	private List<string> dependencies;
-	private Func<bool>? func;
+	private ScriptObject func;
 
 	internal readonly Project? project;
 
@@ -34,12 +36,12 @@ public class Task {
 	/// <param name="func">the function</param>
 	/// <returns>true: task suceeded, false: task failed</returns>
 	public void onExecute(dynamic func) {
-		this.func = () => {
+		this.func = func; /*() => {
 			var res = func();
 			// Return true if nothing or undefined gets returned
 			if (res.GetType() != typeof(bool)) return true;
 			return res;
-		};
+		};*/
 		ScriptManager.registerTask(this);
 	}
 	/// <summary>
@@ -56,9 +58,12 @@ public class Task {
 	/// </summary>
 	/// <returns>false: task returned false, true: task did not return false</returns>
 	/// <exception cref="TaskNotFoundException"></exception>
-	public bool execute() {
+	public async Task<bool> execute() {
 		// Function cannot be null, as task only gets registered when the functon has been set
-		return func.Invoke();
+		var res = await func.InvokeAsFunction().ToTask();
+
+		Console.WriteLine("Task Done!");
+		return res.GetType() != typeof(bool) ? true : (bool) res;
 	}
 
 	/// <summary>
