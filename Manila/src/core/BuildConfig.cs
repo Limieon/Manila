@@ -9,14 +9,14 @@ namespace Manila.Core;
 public class BuildConfig {
 	/// <summary>
 	/// Gets the name of the platform (e.g., "windows", "linux", "osx", "freebsd", or "unknown").
-	/// </summary>
+	/// </summary> 
 	public readonly string platform;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="BuildConfig"/> class.
 	/// </summary>
 	/// <remarks>
-	/// This constructor parses command-line arguments prefixed with "--c:" and assigns values to corresponding fields in this class.
+	/// This constructor parses command-line arguments prefixed with "--c:" and assigns values to corresponding fields in this class (or a derived clsass).
 	/// Supported field types include string, int, float, double, and enum types.
 	/// </remarks>
 	public BuildConfig() {
@@ -30,7 +30,11 @@ public class BuildConfig {
 			var s = args[i];
 			if (s.StartsWith("--c:")) {
 				var key = s[4..];
-				dynamic val = args.Length > i + 1 ? args[i + 1] : true;
+				dynamic val = true;
+
+				if (args.Length > i + 1) {
+					if (!args[i + 1].StartsWith("-")) val = args[i + 1];
+				}
 
 				var field = GetType().GetField(key);
 				if (field == null) throw new FieldAccessException($"Field '{key}' was not found on '{GetType().FullName}'!");
@@ -47,10 +51,10 @@ public class BuildConfig {
 					var validField = GetType().GetField($"{field.Name}_VALID".ToUpper());
 					if (validField != null) {
 						var valid = (List<string>) validField.GetValue(null);
-						foreach (var v in valid) { System.Console.WriteLine(v); }
-
 						if (!valid.Contains(val)) throw new Exception($"Config '{field.Name}' has an invliad value!");
 					}
+					field.SetValue(this, val);
+				} else if (field.FieldType == typeof(bool)) {
 					field.SetValue(this, val);
 				}
 			}

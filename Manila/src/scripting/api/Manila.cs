@@ -76,4 +76,19 @@ public static class Manila {
 		if (ScriptManager.scope != ScriptManager.Scope.WORKSPACE) throw new Exception("Function 'project' is only available in the workspace scope!");
 		ScriptManager.workspace.addProjectFilter(new ProjectFilter.ArrayFilter(ScriptUtils.toArray<string>(filter), func));
 	}
+
+	/// <summary>
+	/// Prints text to stdout
+	/// </summary>
+	/// <param name="text">the text to print</param>
+	public static void print(params dynamic[] text) {
+		Functions.print(string.Join(" ", text));
+	}
+	/// <summary>
+	/// Prints text to stdout (with markup support (visit: https://spectreconsole.net/markup))
+	/// </summary>
+	/// <param name="text">the text to print</param>
+	public static void markup(params dynamic[] text) {
+		Functions.markup(string.Join(" ", text));
+	}
 }
