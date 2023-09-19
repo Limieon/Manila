@@ -59,10 +59,7 @@ public class Task {
 	/// <returns>false: task returned false, true: task did not return false</returns>
 	/// <exception cref="TaskNotFoundException"></exception>
 	public async Task<bool> execute() {
-		// Function cannot be null, as task only gets registered when the functon has been set
 		var res = await func.InvokeAsFunction().ToTask();
-
-		Console.WriteLine("Task Done!");
 		return res.GetType() != typeof(bool) ? true : (bool) res;
 	}
 
