@@ -57,6 +57,8 @@ public static class ScriptManager {
 	internal static Core.Workspace? workspace;
 	internal static BuildConfig? buildConfig = null;
 
+	public static long timeBuildStarted { get; private set; }
+
 	/// <summary>
 	/// The data stored in the workspace.manila file
 	/// </summary>
@@ -86,6 +88,7 @@ public static class ScriptManager {
 		if (!new ManilaFile("Manila.js").exists()) {
 			throw new Exception("No script environment!");
 		}
+
 		engine.run("Manila.js");
 		workspace.name = workspaceData.data.name;
 
@@ -203,6 +206,7 @@ public static class ScriptManager {
 	/// <param name="task">the task to execute</param>
 	/// <returns>true: task succeded, false: task failed</returns>
 	public static async Task<bool> executeTask(Scripting.API.Task task) {
+		timeBuildStarted = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 		var order = getTasksRec(task);
 
 		var taskNum = 1;

@@ -115,4 +115,14 @@ public static class Manila {
 	public static void markup(params dynamic[] text) {
 		Functions.markup(string.Join(" ", text));
 	}
+
+	public static long taskDuration() {
+		return DateTimeOffset.Now.ToUnixTimeMilliseconds() - Task.timeTaskStarted;
+	}
+	public static long totalTaskDuration() {
+		return DateTimeOffset.Now.ToUnixTimeMilliseconds() - Task.timeFirstTaskStarted;
+	}
+	public static long buildDuration() {
+		return DateTimeOffset.Now.ToUnixTimeMilliseconds() - ScriptManager.timeBuildStarted;
+	}
 }

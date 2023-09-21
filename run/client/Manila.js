@@ -21,13 +21,13 @@ task('compile').onExecute(async () => {
 	const objFiles = []
 	var numFile = 1
 
-	markup(
+	Manila.markup(
 		`[gray]Compiling[/] [blue]${workspace.name}[/][gray]/[/][blue]${
 			project.name
 		}[/] [gray]=>[/] [magenta]${flags.binDir.getPath()}[/][gray]...[/]`
 	)
 	for (const file of files) {
-		markup(`[yellow]${numFile}[/][gray]/[/][green]${files.Length}[/] [gray]>[/] [magenta]${file.getFileName()}[/]`)
+		Manila.markup(`[yellow]${numFile}[/][gray]/[/][green]${files.Length}[/] [gray]>[/] [magenta]${file.getFileName()}[/]`)
 
 		objFiles.push(ManilaCPP.clangCompile(flags, project, workspace, file).objFile)
 	}
