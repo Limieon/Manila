@@ -327,4 +327,8 @@ public class ManilaDirectory {
 		}
 		return Manila.file(getPath(), files[0]);
 	}
+
+	public void delete() {
+		Directory.Delete(path, true);
+	}
 }
