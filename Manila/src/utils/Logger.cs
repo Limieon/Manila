@@ -1,4 +1,5 @@
 
+using Manila.Scripting.API;
 using Spectre.Console;
 
 namespace Manila.Utils;
@@ -24,6 +25,7 @@ public static class Logger {
 	public static void debug(params dynamic[] data) {
 		if (!verbose) return;
 		AnsiConsole.Markup("[cyan][[DEBUG]][/]: ");
+		if (Scripting.API.Task.inTask) AnsiConsole.Write("  ");
 		AnsiConsole.WriteLine(string.Join(" ", data));
 	}
 	/// <summary>
@@ -31,6 +33,7 @@ public static class Logger {
 	/// </summary>
 	/// <param name="data">the data to print</param>
 	public static void info(params dynamic[] data) {
+		if (Scripting.API.Task.inTask) AnsiConsole.Write("  ");
 		Console.WriteLine(string.Join(" ", data));
 	}
 
@@ -41,6 +44,7 @@ public static class Logger {
 	public static void debugMarkup(params dynamic[] data) {
 		if (!verbose) return;
 		AnsiConsole.Markup("[cyan][[DEBUG]][/]: ");
+		if (Scripting.API.Task.inTask) AnsiConsole.Write("  ");
 		AnsiConsole.MarkupLine(string.Join(" ", data));
 	}
 
@@ -49,6 +53,7 @@ public static class Logger {
 	/// </summary>
 	/// <param name="data">the data to print</param>
 	public static void infoMarkup(params dynamic[] data) {
+		if (Scripting.API.Task.inTask) AnsiConsole.Write("  ");
 		AnsiConsole.MarkupLine(string.Join(" ", data));
 	}
 
@@ -58,26 +63,31 @@ public static class Logger {
 	/// <param name="e">the exception</param>
 	public static void exception(Exception e) {
 		if (!verbose) return;
+		if (Scripting.API.Task.inTask) AnsiConsole.Write("  ");
 		AnsiConsole.WriteException(e);
 	}
 
 	internal static void pluginDebug(string id, params dynamic[] data) {
 		if (!verbose) return;
 		AnsiConsole.Markup($"[cyan][[{id}/DEBUG]][/]: ");
+		if (Scripting.API.Task.inTask) AnsiConsole.Write("  ");
 		AnsiConsole.WriteLine(string.Join(" ", data));
 	}
 	internal static void pluginInfo(string id, params dynamic[] data) {
 		if (verbose) AnsiConsole.Markup($"[cyan][[{id}/INFO]][/]: ");
+		if (Scripting.API.Task.inTask) AnsiConsole.Write("  ");
 		AnsiConsole.WriteLine(string.Join(" ", data));
 	}
 
 	internal static void pluginMarkupDebug(string id, params dynamic[] data) {
 		if (!verbose) return;
 		AnsiConsole.Markup($"[cyan][[{id}/DEBUG]][/]: ");
+		if (Scripting.API.Task.inTask) AnsiConsole.Write("  ");
 		AnsiConsole.MarkupLine(string.Join(" ", data));
 	}
 	internal static void pluginMarkupInfo(string id, params dynamic[] data) {
 		if (verbose) AnsiConsole.Markup($"[cyan][[{id}/INFO]][/]: ");
+		if (Scripting.API.Task.inTask) AnsiConsole.Write("  ");
 		AnsiConsole.MarkupLine(string.Join(" ", data));
 	}
 }

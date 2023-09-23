@@ -17,6 +17,8 @@ public class Task {
 	private List<string> dependencies;
 	private ScriptObject func;
 
+	public static bool inTask { get; private set; }
+
 	public static long timeTaskStarted { get; private set; }
 	public static long timeFirstTaskStarted { get; private set; }
 
@@ -63,11 +65,14 @@ public class Task {
 	/// <exception cref="TaskNotFoundException"></exception>
 	public async Task<bool> execute() {
 		Task.timeTaskStarted = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-		if(Task.timeFirstTaskStarted < 1) {
+		if (Task.timeFirstTaskStarted < 1) {
 			Task.timeFirstTaskStarted = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 		}
 
+		inTask = true;
 		var res = await func.InvokeAsFunction().ToTask();
+		inTask = false;
+
 		return res.GetType() != typeof(bool) ? true : (bool) res;
 	}
 

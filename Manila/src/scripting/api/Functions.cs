@@ -49,6 +49,7 @@ public static class Functions {
 	/// </summary>
 	/// <param name="text">the text to print</param>
 	public static void print(params dynamic[] text) {
+		if (Scripting.API.Task.inTask) AnsiConsole.Write("  ");
 		AnsiConsole.WriteLine(string.Join(" ", text));
 	}
 	/// <summary>
@@ -56,6 +57,7 @@ public static class Functions {
 	/// </summary>
 	/// <param name="text">the text to print</param>
 	public static void markup(params dynamic[] text) {
+		if (Scripting.API.Task.inTask) AnsiConsole.Write("  ");
 		AnsiConsole.MarkupLine(string.Join(" ", text));
 	}
 
