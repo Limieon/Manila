@@ -28,9 +28,12 @@ The goal of the build system is to create a simple but flexible API so build scr
 It should also be possible to get the results of the tests and then do other stuff with them, for example, sending the test results into a channel in Discord.
 
 ## Road Map
-I started to rewrite this project just a few days ago, so not many features are currently implemented
+The codebase is now nearly finished so the new features I'm currently implementing are just for Quality of Life purposes.  
+QoL in this context means to provide a more simple API Layer ontop of the more complex API layer to allow smaller project writing less code for the same build logic.
 
-1. Build a solid Codebase so I can add the more advanced features on top of it
-2. Implement basic API features such as printing to console, creating / deleting / moving files
-3. Add a Plugin API so the first simple Plugin can be developed
-4. Develop a C++ plugin that (at the beginning) uses clang to compile simple C++ projects
+The most features I will implement in the near feature are plugins.  
+The following plugins are on my To-Do list to have been implemented before the 1st Alpha Release:
+1. Jenkins
+2. Discord
+3. Git
+4. GitHub / any other Git Hosting Platform
