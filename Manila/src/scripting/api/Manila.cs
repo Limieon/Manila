@@ -142,4 +142,5 @@ public static class Manila {
 	}
 
 	public static Application application(ManilaFile binary) { return new Application(binary); }
+	public static FileSet fileSet(ManilaDirectory root) { return new FileSet(root.getPath()); }
 }

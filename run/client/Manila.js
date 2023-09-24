@@ -11,6 +11,9 @@ const objDir = Manila.dir(workspace.location)
 
 let binary = undefined
 
+const srcFileSet = Manila.fileSet(project.location)
+srcFileSet.include('src/**/*.c').include('src/**/*.cpp')
+
 task('clean').onExecute(async () => {
 	print('Deleting Bin Dir...')
 	if (binDir.exists()) binDir.delete()
@@ -30,9 +33,7 @@ task('compile').onExecute(async () => {
 	flags.objDir = objDir
 	flags.platform = config.platform
 
-	const files = Manila.dir(project.location)
-		.join('src')
-		.files(f => f.endsWith('.cpp') || f.endsWith('.c'), true)
+	let files = srcFileSet.files()
 
 	const objFiles = []
 	var numFile = 1
@@ -65,6 +66,5 @@ task('run')
 	.onExecute(async () => {
 		const app = Manila.application(binary)
 		let exitCode = app.run()
-
 		Manila.print('App Exited with code:', exitCode)
 	})
