@@ -42,11 +42,8 @@ task('compile').onExecute(async () => {
 		let res = await ManilaCPP.clangCompile(flags, project, workspace, file)
 
 		if (res.success) {
-			if (res.skipped) {
-				Manila.appendMarkup(' [gray]-[/] [yellow]Skipped[/]')
-			} else {
-				Manila.appendMarkup(' [gray]-[/] [green]Success[/]')
-			}
+			if (res.skipped) Manila.appendMarkup(' [gray]-[/] [yellow]Skipped[/]')
+			else Manila.appendMarkup(' [gray]-[/] [green]Success[/]')
 		}
 
 		objFiles.push(res.objFile)
@@ -66,5 +63,8 @@ task('compile').onExecute(async () => {
 task('run')
 	.dependsOn(':client:compile')
 	.onExecute(async () => {
-		Manila.print('Executing', binary.getPath())
+		const app = Manila.application(binary)
+		let exitCode = app.run()
+
+		Manila.print('App Exited with code:', exitCode)
 	})

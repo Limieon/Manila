@@ -1,5 +1,6 @@
 
 using System.Text.RegularExpressions;
+using Manila.CLI;
 using Manila.Core;
 using Manila.Utils;
 using Microsoft.ClearScript;
@@ -139,4 +140,6 @@ public static class Manila {
 	public static long buildDuration() {
 		return DateTimeOffset.Now.ToUnixTimeMilliseconds() - ScriptManager.timeBuildStarted;
 	}
+
+	public static Application application(ManilaFile binary) { return new Application(binary); }
 }
