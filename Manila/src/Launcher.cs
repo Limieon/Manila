@@ -66,15 +66,26 @@ class Launcher {
 					if (res) {
 						Logger.info();
 						Logger.infoMarkup($"[green]Task Successful![/] [gray]Took[/] [cyan]{FormattingUtils.stringifyDuration(duration)}[/]");
+						PluginManager.shutdown();
+						ScriptManager.shutdown();
+
 						return 0;
 					} else {
 						Logger.info();
 						Logger.infoMarkup($"[red]Task Successful![/] [gray]Took[/] [cyan]{FormattingUtils.stringifyDuration(duration)}[/]");
+						PluginManager.shutdown();
+						ScriptManager.shutdown();
+
 						return -1;
 					}
 				} catch (TaskNotFoundException e) {
 					Logger.infoMarkup($"[red]Task[/] [yellow]{e.name}[/] [red]could not be found![/]");
 					Logger.exception(e);
+
+					Logger.debug("Avilable Tasks:");
+					foreach (var t in ScriptManager.getTasks()) {
+						Logger.debug(t.name);
+					}
 
 					return -1;
 				}

@@ -249,4 +249,8 @@ public static class ScriptManager {
 	public static void addType(string name, Type type) {
 		engine.engine.AddHostType(type);
 	}
+
+	public static List<Scripting.API.Task> getTasks() {
+		return tasks;
+	}
 }

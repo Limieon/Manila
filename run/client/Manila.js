@@ -18,38 +18,50 @@ task('clean').onExecute(async () => {
 	if (objDir.exists()) objDir.delete()
 })
 
-task('compile')
+task('recompile')
 	.dependsOn(':client:clean')
-	.onExecute(async () => {
-		const flags = ManilaCPP.clangFlags()
-		flags.name = project.name
-		flags.binDir = binDir
-		flags.objDir = objDir
-		flags.platform = config.platform
+	.dependsOn(':client:compile')
+	.onExecute(async () => {})
 
-		const files = Manila.dir(project.location)
-			.join('src')
-			.files(f => f.endsWith('.cpp') || f.endsWith('.c'), true)
+task('compile').onExecute(async () => {
+	const flags = ManilaCPP.clangFlags()
+	flags.name = project.name
+	flags.binDir = binDir
+	flags.objDir = objDir
+	flags.platform = config.platform
 
-		const objFiles = []
-		var numFile = 1
+	const files = Manila.dir(project.location)
+		.join('src')
+		.files(f => f.endsWith('.cpp') || f.endsWith('.c'), true)
 
-		for (const file of files) {
-			Manila.markup(`[yellow]${numFile}[/][gray]/[/][green]${files.Length}[/] [gray]>[/] [magenta]${file.getFileName()}[/]`)
+	const objFiles = []
+	var numFile = 1
 
-			objFiles.push(await ManilaCPP.clangCompile(flags, project, workspace, file).objFile)
+	for (const file of files) {
+		Manila.markup(`[yellow]${numFile}[/][gray]/[/][green]${files.Length}[/] [gray]>[/] [magenta]${file.getFileName()}[/]`)
+		let res = await ManilaCPP.clangCompile(flags, project, workspace, file)
 
-			numFile++
+		if (res.success) {
+			if (res.skipped) {
+				Manila.appendMarkup(' [gray]-[/] [yellow]Skipped[/]')
+			} else {
+				Manila.appendMarkup(' [gray]-[/] [green]Success[/]')
+			}
 		}
-		Manila.markup(
-			`\n[gray]Linking[/] [blue]${workspace.name}[/][gray]/[/][blue]${
-				project.name
-			}[/] [gray]=>[/] [magenta]${flags.binDir.getPath()}[/][gray]...[/]\n`
-		)
-		const linkerRes = ManilaCPP.clangLink(flags, project, workspace, objFiles)
 
-		binary = linkerRes.binary
-	})
+		objFiles.push(res.objFile)
+
+		numFile++
+	}
+	Manila.markup(
+		`\n[gray]Linking[/] [blue]${workspace.name}[/][gray]/[/][blue]${
+			project.name
+		}[/] [gray]=>[/] [magenta]${flags.binDir.getPath()}[/][gray]...[/]\n`
+	)
+	const linkerRes = ManilaCPP.clangLink(flags, project, workspace, objFiles)
+
+	binary = linkerRes.binary
+})
 
 task('run')
 	.dependsOn(':client:compile')

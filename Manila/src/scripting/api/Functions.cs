@@ -12,12 +12,16 @@ namespace Manila.Scripting.API;
 /// Default functions provided by the api
 /// </summary>
 public static class Functions {
+	private static bool lastAppend = false;
+
 	internal static void addToEngine(V8ScriptEngine e) {
 		e.AddHostObject("task", task);
 		e.AddHostObject("print", print);
 		e.AddHostObject("markup", markup);
 		e.AddHostObject("regex", regex);
 		e.AddHostObject("properties", properties);
+		e.AddHostObject("appendPrint", appendPrint);
+		e.AddHostObject("appendMarkup", appendMarkup);
 
 		Action<ScriptObject, int> setTimeout = (func, delay) => {
 			var timer = new Timer(_ => func.Invoke(false));
@@ -44,21 +48,38 @@ public static class Functions {
 	public static Task task(string name) {
 		return new Task(name);
 	}
+
 	/// <summary>
 	/// Prints text to stdout
 	/// </summary>
 	/// <param name="text">the text to print</param>
 	public static void print(params dynamic[] text) {
+		if (lastAppend) Console.WriteLine();
+		lastAppend = false;
+
 		if (Scripting.API.Task.inTask) AnsiConsole.Write("  ");
-		AnsiConsole.WriteLine(string.Join(" ", text));
+		AnsiConsole.Write(string.Join(" ", text));
 	}
 	/// <summary>
 	/// Prints text to stdout (with markup suppor (visit: https://spectreconsole.net/markup))
 	/// </summary>
 	/// <param name="text">the text to print</param>
 	public static void markup(params dynamic[] text) {
+		if (lastAppend) Console.WriteLine();
+		lastAppend = false;
+
 		if (Scripting.API.Task.inTask) AnsiConsole.Write("  ");
-		AnsiConsole.MarkupLine(string.Join(" ", text));
+		AnsiConsole.Markup(string.Join(" ", text));
+	}
+
+	public static void appendPrint(params dynamic[] text) {
+		lastAppend = true;
+		AnsiConsole.Write(" ");
+		AnsiConsole.Write(string.Join(" ", text));
+	}
+	public static void appendMarkup(params dynamic[] text) {
+		lastAppend = true;
+		AnsiConsole.Markup(string.Join(" ", text));
 	}
 
 	/// <summary>

@@ -115,6 +115,20 @@ public static class Manila {
 	public static void markup(params dynamic[] text) {
 		Functions.markup(string.Join(" ", text));
 	}
+	/// <summary>
+	/// Prints text to stdout
+	/// </summary>
+	/// <param name="text">the text to print</param>
+	public static void appendPrint(params dynamic[] text) {
+		Functions.appendPrint(string.Join(" ", text));
+	}
+	/// <summary>
+	/// Prints text to stdout (with markup support (visit: https://spectreconsole.net/markup))
+	/// </summary>
+	/// <param name="text">the text to print</param>
+	public static void appendMarkup(params dynamic[] text) {
+		Functions.appendMarkup(string.Join(" ", text));
+	}
 
 	public static long taskDuration() {
 		return DateTimeOffset.Now.ToUnixTimeMilliseconds() - Task.timeTaskStarted;

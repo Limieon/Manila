@@ -1,6 +1,7 @@
 
 using Newtonsoft.Json;
 using Microsoft.ClearScript;
+using System.Security.Cryptography;
 
 namespace Manila.Scripting.API;
 
@@ -185,6 +186,15 @@ public class ManilaFile {
 	/// <returns>A new <see cref="ManilaFile"/> instance with the updated file extension</returns>
 	public ManilaFile setExtension(string e) {
 		return new ManilaFile(Path.Join(Path.GetDirectoryName(path), $"{Path.GetFileNameWithoutExtension(path)}.{e}"));
+	}
+
+	public string checksum() {
+		using (var md5 = MD5.Create()) {
+			using (var stream = File.OpenRead(path)) {
+				var hash = md5.ComputeHash(stream);
+				return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+			}
+		}
 	}
 }
 
