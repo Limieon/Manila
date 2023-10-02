@@ -253,4 +253,17 @@ public static class ScriptManager {
 	public static List<Scripting.API.Task> getTasks() {
 		return tasks;
 	}
+
+	/// <summary>
+	/// Gets every task tagged with a specific tag
+	/// </summary>
+	/// <param name="tag">The tag to search for</param>
+	public static List<Scripting.API.Task> getTasks(string tag) {
+		// TODO: Sort tasks by dependency requirements
+		var res = new List<Scripting.API.Task>();
+		foreach (var t in tasks) {
+			if (t.tags.Contains(tag)) res.Add(t);
+		}
+		return res;
+	}
 }

@@ -14,7 +14,8 @@ public class Task {
 	/// The name of the task
 	/// </summary>
 	public string name { get; private set; }
-	private List<string> dependencies;
+	public List<string> dependencies { get; private set; }
+	public List<string> tags { get; private set; }
 	private ScriptObject func;
 
 	public static bool inTask { get; private set; }
@@ -33,6 +34,7 @@ public class Task {
 
 		this.name = ":" + name;
 		dependencies = new List<string>();
+		tags = new List<string>();
 	}
 
 	/// <summary>
@@ -55,6 +57,15 @@ public class Task {
 	/// <param name="task">the dependency</param>
 	public Task dependsOn(string task) {
 		dependencies.Add(task);
+		return this;
+	}
+	/// <summary>
+	/// Adds a tag to a task
+	/// </summary>
+	/// <param name="tag">The tag to add</param>
+	/// <returns></returns>
+	public Task tag(string tag) {
+		tags.Add(tag);
 		return this;
 	}
 

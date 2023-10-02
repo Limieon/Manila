@@ -28,40 +28,42 @@ task('recompile')
 	.dependsOn(':client:compile')
 	.onExecute(async () => {})
 
-task('compile').onExecute(async () => {
-	const flags = ManilaCPP.clangFlags()
-	flags.name = project.name
-	flags.binDir = binDir
-	flags.objDir = objDir
-	flags.platform = config.platform
+task('compile')
+	.tag('manila/build')
+	.onExecute(async () => {
+		const flags = ManilaCPP.clangFlags()
+		flags.name = project.name
+		flags.binDir = binDir
+		flags.objDir = objDir
+		flags.platform = config.platform
 
-	let files = srcFileSet.files()
+		let files = srcFileSet.files()
 
-	const objFiles = []
-	var numFile = 1
+		const objFiles = []
+		var numFile = 1
 
-	for (const file of files) {
-		Manila.markup(`[yellow]${numFile}[/][gray]/[/][green]${files.Length}[/] [gray]>[/] [magenta]${file.getFileName()}[/]`)
-		let res = await ManilaCPP.clangCompile(flags, project, workspace, file)
+		for (const file of files) {
+			Manila.markup(`[yellow]${numFile}[/][gray]/[/][green]${files.Length}[/] [gray]>[/] [magenta]${file.getFileName()}[/]`)
+			let res = await ManilaCPP.clangCompile(flags, project, workspace, file)
 
-		if (res.success) {
-			if (res.skipped) Manila.appendMarkup(' [gray]-[/] [yellow]Skipped[/]')
-			else Manila.appendMarkup(' [gray]-[/] [green]Success[/]')
+			if (res.success) {
+				if (res.skipped) Manila.appendMarkup(' [gray]-[/] [yellow]Skipped[/]')
+				else Manila.appendMarkup(' [gray]-[/] [green]Success[/]')
+			}
+
+			objFiles.push(res.objFile)
+
+			numFile++
 		}
+		Manila.markup(
+			`\n[gray]Linking[/] [blue]${workspace.name}[/][gray]/[/][blue]${
+				project.name
+			}[/] [gray]=>[/] [magenta]${flags.binDir.getPath()}[/][gray]...[/]\n`
+		)
+		const linkerRes = ManilaCPP.clangLink(flags, project, workspace, objFiles)
 
-		objFiles.push(res.objFile)
-
-		numFile++
-	}
-	Manila.markup(
-		`\n[gray]Linking[/] [blue]${workspace.name}[/][gray]/[/][blue]${
-			project.name
-		}[/] [gray]=>[/] [magenta]${flags.binDir.getPath()}[/][gray]...[/]\n`
-	)
-	const linkerRes = ManilaCPP.clangLink(flags, project, workspace, objFiles)
-
-	binary = linkerRes.binary
-})
+		binary = linkerRes.binary
+	})
 
 task('run')
 	.dependsOn(':client:compile')

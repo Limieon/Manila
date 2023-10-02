@@ -1,4 +1,7 @@
 
+using Manila.Core;
+using Manila.Plugin;
+using Manila.Scripting.Exceptions;
 using Microsoft.ClearScript;
 
 namespace Manila.Utils;
@@ -48,5 +51,39 @@ public static class ScriptUtils {
 	public static string getTaskName(Scripting.API.Task task) {
 		if (task.project == null) { return task.name; }
 		return task.project.id + task.name;
+	}
+
+	public static async Task<int> executeTask(Manila.Scripting.API.Task t) {
+		try {
+			long start = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+			var res = await ScriptManager.executeTask(t);
+			long duration = DateTimeOffset.Now.ToUnixTimeMilliseconds() - start;
+
+			if (res) {
+				Logger.info();
+				Logger.infoMarkup($"[green]Task Successful![/] [gray]Took[/] [cyan]{FormattingUtils.stringifyDuration(duration)}[/]");
+				PluginManager.shutdown();
+				ScriptManager.shutdown();
+
+				return 0;
+			} else {
+				Logger.info();
+				Logger.infoMarkup($"[red]Task Successful![/] [gray]Took[/] [cyan]{FormattingUtils.stringifyDuration(duration)}[/]");
+				PluginManager.shutdown();
+				ScriptManager.shutdown();
+
+				return -1;
+			}
+		} catch (TaskNotFoundException e) {
+			Logger.infoMarkup($"[red]Task[/] [yellow]{e.name}[/] [red]could not be found![/]");
+			Logger.exception(e);
+
+			Logger.debug("Avilable Tasks:");
+			foreach (var ta in ScriptManager.getTasks()) {
+				Logger.debug(ta.name);
+			}
+
+			return -1;
+		}
 	}
 }

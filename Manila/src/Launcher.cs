@@ -43,72 +43,42 @@ class Launcher {
 				return -1;
 			}
 
-			if (args.Length > 0 && args[0].StartsWith(":")) {
-				ScriptManager.init(workspace);
-
-				try {
-					ScriptManager.runWorkspaceFile();
-				} catch (FileNotFoundException e) {
-					Logger.infoMarkup($"[red]{e.Message}[/]");
-					Logger.exception(e);
-
-					return -1;
-				} catch (PropertyNotFoundException e) {
-					Logger.infoMarkup($"[red]Project[/] [blue]{e.project.id}[/] [red]does not contain property[/] [blue]{e.property}[/][red]![/]");
-					Logger.exception(e);
-
-					return -1;
-				} catch (NoScriptEnvException e) {
-					Logger.infoMarkup("[red]Could not find[/] [yellow]Manila.js[/] [red]build script![/]");
-					Logger.infoMarkup("Directory does not seem to be a [blue]script environment[/]!");
-					Logger.exception(e);
-
-					return -1;
-				} catch (Exception e) {
-					Logger.infoMarkup($"[red]An unknow exception occured![/] [yellow]{e.Message}[/]");
-					Logger.exception(e);
-
-					return -1;
-				}
-			}
-
+			// Run script manager
+			ScriptManager.init(workspace);
 			try {
-				long start = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-				var res = await ScriptManager.executeTask(ScriptManager.getTask(args[0]));
-				long duration = DateTimeOffset.Now.ToUnixTimeMilliseconds() - start;
-
-				if (res) {
-					Logger.info();
-					Logger.infoMarkup($"[green]Task Successful![/] [gray]Took[/] [cyan]{FormattingUtils.stringifyDuration(duration)}[/]");
-					PluginManager.shutdown();
-					ScriptManager.shutdown();
-
-					return 0;
-				} else {
-					Logger.info();
-					Logger.infoMarkup($"[red]Task Successful![/] [gray]Took[/] [cyan]{FormattingUtils.stringifyDuration(duration)}[/]");
-					PluginManager.shutdown();
-					ScriptManager.shutdown();
-
-					return -1;
-				}
-			} catch (TaskNotFoundException e) {
-				Logger.infoMarkup($"[red]Task[/] [yellow]{e.name}[/] [red]could not be found![/]");
+				ScriptManager.runWorkspaceFile();
+			} catch (FileNotFoundException e) {
+				Logger.infoMarkup($"[red]{e.Message}[/]");
 				Logger.exception(e);
 
-				Logger.debug("Avilable Tasks:");
-				foreach (var t in ScriptManager.getTasks()) {
-					Logger.debug(t.name);
-				}
+				return -1;
+			} catch (PropertyNotFoundException e) {
+				Logger.infoMarkup($"[red]Project[/] [blue]{e.project.id}[/] [red]does not contain property[/] [blue]{e.property}[/][red]![/]");
+				Logger.exception(e);
+
+				return -1;
+			} catch (NoScriptEnvException e) {
+				Logger.infoMarkup("[red]Could not find[/] [yellow]Manila.js[/] [red]build script![/]");
+				Logger.infoMarkup("Directory does not seem to be a [blue]script environment[/]!");
+				Logger.exception(e);
+
+				return -1;
+			} catch (Exception e) {
+				Logger.infoMarkup($"[red]An unknow exception occured![/] [yellow]{e.Message}[/]");
+				Logger.exception(e);
 
 				return -1;
 			}
+
+			if (args[0].StartsWith(":"))
+				await ScriptUtils.executeTask(ScriptManager.getTask(args[0]));
 		}
 
 		try {
 			app.setDefaultCommand(new CommandManila())
-				.setHelpCommand(new Commands.CommandHelp())
+				.setHelpCommand(new CommandHelp())
 				.addCommand(new CommandInit())
+				.addCommand(new CommandBuild())
 				.parse(args);
 		} catch (ParameterNotProivdedException e) {
 			Console.WriteLine("Missing Parameter '" + e.parameter.name + "' on Command '" + e.command.name + "'!");
