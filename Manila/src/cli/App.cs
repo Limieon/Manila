@@ -1,5 +1,6 @@
 
 using Manila.CLI.Exceptions;
+using Manila.Utils;
 
 namespace Manila.CLI;
 
@@ -86,30 +87,12 @@ public class App {
 	/// <param name="args">The command-line arguments</param>
 	public void parse(string[] args) {
 		List<string> parameters = new List<string>();
-		Dictionary<string, object> options = new Dictionary<string, object>();
+		Dictionary<string, object> options = CLIUtils.parseArguments(args);
 
-		{
-			int i = 0;
-			while (i < args.Length) {
-				string arg = args[i];
-
-				if (arg.StartsWith("--")) {
-					string? nextArg = args.Length > i + 1 ? args[i + 1] : null;
-					if (nextArg != null && !nextArg.StartsWith("-")) {
-						options.Add(arg.Substring(2), nextArg);
-						i += 2;
-					} else {
-						options.Add(arg[2..], true);
-						i++;
-					}
-
-					continue;
-				}
-
-				parameters.Add(arg);
-				i++;
-			}
+		foreach (var arg in args) {
+			if (!arg.StartsWith("-")) parameters.Add(arg);
 		}
+
 
 		if (parameters.Count < 1) {
 			defaultCommand?.onExecute(new Dictionary<string, object>(), options);
@@ -119,7 +102,7 @@ public class App {
 
 		string cmd = args[0].ToLower();
 		if (cmd == "help") {
-			this.helpCommand?.printHelp(this);
+			helpCommand?.printHelp(this);
 			return;
 		}
 

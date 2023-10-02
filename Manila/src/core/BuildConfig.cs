@@ -1,5 +1,6 @@
 
 using System.Runtime.InteropServices;
+using Manila.Core.Exceptions;
 
 namespace Manila.Core;
 
@@ -37,7 +38,7 @@ public class BuildConfig {
 				}
 
 				var field = GetType().GetField(key);
-				if (field == null) throw new FieldAccessException($"Field '{key}' was not found on '{GetType().FullName}'!");
+				if (field == null) throw new ConfigNotFoundException(key, GetType());
 				if (field.FieldType.IsEnum) {
 					var func = GetType().GetMethod(field.FieldType.Name.ToLower() + "FromString");
 					field.SetValue(this, func.Invoke(null, new object[] { val }));

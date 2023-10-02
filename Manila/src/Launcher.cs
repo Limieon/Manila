@@ -33,7 +33,15 @@ class Launcher {
 		Logger.debug("Root Dir:", rootDir.getPath());
 		if (rootDir.join(".manila").exists() && workspace.data.name != null) {
 			PluginManager.init();
-			PluginManager.loadPlugins(app);
+
+			try {
+				PluginManager.loadPlugins(app);
+			} catch (ConfigNotFoundException e) {
+				Logger.infoMarkup($"[red]Config called[/] [yellow]{e.name}[/] [red]was not found![/]");
+				Logger.exception(e);
+
+				return -1;
+			}
 
 			if (args.Length > 0 && args[0].StartsWith(":")) {
 				ScriptManager.init(workspace);
@@ -50,45 +58,50 @@ class Launcher {
 					Logger.exception(e);
 
 					return -1;
-				} catch (Exception e) {
+				} catch (NoScriptEnvException e) {
 					Logger.infoMarkup("[red]Could not find[/] [yellow]Manila.js[/] [red]build script![/]");
 					Logger.infoMarkup("Directory does not seem to be a [blue]script environment[/]!");
 					Logger.exception(e);
 
 					return -1;
-				}
-
-				try {
-					long start = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-					var res = await ScriptManager.executeTask(ScriptManager.getTask(args[0]));
-					long duration = DateTimeOffset.Now.ToUnixTimeMilliseconds() - start;
-
-					if (res) {
-						Logger.info();
-						Logger.infoMarkup($"[green]Task Successful![/] [gray]Took[/] [cyan]{FormattingUtils.stringifyDuration(duration)}[/]");
-						PluginManager.shutdown();
-						ScriptManager.shutdown();
-
-						return 0;
-					} else {
-						Logger.info();
-						Logger.infoMarkup($"[red]Task Successful![/] [gray]Took[/] [cyan]{FormattingUtils.stringifyDuration(duration)}[/]");
-						PluginManager.shutdown();
-						ScriptManager.shutdown();
-
-						return -1;
-					}
-				} catch (TaskNotFoundException e) {
-					Logger.infoMarkup($"[red]Task[/] [yellow]{e.name}[/] [red]could not be found![/]");
+				} catch (Exception e) {
+					Logger.infoMarkup($"[red]An unknow exception occured![/] [yellow]{e.Message}[/]");
 					Logger.exception(e);
-
-					Logger.debug("Avilable Tasks:");
-					foreach (var t in ScriptManager.getTasks()) {
-						Logger.debug(t.name);
-					}
 
 					return -1;
 				}
+			}
+
+			try {
+				long start = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+				var res = await ScriptManager.executeTask(ScriptManager.getTask(args[0]));
+				long duration = DateTimeOffset.Now.ToUnixTimeMilliseconds() - start;
+
+				if (res) {
+					Logger.info();
+					Logger.infoMarkup($"[green]Task Successful![/] [gray]Took[/] [cyan]{FormattingUtils.stringifyDuration(duration)}[/]");
+					PluginManager.shutdown();
+					ScriptManager.shutdown();
+
+					return 0;
+				} else {
+					Logger.info();
+					Logger.infoMarkup($"[red]Task Successful![/] [gray]Took[/] [cyan]{FormattingUtils.stringifyDuration(duration)}[/]");
+					PluginManager.shutdown();
+					ScriptManager.shutdown();
+
+					return -1;
+				}
+			} catch (TaskNotFoundException e) {
+				Logger.infoMarkup($"[red]Task[/] [yellow]{e.name}[/] [red]could not be found![/]");
+				Logger.exception(e);
+
+				Logger.debug("Avilable Tasks:");
+				foreach (var t in ScriptManager.getTasks()) {
+					Logger.debug(t.name);
+				}
+
+				return -1;
 			}
 		}
 

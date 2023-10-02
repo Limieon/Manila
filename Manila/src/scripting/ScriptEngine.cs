@@ -15,7 +15,9 @@ public class ScriptEngine {
 		engine = new V8ScriptEngine(V8ScriptEngineFlags.EnableDateTimeConversion | V8ScriptEngineFlags.EnableValueTaskPromiseConversion | V8ScriptEngineFlags.EnableTaskPromiseConversion);
 		engine.DocumentSettings.AccessFlags = DocumentAccessFlags.EnableFileLoading;
 		engine.AddHostTypes(typeof(API.Manila));
+
 		API.Functions.addToEngine(engine);
+		API.Parameter.init(Environment.GetCommandLineArgs(), engine);
 	}
 	internal void shutdown() {
 		engine.Dispose();

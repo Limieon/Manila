@@ -86,7 +86,7 @@ public static class ScriptManager {
 		scope = Scope.WORKSPACE;
 
 		if (!new ManilaFile("Manila.js").exists()) {
-			throw new Exception("No script environment!");
+			throw new NoScriptEnvException();
 		}
 
 		engine.run("Manila.js");

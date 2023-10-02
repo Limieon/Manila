@@ -2,6 +2,8 @@ const project = Manila.getProject()
 const workspace = Manila.getWorkspace()
 const config = Manila.getConfig()
 
+const year = parameterInt('year', 'enter the current year')
+
 const binDir = Manila.dir(workspace.location).join('bin').join(config.platform).join(`${config.config}-${config.arch}`).join(project.name)
 const objDir = Manila.dir(workspace.location)
 	.join('bin-int')
@@ -65,6 +67,6 @@ task('run')
 	.dependsOn(':client:compile')
 	.onExecute(async () => {
 		const app = Manila.application(binary)
-		let exitCode = app.run()
+		let exitCode = app.run(project.location, 'abc', 'def', 'ghi')
 		Manila.print('App Exited with code:', exitCode)
 	})
