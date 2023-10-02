@@ -18,6 +18,7 @@ public class ScriptEngine {
 
 		API.Functions.addToEngine(engine);
 		API.Parameter.init(Environment.GetCommandLineArgs(), engine);
+		API.Dependency.init(engine);
 	}
 	internal void shutdown() {
 		engine.Dispose();

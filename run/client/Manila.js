@@ -2,8 +2,6 @@ const project = Manila.getProject()
 const workspace = Manila.getWorkspace()
 const config = Manila.getConfig()
 
-const year = parameterInt('year', 'enter the current year', 2023)
-
 const binDir = Manila.dir(workspace.location).join('bin').join(config.platform).join(`${config.config}-${config.arch}`).join(project.name)
 const objDir = Manila.dir(workspace.location)
 	.join('bin-int')
@@ -41,6 +39,8 @@ task('compile')
 
 		const objFiles = []
 		var numFile = 1
+
+		dependencies([prj(':core'), prj(':client')])
 
 		for (const file of files) {
 			Manila.markup(`[yellow]${numFile}[/][gray]/[/][green]${files.Length}[/] [gray]>[/] [magenta]${file.getFileName()}[/] `)
