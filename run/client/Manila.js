@@ -2,7 +2,7 @@ const project = Manila.getProject()
 const workspace = Manila.getWorkspace()
 const config = Manila.getConfig()
 
-const year = parameterInt('year', 'enter the current year')
+const year = parameterInt('year', 'enter the current year', 2023)
 
 const binDir = Manila.dir(workspace.location).join('bin').join(config.platform).join(`${config.config}-${config.arch}`).join(project.name)
 const objDir = Manila.dir(workspace.location)
@@ -17,9 +17,9 @@ const srcFileSet = Manila.fileSet(project.location)
 srcFileSet.include('src/**/*.c').include('src/**/*.cpp')
 
 task('clean').onExecute(async () => {
-	print('Deleting Bin Dir...')
+	println('Deleting Bin Dir...')
 	if (binDir.exists()) binDir.delete()
-	print('Deleting Obj Dir...\n')
+	println('Deleting Obj Dir...\n')
 	if (objDir.exists()) objDir.delete()
 })
 
@@ -43,19 +43,19 @@ task('compile')
 		var numFile = 1
 
 		for (const file of files) {
-			Manila.markup(`[yellow]${numFile}[/][gray]/[/][green]${files.Length}[/] [gray]>[/] [magenta]${file.getFileName()}[/]`)
+			Manila.markup(`[yellow]${numFile}[/][gray]/[/][green]${files.Length}[/] [gray]>[/] [magenta]${file.getFileName()}[/] `)
 			let res = await ManilaCPP.clangCompile(flags, project, workspace, file)
 
 			if (res.success) {
-				if (res.skipped) Manila.appendMarkup(' [gray]-[/] [yellow]Skipped[/]')
-				else Manila.appendMarkup(' [gray]-[/] [green]Success[/]')
+				if (res.skipped) Manila.markupln('[gray]-[/] [yellow]Skipped[/]')
+				else Manila.markupln('[gray]-[/] [green]Success[/]')
 			}
 
 			objFiles.push(res.objFile)
 
 			numFile++
 		}
-		Manila.markup(
+		Manila.markupln(
 			`\n[gray]Linking[/] [blue]${workspace.name}[/][gray]/[/][blue]${
 				project.name
 			}[/] [gray]=>[/] [magenta]${flags.binDir.getPath()}[/][gray]...[/]\n`
@@ -70,5 +70,5 @@ task('run')
 	.onExecute(async () => {
 		const app = Manila.application(binary)
 		let exitCode = app.run(project.location, 'abc', 'def', 'ghi')
-		Manila.print('App Exited with code:', exitCode)
+		println('App Exited with code:', exitCode)
 	})

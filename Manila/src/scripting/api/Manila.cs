@@ -120,15 +120,15 @@ public static class Manila {
 	/// Prints text to stdout
 	/// </summary>
 	/// <param name="text">the text to print</param>
-	public static void appendPrint(params dynamic[] text) {
-		Functions.appendPrint(string.Join(" ", text));
+	public static void println(params dynamic[] text) {
+		Functions.println(string.Join(" ", text));
 	}
 	/// <summary>
 	/// Prints text to stdout (with markup support (visit: https://spectreconsole.net/markup))
 	/// </summary>
 	/// <param name="text">the text to print</param>
-	public static void appendMarkup(params dynamic[] text) {
-		Functions.appendMarkup(string.Join(" ", text));
+	public static void markupln(params dynamic[] text) {
+		Functions.markupln(string.Join(" ", text));
 	}
 
 	public static long taskDuration() {
