@@ -40,7 +40,7 @@ task('compile')
 		const objFiles = []
 		var numFile = 1
 
-		dependencies([prj(':core'), prj(':client')])
+		dependencies([Manila.project(':core'), Manila.project(':client'), Manila.external('glfw', 'glfw')])
 
 		for (const file of files) {
 			Manila.markup(`[yellow]${numFile}[/][gray]/[/][green]${files.Length}[/] [gray]>[/] [magenta]${file.getFileName()}[/] `)

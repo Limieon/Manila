@@ -143,4 +143,15 @@ public static class Manila {
 
 	public static Application application(ManilaFile binary) { return new Application(binary); }
 	public static FileSet fileSet(ManilaDirectory root) { return new FileSet(root.getPath()); }
+
+	/// <summary>
+	/// Adds a project as a dependency
+	/// </summary>
+	/// <param name="id">The id of the project</param>
+	public static Dependency.Resolver project(string id) {
+		return Dependency.project(id);
+	}
+	public static Dependency.Resolver external(string projectNamespace, string projectID) {
+		return Dependency.external(projectNamespace, projectID);
+	}
 }
