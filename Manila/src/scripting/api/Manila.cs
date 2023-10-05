@@ -154,4 +154,8 @@ public static class Manila {
 	public static Dependency.Resolver external(string projectNamespace, string projectID) {
 		return Dependency.external(projectNamespace, projectID);
 	}
+
+	public static void runTask(string id) {
+		ScriptManager.getTask(id);
+	}
 }
