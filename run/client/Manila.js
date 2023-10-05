@@ -9,66 +9,33 @@ const objDir = Manila.dir(workspace.location)
 	.join(`${config.config}-${config.arch}`)
 	.join(project.name)
 
-let binary = undefined
-
 const srcFileSet = Manila.fileSet(project.location)
 srcFileSet.include('src/**/*.c').include('src/**/*.cpp')
 
 task('clean').onExecute(async () => {
-	println('Deleting Bin Dir...')
+	Manila.println('Deleting Bin Dir...')
 	if (binDir.exists()) binDir.delete()
-	println('Deleting Obj Dir...\n')
+	Manila.println('Deleting Obj Dir...\n')
 	if (objDir.exists()) objDir.delete()
 })
 
 task('recompile')
+	.tag('manila/rebuild')
 	.dependsOn(':client:clean')
 	.dependsOn(':client:compile')
-	.onExecute(async () => {})
+	.onExecute(async () => {
+		Manila.println('Recompiling...')
+	})
 
 task('compile')
 	.tag('manila/build')
 	.onExecute(async () => {
-		const flags = ManilaCPP.clangFlags()
-		flags.name = project.name
-		flags.binDir = binDir
-		flags.objDir = objDir
-		flags.platform = config.platform
-
-		let files = srcFileSet.files()
-
-		const objFiles = []
-		var numFile = 1
-
-		dependencies([Manila.project(':core'), Manila.project(':client'), Manila.external('glfw', 'glfw')])
-
-		for (const file of files) {
-			Manila.markup(`[yellow]${numFile}[/][gray]/[/][green]${files.Length}[/] [gray]>[/] [magenta]${file.getFileName()}[/] `)
-			let res = await ManilaCPP.clangCompile(flags, project, workspace, file)
-
-			if (res.success) {
-				if (res.skipped) Manila.markupln('[gray]-[/] [yellow]Skipped[/]')
-				else Manila.markupln('[gray]-[/] [green]Success[/]')
-			}
-
-			objFiles.push(res.objFile)
-
-			numFile++
-		}
-		Manila.markupln(
-			`\n[gray]Linking[/] [blue]${workspace.name}[/][gray]/[/][blue]${
-				project.name
-			}[/] [gray]=>[/] [magenta]${flags.binDir.getPath()}[/][gray]...[/]\n`
-		)
-		const linkerRes = ManilaCPP.clangLink(flags, project, workspace, objFiles)
-
-		binary = linkerRes.binary
+		Manila.println('Building...')
 	})
 
 task('run')
+	.tag('manila/run')
 	.dependsOn(':client:compile')
 	.onExecute(async () => {
-		const app = Manila.application(binary)
-		let exitCode = app.run(project.location, 'abc', 'def', 'ghi')
-		println('App Exited with code:', exitCode)
+		Manila.println('Running...')
 	})
