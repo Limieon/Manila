@@ -156,6 +156,6 @@ public static class Manila {
 	}
 
 	public static void runTask(string id) {
-		ScriptManager.getTask(id);
+		ScriptManager.executeTask(ScriptManager.getTask(id), true);
 	}
 }

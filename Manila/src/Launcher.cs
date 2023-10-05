@@ -27,7 +27,6 @@ class Launcher {
 		var app = new CLI.App("Manila", "A Build System written in [green4]C#[/] using [yellow]JavaScript[/] as Build Scripts");
 
 		var workspace = new Data.Workspace();
-		System.Console.WriteLine(workspace.data.name);
 		FileUtils.init(rootDir, workspace.data.name != null);
 
 		Logger.debug("Root Dir:", rootDir.getPath());

@@ -39,3 +39,8 @@ task('run')
 	.onExecute(async () => {
 		Manila.println('Running...')
 	})
+
+task('test').onExecute(async () => {
+	Manila.println('Test Task')
+	Manila.runTask(':client:compile')
+})

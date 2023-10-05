@@ -62,15 +62,11 @@ public static class ScriptUtils {
 			if (res) {
 				Logger.info();
 				Logger.infoMarkup($"[green]Task Successful![/] [gray]Took[/] [cyan]{FormattingUtils.stringifyDuration(duration)}[/]");
-				PluginManager.shutdown();
-				ScriptManager.shutdown();
 
 				return 0;
 			} else {
 				Logger.info();
 				Logger.infoMarkup($"[red]Task Successful![/] [gray]Took[/] [cyan]{FormattingUtils.stringifyDuration(duration)}[/]");
-				PluginManager.shutdown();
-				ScriptManager.shutdown();
 
 				return -1;
 			}

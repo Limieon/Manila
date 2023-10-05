@@ -6,6 +6,7 @@ using Manila.Scripting;
 using Manila.Scripting.API;
 using Manila.Scripting.Exceptions;
 using Manila.Utils;
+using Spectre.Console;
 
 namespace Manila.Core;
 
@@ -205,21 +206,17 @@ public static class ScriptManager {
 	/// </summary>
 	/// <param name="task">the task to execute</param>
 	/// <returns>true: task succeded, false: task failed</returns>
-	public static async Task<bool> executeTask(Scripting.API.Task task) {
+	public static async Task<bool> executeTask(Scripting.API.Task task, bool inline = false) {
 		timeBuildStarted = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 		var order = getTasksRec(task);
 
+		if (inline) {
+			Logger.system($"Running inline task [magenta]{ScriptUtils.getTaskName(task)}[/] and its [yellow]{order.Count}[/] dependencies...");
+		}
+
 		var taskNum = 1;
 		foreach (var t in order) {
-			if (taskNum == order.Count) {
-				Logger.infoMarkup(
-					$"[green]{taskNum++}[/][gray]/[/][cyan]{order.Count}[/] [gray]>[/] [blue]{ScriptUtils.getTaskName(t)}[/]"
-				);
-			} else {
-				Logger.infoMarkup(
-					$"[yellow]{taskNum++}[/][gray]/[/][cyan]{order.Count}[/] [gray]>[/] [blue]{ScriptUtils.getTaskName(t)}[/]"
-				);
-			}
+			if (!inline) Logger.printTaskHeader(task, taskNum++, order.Count);
 
 			await t.execute();
 		}

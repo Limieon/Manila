@@ -90,4 +90,13 @@ public static class Logger {
 		if (Scripting.API.Task.inTask) AnsiConsole.Write("  ");
 		AnsiConsole.MarkupLine(string.Join(" ", data));
 	}
+
+	internal static void printTaskHeader(Scripting.API.Task task, int current, int total) {
+		AnsiConsole.MarkupLine($"[green]{current}[/][gray]/[/][cyan]{total}[/] [gray]>[/] [blue]{ScriptUtils.getTaskName(task)}[/]");
+	}
+
+	internal static void system(params dynamic[] data) {
+		AnsiConsole.Markup("[blue]Manila[/] [gray]>[/] ");
+		AnsiConsole.MarkupLine(string.Join(" ", data));
+	}
 }
