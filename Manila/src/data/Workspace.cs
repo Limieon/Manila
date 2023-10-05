@@ -15,7 +15,7 @@ public class Workspace {
 		/// <summary>
 		/// Gets or sets the name of the workspace
 		/// </summary>
-		public string name = "ManilaWorkspace";
+		public string? name = null;
 
 		/// <summary>
 		/// Gets or sets the list of authors associated with the workspace

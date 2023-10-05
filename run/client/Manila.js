@@ -15,7 +15,7 @@ srcFileSet.include('src/**/*.c').include('src/**/*.cpp')
 task('clean').onExecute(async () => {
 	Manila.println('Deleting Bin Dir...')
 	if (binDir.exists()) binDir.delete()
-	Manila.println('Deleting Obj Dir...\n')
+	Manila.println('Deleting Obj Dir...')
 	if (objDir.exists()) objDir.delete()
 })
 
