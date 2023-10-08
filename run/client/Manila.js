@@ -12,14 +12,14 @@ const objDir = Manila.dir(workspace.location)
 const srcFileSet = Manila.fileSet(project.location)
 srcFileSet.include('src/**/*.c').include('src/**/*.cpp')
 
-task('clean').onExecute(async () => {
+Manila.task('clean').onExecute(async () => {
 	Manila.println('Deleting Bin Dir...')
 	if (binDir.exists()) binDir.delete()
 	Manila.println('Deleting Obj Dir...')
 	if (objDir.exists()) objDir.delete()
 })
 
-task('recompile')
+Manila.task('recompile')
 	.tag('manila/rebuild')
 	.dependsOn(':client:clean')
 	.dependsOn(':client:compile')
@@ -27,20 +27,20 @@ task('recompile')
 		Manila.println('Recompiling...')
 	})
 
-task('compile')
+Manila.task('compile')
 	.tag('manila/build')
 	.onExecute(async () => {
 		Manila.println('Building...')
 	})
 
-task('run')
+Manila.task('run')
 	.tag('manila/run')
 	.dependsOn(':client:compile')
 	.onExecute(async () => {
 		Manila.println('Running...')
 	})
 
-task('test').onExecute(async () => {
+Manila.task('test').onExecute(async () => {
 	Manila.println('Test Task')
 	Manila.runTask(':client:compile')
 })

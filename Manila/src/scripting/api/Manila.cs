@@ -158,4 +158,8 @@ public static class Manila {
 	public static void runTask(string id) {
 		ScriptManager.executeTask(ScriptManager.getTask(id), true);
 	}
+
+	public static Task task(string name) {
+		return new Task(name);
+	}
 }
