@@ -48,7 +48,7 @@ public class Option {
 	/// <summary>
 	/// Gets the default value of the option
 	/// </summary>
-	public object vDefault { get; private set; }
+	public object? vDefault { get; private set; }
 
 	/// <summary>
 	/// Parses the specified value based on the option's type
@@ -59,6 +59,12 @@ public class Option {
 		if (this.type == Type.STRING) return (string) value;
 		if (this.type == Type.FLAG) {
 			if (value.GetType() == typeof(bool)) return true;
+			if (value.GetType() == typeof(string)) {
+				switch (((string) value).ToLower()) {
+					case "true": return true;
+					case "false": return false;
+				}
+			}
 			throw new OptionProvidedWrongTypeException(this, Type.STRING, (string) value);
 		}
 		if (this.type == Type.NUMBER) {
@@ -81,7 +87,7 @@ public class Option {
 	/// <param name="alias">The alias of the option</param>
 	/// <param name="vDefault">The default value of the option</param>
 	/// <param name="type">The type of the option</param>
-	public Option(string name, string description, string alias = "", object vDefault = null, Type type = Type.FLAG) {
+	public Option(string name, string description, string alias = "", object? vDefault = null, Type type = Type.FLAG) {
 		this.name = name;
 		this.description = description;
 		this.alias = alias;

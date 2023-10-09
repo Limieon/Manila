@@ -18,13 +18,13 @@ class Launcher {
 
 		var verbose = false;
 		foreach (var s in args) {
-			if (s == "-v" || s == "--verbose") verbose = true;
+			if (s == "--verbose") verbose = true;
 		}
 
 		Logger.init(verbose);
 
 		var rootDir = Scripting.API.Manila.dir(Directory.GetCurrentDirectory());
-		var app = new CLI.App("Manila", "A Build System written in [green4]C#[/] using [yellow]JavaScript[/] as Build Scripts");
+		var app = new CLI.App("Manila", "A Build System written in [green4]C#[/] using [yellow]JavaScript[/] as Build Scripts", "1.0.0");
 
 		var workspace = new Data.Workspace();
 		FileUtils.init(rootDir, workspace.data.name != null);
@@ -69,11 +69,20 @@ class Launcher {
 				return -1;
 			}
 
-			if (args[0].StartsWith(":"))
-				await ScriptUtils.executeTask(ScriptManager.getTask(args[0]));
-			else if (args[0].StartsWith("/"))
-				foreach (var t in ScriptManager.getTasks(args[0][1..]))
-					await ScriptUtils.executeTask(ScriptManager.getTask(t.name));
+			if (args.Length > 0) {
+				if (args[0].StartsWith(":")) {
+					await ScriptUtils.executeTask(ScriptManager.getTask(args[0]));
+					return 0;
+				} else if (args[0].StartsWith("/")) {
+					try {
+						foreach (var t in ScriptManager.getTasks(args[0][1..])) await ScriptUtils.executeTask(ScriptManager.getTask(t.name));
+					} catch (ArgumentException e) {
+						Logger.infoMarkup($"[red]Tag {args[0]} contains no tasks![/]");
+						Logger.exception(e);
+					}
+					return 0;
+				}
+			}
 		}
 
 		try {

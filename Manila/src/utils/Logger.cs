@@ -91,10 +91,20 @@ public static class Logger {
 		AnsiConsole.MarkupLine(string.Join(" ", data));
 	}
 
+	/// <summary>
+	/// Prints the task header
+	/// </summary>
+	/// <param name="task">The task</param>
+	/// <param name="current">Current Task Number</param>
+	/// <param name="total">Total Task Number</param>
 	internal static void printTaskHeader(Scripting.API.Task task, int current, int total) {
 		AnsiConsole.MarkupLine($"[green]{current}[/][gray]/[/][cyan]{total}[/] [gray]>[/] [blue]{ScriptUtils.getTaskName(task)}[/]");
 	}
 
+	/// <summary>
+	/// Prints messages in the system context
+	/// </summary>
+	/// <param name="data">The data to print</param>
 	internal static void system(params dynamic[] data) {
 		AnsiConsole.Markup("[blue]Manila[/] [gray]>[/] ");
 		AnsiConsole.MarkupLine(string.Join(" ", data));

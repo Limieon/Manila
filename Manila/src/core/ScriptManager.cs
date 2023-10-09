@@ -261,6 +261,7 @@ public static class ScriptManager {
 		foreach (var t in tasks) {
 			if (t.tags.Contains(tag)) res.Add(t);
 		}
+		if (res.Count < 1) throw new ArgumentException($"Task tag {tag} has no tasks!");
 		return res;
 	}
 }
