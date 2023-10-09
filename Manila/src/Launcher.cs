@@ -71,6 +71,9 @@ class Launcher {
 
 			if (args[0].StartsWith(":"))
 				await ScriptUtils.executeTask(ScriptManager.getTask(args[0]));
+			else if (args[0].StartsWith("/"))
+				foreach (var t in ScriptManager.getTasks(args[0][1..]))
+					await ScriptUtils.executeTask(ScriptManager.getTask(t.name));
 		}
 
 		try {

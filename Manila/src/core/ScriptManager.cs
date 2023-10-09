@@ -216,7 +216,7 @@ public static class ScriptManager {
 
 		var taskNum = 1;
 		foreach (var t in order) {
-			if (!inline) Logger.printTaskHeader(task, taskNum++, order.Count);
+			if (!inline) Logger.printTaskHeader(t, taskNum++, order.Count);
 
 			await t.execute();
 		}
