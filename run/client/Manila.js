@@ -37,6 +37,8 @@ Manila.task('run')
 	.dependsOn(':client:compile')
 	.onExecute(async () => {
 		Manila.println('Running...')
+		const res = Manila.http.get('https://www.timeapi.io/api/Time/current/zone?timeZone=Asia/Manila')
+		Manila.println(res['dateTime'])
 	})
 
 Manila.task('test').onExecute(async () => {

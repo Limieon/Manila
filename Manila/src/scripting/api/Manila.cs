@@ -11,6 +11,8 @@ namespace Manila.Scripting.API;
 /// The main Manila Build System API
 /// </summary>
 public static class Manila {
+	public static HTTP http = new HTTP();
+
 	/// <summary>
 	/// Creates a new file handle
 	/// </summary>
