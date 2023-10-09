@@ -4,8 +4,8 @@ using Newtonsoft.Json;
 
 namespace Manila.Utils;
 
-public class ProjectGenerator {
-	public class WorkspaceData {
+internal class ProjectGenerator {
+	internal class WorkspaceData {
 		public string name;
 		public List<string> authors = new List<string>();
 		public List<string> projects = new List<string>();

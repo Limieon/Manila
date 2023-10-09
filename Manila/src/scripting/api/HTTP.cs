@@ -1,9 +1,5 @@
 
-using System.Text.Json.Nodes;
-using Manila.Core;
 using Microsoft.ClearScript;
-using Microsoft.ClearScript.JavaScript;
-using Microsoft.ClearScript.V8;
 using Newtonsoft.Json.Linq;
 
 namespace Manila.Scripting.API;

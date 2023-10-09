@@ -11,7 +11,10 @@ namespace Manila.Scripting.API;
 /// The main Manila Build System API
 /// </summary>
 public static class Manila {
-	public static HTTP http = new HTTP();
+	/// <summary>
+	/// Object to make HTTP Requests
+	/// </summary>
+	public static readonly HTTP http = new HTTP();
 
 	/// <summary>
 	/// Creates a new file handle
@@ -132,18 +135,39 @@ public static class Manila {
 	public static void markupln(params dynamic[] text) {
 		Functions.markupln(string.Join(" ", text));
 	}
-
+	/// <summary>
+	/// Get the duration since the task started
+	/// </summary>
+	/// <returns>Duration in ms</returns>
 	public static long taskDuration() {
 		return DateTimeOffset.Now.ToUnixTimeMilliseconds() - Task.timeTaskStarted;
 	}
+	/// <summary>
+	/// Get the duration since the first task in the chain started
+	/// </summary>
+	/// <returns>Duration in ms</returns>
 	public static long totalTaskDuration() {
 		return DateTimeOffset.Now.ToUnixTimeMilliseconds() - Task.timeFirstTaskStarted;
 	}
+	/// <summary>
+	/// Get the duration since the build started
+	/// </summary>
+	/// <returns>Duration in ms</returns>
 	public static long buildDuration() {
 		return DateTimeOffset.Now.ToUnixTimeMilliseconds() - ScriptManager.timeBuildStarted;
 	}
 
+	/// <summary>
+	/// Get an application handle by a binary
+	/// </summary>
+	/// <param name="binary">The binary</param>
+	/// <returns>The application handle</returns>
 	public static Application application(ManilaFile binary) { return new Application(binary); }
+	/// <summary>
+	/// Get a fileset handle at a given root
+	/// </summary>
+	/// <param name="root">The root</param>
+	/// <returns>The fileset handle</returns>
 	public static FileSet fileSet(ManilaDirectory root) { return new FileSet(root.getPath()); }
 
 	/// <summary>
@@ -153,14 +177,29 @@ public static class Manila {
 	public static Dependency.Resolver project(string id) {
 		return Dependency.project(id);
 	}
+	/// <summary>
+	/// Adds a external dependency
+	/// </summary>
+	/// <param name="projectNamespace">The dependency namespace</param>
+	/// <param name="projectID">The dependency id</param>
+	/// <returns>The dependency rsolver</returns>
 	public static Dependency.Resolver external(string projectNamespace, string projectID) {
 		return Dependency.external(projectNamespace, projectID);
 	}
 
+	/// <summary>
+	/// Run a task from a script
+	/// </summary>
+	/// <param name="id">The id of the task</param>
 	public static void runTask(string id) {
 		ScriptManager.executeTask(ScriptManager.getTask(id), true);
 	}
 
+	/// <summary>
+	/// Create a new task
+	/// </summary>
+	/// <param name="name">The name of the task</param>
+	/// <returns>The task handle</returns>
 	public static Task task(string name) {
 		return new Task(name);
 	}

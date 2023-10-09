@@ -47,6 +47,7 @@ public abstract class ProjectFilter {
 		/// Initializes a new instance of the RegexFilter class with the specified regular expression filter.
 		/// </summary>
 		/// <param name="filter">The regular expression pattern used for filtering.</param>
+		/// <param name="func">The function to execute when the filter matches</param>
 		public RegexFilter(Regex filter, ScriptObject func) : base(func) { this.filter = filter; }
 
 		/// <inheritdoc />
