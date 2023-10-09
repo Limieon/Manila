@@ -1,6 +1,5 @@
 
 using Manila.CLI;
-using Manila.Scripting;
 using Manila.Utils;
 
 namespace Manila.Commands;

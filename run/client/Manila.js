@@ -2,21 +2,20 @@ const project = Manila.getProject()
 const workspace = Manila.getWorkspace()
 const config = Manila.getConfig()
 
-const binDir = Manila.dir(workspace.location).join('bin').join(config.platform).join(`${config.config}-${config.arch}`).join(project.name)
-const objDir = Manila.dir(workspace.location)
-	.join('bin-int')
-	.join(config.platform)
-	.join(`${config.config}-${config.arch}`)
-	.join(project.name)
+const baseBinDir = Manila.dir(workspace.location).join('bin')
+const baseObjDir = Manila.dir(workspace.location).join('bin-int')
+
+const binDir = baseBinDir.join(config.platform).join(`${config.config}-${config.arch}`).join(project.name)
+const objDir = baseObjDir.join(config.platform).join(`${config.config}-${config.arch}`).join(project.name)
 
 const srcFileSet = Manila.fileSet(project.location)
 srcFileSet.include('src/**/*.c').include('src/**/*.cpp')
 
 Manila.task('clean').onExecute(async () => {
 	Manila.println('Deleting Bin Dir...')
-	if (binDir.exists()) binDir.delete()
+	if (baseBinDir.exists()) baseBinDir.delete()
 	Manila.println('Deleting Obj Dir...')
-	if (objDir.exists()) objDir.delete()
+	if (baseObjDir.exists()) baseObjDir.delete()
 })
 
 Manila.task('recompile')

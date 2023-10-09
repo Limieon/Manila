@@ -98,12 +98,14 @@ public class App {
 		for (var i = 0; i < args.Length; i++) {
 			var arg = args[i];
 
-			if (!arg.StartsWith("-")) parameters.Add(arg);
-			else {
+			if (!arg.StartsWith("-")) {
+				parameters.Add(arg);
+			} else {
 				if (i + 1 < args.Length && !args[i + 1].StartsWith("-")) {
 					options.Add(arg[2..], args[i + 1]);
+				} else {
+					options.Add(arg[2..], "true");
 				}
-				options.Add(arg[2..], "true");
 			}
 		}
 
