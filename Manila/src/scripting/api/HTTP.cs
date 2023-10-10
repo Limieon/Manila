@@ -12,7 +12,7 @@ public class HTTP {
 	private HttpClient client = new HttpClient();
 
 	public object get(string url) {
-		var reqTask = new HttpClient().GetAsync(url);
+		var reqTask = client.GetAsync(url);
 		reqTask.Wait();
 		var reqTaskRes = reqTask.Result;
 		reqTaskRes.EnsureSuccessStatusCode();
@@ -23,9 +23,19 @@ public class HTTP {
 	}
 
 	public object post(string url, ScriptObject body) {
-		var str = JsonConvert.SerializeObject(body);
-		HttpContent content = new StringContent(str, Encoding.UTF8, "application/json");
-		var reqTask = new HttpClient().PostAsync(new Uri(url), content);
+		var content = new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json");
+		var reqTask = client.PostAsync(url, content);
+		reqTask.Wait();
+
+		var reqTaskRes = reqTask.Result;
+		var task = reqTaskRes.Content.ReadAsStringAsync();
+		task.Wait();
+		return task.Result;
+	}
+
+	public object put(string url, ScriptObject body) {
+		var content = new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json");
+		var reqTask = client.PutAsync(url, content);
 		reqTask.Wait();
 
 		var reqTaskRes = reqTask.Result;

@@ -47,6 +47,13 @@ Manila.task('run')
 			}
 		})
 		Manila.println(res2)
+
+		const res3 = Manila.http.put('http://127.0.0.1:20176/put', {
+			data: {
+				password: '5678'
+			}
+		})
+		Manila.println(res3)
 	})
 
 Manila.task('test').onExecute(async () => {
