@@ -1,5 +1,9 @@
 
+using System.Net.Http.Json;
+using System.Text;
 using Microsoft.ClearScript;
+using Microsoft.ClearScript.JavaScript;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Manila.Scripting.API;
@@ -8,7 +12,7 @@ public class HTTP {
 	private HttpClient client = new HttpClient();
 
 	public object get(string url) {
-		var reqTask = client.GetAsync(url);
+		var reqTask = new HttpClient().GetAsync(url);
 		reqTask.Wait();
 		var reqTaskRes = reqTask.Result;
 		reqTaskRes.EnsureSuccessStatusCode();
@@ -16,5 +20,17 @@ public class HTTP {
 		var task = reqTaskRes.Content.ReadAsStringAsync();
 		task.Wait();
 		return JObject.Parse(task.Result);
+	}
+
+	public object post(string url, ScriptObject body) {
+		var str = JsonConvert.SerializeObject(body);
+		HttpContent content = new StringContent(str, Encoding.UTF8, "application/json");
+		var reqTask = new HttpClient().PostAsync(new Uri(url), content);
+		reqTask.Wait();
+
+		var reqTaskRes = reqTask.Result;
+		var task = reqTaskRes.Content.ReadAsStringAsync();
+		task.Wait();
+		return task.Result;
 	}
 }

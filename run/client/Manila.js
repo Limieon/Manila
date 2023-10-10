@@ -39,6 +39,14 @@ Manila.task('run')
 		Manila.println('Running...')
 		const res = Manila.http.get('https://www.timeapi.io/api/Time/current/zone?timeZone=Asia/Manila')
 		Manila.println(res['dateTime'])
+
+		const res2 = Manila.http.post('http://127.0.0.1:20176/post', {
+			data: {
+				username: 'Limieon',
+				password: '1234'
+			}
+		})
+		Manila.println(res2)
 	})
 
 Manila.task('test').onExecute(async () => {
