@@ -54,6 +54,9 @@ Manila.task('run')
 			}
 		})
 		Manila.println(res3)
+
+		const res4 = Manila.http.delete('http://127.0.0.1:20176/delete')
+		Manila.println(res4)
 	})
 
 Manila.task('test').onExecute(async () => {

@@ -43,4 +43,14 @@ public class HTTP {
 		task.Wait();
 		return task.Result;
 	}
+
+	public object delete(string url) {
+		var reqTask = client.DeleteAsync(url);
+		reqTask.Wait();
+
+		var reqTaskRes = reqTask.Result;
+		var task = reqTaskRes.Content.ReadAsStringAsync();
+		task.Wait();
+		return task.Result;
+	}
 }
