@@ -1,6 +1,5 @@
 
 using System.Text.RegularExpressions;
-using Manila.CLI;
 using Manila.Core;
 using Manila.Utils;
 using Microsoft.ClearScript;
@@ -15,6 +14,7 @@ public static class Manila {
 	/// Object to make HTTP Requests
 	/// </summary>
 	public static readonly HTTP http = new HTTP();
+	public static readonly ENV env = new ENV();
 
 	/// <summary>
 	/// Creates a new file handle
