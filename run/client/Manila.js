@@ -37,28 +37,8 @@ Manila.task('run')
 	.dependsOn(':client:compile')
 	.onExecute(async () => {
 		Manila.println('Running...')
-		const API_BASE = Manila.env.get('API_BASE')
-
-		const res = Manila.http.get('https://www.timeapi.io/api/Time/current/zone?timeZone=Asia/Manila')
-		Manila.println(res['dateTime'])
-
-		const res2 = Manila.http.post(`${API_BASE}/post`, {
-			data: {
-				username: 'Limieon',
-				password: '1234'
-			}
-		})
-		Manila.println(res2)
-
-		const res3 = Manila.http.put(`${API_BASE}/put`, {
-			data: {
-				password: '5678'
-			}
-		})
-		Manila.println(res3)
-
-		const res4 = Manila.http.delete(`${API_BASE}/delete`)
-		Manila.println(res4)
+		const { dateTime } = Manila.http.get('https://www.timeapi.io/api/Time/current/zone?timeZone=Asia/Manila')
+		Manila.println(dateTime)
 	})
 
 Manila.task('test').onExecute(async () => {
