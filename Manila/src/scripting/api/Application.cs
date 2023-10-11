@@ -3,6 +3,9 @@ using System.Diagnostics;
 
 namespace Manila.Scripting.API;
 
+/// <summary>
+/// API for running applications
+/// </summary>
 public class Application {
 	public readonly ManilaFile binary;
 

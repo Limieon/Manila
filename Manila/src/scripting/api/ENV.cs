@@ -1,10 +1,13 @@
 
 namespace Manila.Scripting.API;
 
+/// <summary>
+/// API for enviornment variables
+/// </summary>
 public class ENV {
 	private Dictionary<string, object> data;
 
-	public ENV() {
+	internal ENV() {
 		data = new Dictionary<string, object>();
 		load();
 	}
@@ -28,6 +31,12 @@ public class ENV {
 		return value;
 	}
 
+	/// <summary>
+	/// Get a value by its key
+	/// </summary>
+	/// <param name="key">The key</param>
+	/// <param name="vDefault">The default value when key is not found</param>
+	/// <returns>The value or the default</returns>
 	public object? get(string key, object vDefault) {
 		return has(key) ?
 			get(key) :
@@ -35,6 +44,16 @@ public class ENV {
 				vDefault :
 				Environment.GetEnvironmentVariable(key);
 	}
-	public object get(string key) { return data[key]; }
+	/// <summary>
+	/// Get a value by its key
+	/// </summary>
+	/// <param name="key">The key</param>
+	/// <returns>The value or null if not found</returns>
+	public object? get(string key) { return has(key) ? data[key] : null; }
+	/// <summary>
+	/// Checks if a variable is present
+	/// </summary>
+	/// <param name="key">The key</param>
+	/// <returns>true: exists</returns>
 	public bool has(string key) { return Environment.GetEnvironmentVariable(key) != null || data.ContainsKey(key); }
 }

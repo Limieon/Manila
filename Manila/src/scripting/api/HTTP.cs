@@ -1,13 +1,14 @@
 
-using System.Net.Http.Json;
 using System.Text;
 using Microsoft.ClearScript;
-using Microsoft.ClearScript.JavaScript;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Manila.Scripting.API;
 
+/// <summary>
+/// API for HTTP Requests
+/// </summary>
 public class HTTP {
 	private HttpClient client = new HttpClient();
 

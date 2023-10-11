@@ -5,18 +5,30 @@ using Microsoft.ClearScript.V8;
 
 namespace Manila.Scripting.API;
 
+/// <summary>
+/// API for dependency management
+/// </summary>
 public static class Dependency {
+	/// <summary>
+	/// Base class for dependency resolvers
+	/// </summary>
 	public abstract class Resolver {
 		public abstract void resolve();
 	}
+	/// <summary>
+	/// Project dependency resolver
+	/// </summary>
 	public class ResolverProject : Resolver {
 		public readonly string id;
-		public ResolverProject(string id) { this.id = id; }
+		internal ResolverProject(string id) { this.id = id; }
 
 		public override void resolve() {
 			Console.WriteLine("Loading project " + id);
 		}
 	}
+	/// <summary>
+	/// External dependency resolver
+	/// </summary>
 	public class ResolverExternal : Resolver {
 		public readonly string projectID;
 		public readonly string projectNamespace;
@@ -31,7 +43,7 @@ public static class Dependency {
 		}
 	}
 
-	public static void init(V8ScriptEngine e) {
+	internal static void init(V8ScriptEngine e) {
 		e.AddHostObject("dependencies", dependencies);
 		e.AddHostObject("project", project);
 	}

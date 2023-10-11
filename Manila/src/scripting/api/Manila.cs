@@ -14,6 +14,9 @@ public static class Manila {
 	/// Object to make HTTP Requests
 	/// </summary>
 	public static readonly HTTP http = new HTTP();
+	/// <summary>
+	/// Object to get env variables
+	/// </summary>
 	public static readonly ENV env = new ENV();
 
 	/// <summary>

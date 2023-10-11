@@ -58,6 +58,9 @@ public static class ScriptManager {
 	internal static Core.Workspace? workspace;
 	internal static BuildConfig? buildConfig = null;
 
+	/// <summary>
+	/// The unix time when the build was invoked
+	/// </summary>
 	public static long timeBuildStarted { get; private set; }
 
 	/// <summary>
@@ -246,7 +249,10 @@ public static class ScriptManager {
 	public static void addType(string name, Type type) {
 		engine.engine.AddHostType(type);
 	}
-
+	/// <summary>
+	/// Get all registered tasks
+	/// </summary>
+	/// <returns>The list of registered tasks</returns>
 	public static List<Scripting.API.Task> getTasks() {
 		return tasks;
 	}

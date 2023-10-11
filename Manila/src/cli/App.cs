@@ -124,7 +124,7 @@ public class App {
 			if (c.name == cmd) executeCommand(c, parameters, options);
 	}
 
-	public void executeCommand(Command c, List<string> parameters, Dictionary<string, string> options) {
+	internal void executeCommand(Command c, List<string> parameters, Dictionary<string, string> options) {
 		Logger.debug($"Executing Command {c.name}");
 
 		Dictionary<string, object> parsedParams = new Dictionary<string, object>();
