@@ -13,7 +13,7 @@ internal class CommandRun : CLI.Command {
 			try {
 				await ScriptUtils.executeTask(t);
 			} catch (Exception e) {
-				Logger.info($"[red]{e.Message}[/]");
+				Logger.infoMarkup($"[red]{e.Message}[/]");
 				Logger.exception(e);
 			}
 		}
