@@ -63,7 +63,7 @@ class Launcher {
 
 				return -1;
 			} catch (Exception e) {
-				Logger.infoMarkup($"[red]An unknow exception occured![/] [yellow]{e.Message}[/]");
+				Logger.infoMarkup($"[red]An unknown exception occured![/] [yellow]{e.Message}[/]");
 				Logger.exception(e);
 
 				return -1;
@@ -72,7 +72,6 @@ class Launcher {
 			if (args.Length > 0) {
 				if (args[0].StartsWith(":")) {
 					await ScriptUtils.executeTask(ScriptManager.getTask(args[0]));
-					return 0;
 				} else if (args[0].StartsWith("/")) {
 					try {
 						foreach (var t in ScriptManager.getTasks(args[0][1..])) await ScriptUtils.executeTask(ScriptManager.getTask(t.name));
@@ -80,7 +79,6 @@ class Launcher {
 						Logger.infoMarkup($"[red]Tag {args[0]} contains no tasks![/]");
 						Logger.exception(e);
 					}
-					return 0;
 				}
 			}
 		}
@@ -102,10 +100,13 @@ class Launcher {
 		} catch (OptionProvidedNotFoundExceptions e) {
 			Console.WriteLine("Could not find option '" + e.option + "' on command '" + e.command.name + "'!");
 			Logger.exception(e);
-		} finally {
-			PluginManager.shutdown();
-			ScriptManager.shutdown();
+		} catch (Exception e) {
+			Logger.infoMarkup($"[red]An unknown exception occured![/] [yellow]{e.Message}[/]");
+			Logger.exception(e);
 		}
+
+		PluginManager.shutdown();
+		ScriptManager.shutdown();
 
 		return 0;
 	}

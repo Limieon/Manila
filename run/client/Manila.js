@@ -30,6 +30,15 @@ Manila.task('compile')
 	.tag('manila/build')
 	.onExecute(async () => {
 		Manila.println('Building...')
+		
+		const flags = MSBuild.flags()
+		flags.binDir = binDir
+		flags.objDir = objDir
+		flags.srcFiles = srcFileSet
+		flags.includeDirs.Add(Manila.dir("include"))
+		flags.libDirs.Add(Manila.dir("lib").join(`${config.config}-${config.arch}`))
+
+		MSBuild.build(workspace, project, config, flags)
 	})
 
 Manila.task('run')
