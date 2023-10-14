@@ -15,20 +15,20 @@
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>C:\dev\Manila\Manila-main\run\bin\windows\Debug-x86\Client</OutDir>
-    <IntDir>C:\dev\Manila\Manila-main\run\bin-int\windows\Debug-x86\Client</IntDir>
+    <OutDir>E:\dev\Manila\Manila-main\run\bin\windows\Debug-x86\Client\</OutDir>
+    <IntDir>E:\dev\Manila\Manila-main\run\bin-int\windows\Debug-x86\Client\</IntDir>
     <TargetName>Client</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\dev\Manila\Manila-main\run\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\dev\Manila\Manila-main\run\include\</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ItemGroup>
-    <ClCompile Include="C:\dev\Manila\Manila-main\run\client\src\Main.cpp" />
-    <ClCompile Include="C:\dev\Manila\Manila-main\run\client\src\Math.cpp" />
+    <ClCompile Include="E:\dev\Manila\Manila-main\run\client\src\Main.cpp" />
+    <ClCompile Include="E:\dev\Manila\Manila-main\run\client\src\Math.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Targets" />
 </Project>
