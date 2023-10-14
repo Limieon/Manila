@@ -13,6 +13,8 @@ srcFileSet.include('src/**/*.c').include('src/**/*.cpp')
 
 let binary
 
+Manila.println('Build Started:', Manila.time.formatted(), `(${Manila.time.zone()})`)
+
 Manila.task('clean').onExecute(async () => {
 	Manila.println('Deleting Bin Dir...')
 	if (baseBinDir.exists()) baseBinDir.delete()
