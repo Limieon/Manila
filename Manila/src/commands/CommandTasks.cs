@@ -12,7 +12,7 @@ public class CommandTasks : Command {
 		var table = new Table().AddColumn("[blue]ID[/]").AddColumn("[blue]Project[/]").AddColumn("[blue]Tags[/]");
 		var tasks = ScriptManager.getTasksAsMap();
 
-		Logger.infoMarkup($"[yellow]{ScriptManager.getTasks().Count}[/] [cyan]Tasks[/] [gray]found in[/] [yellow]{tasks.Keys.Count}[/] [magenta]Projects[/]");
+		Logger.infoMarkup($"[gray]Found[/] [yellow]{ScriptManager.getTasks().Count}[/] [cyan]Task(s)[/] [gray]in[/] [yellow]{tasks.Keys.Count}[/] [magenta]Project(s)[/]");
 		foreach (var k in tasks.Keys) {
 			foreach (var t in tasks[k]) {
 				table.AddRow(
