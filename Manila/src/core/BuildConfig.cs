@@ -26,6 +26,16 @@ public class BuildConfig {
 			RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? "osx" :
 			RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD) ? "freebsd" : "unknown";
 
+		foreach (var f in GetType().GetFields()) {
+			if (!f.Name.StartsWith("_")) continue;
+			var f2 = GetType().GetField(f.Name[1..]);
+
+			if (f2.GetValue(this) == null) {
+				var func = GetType().GetMethod(f.FieldType.Name.ToLower() + "ToString");
+				f2.SetValue(this, func.Invoke(null, new object[] { f.GetValue(this) }));
+			}
+		}
+
 		var args = Environment.GetCommandLineArgs();
 		for (var i = 0; i < args.Length; ++i) {
 			var s = args[i];

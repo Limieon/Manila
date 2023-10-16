@@ -13,6 +13,8 @@ srcFileSet.include('src/**/*.c').include('src/**/*.cpp')
 
 let binary
 
+Manila.println('Build Started:', Manila.time.formatted(), `(${Manila.time.zone()})`)
+
 Manila.task('clean').onExecute(async () => {
 	Manila.println('Deleting Bin Dir...')
 	if (baseBinDir.exists()) baseBinDir.delete()
@@ -32,13 +34,13 @@ Manila.task('compile')
 	.tag('manila/build')
 	.onExecute(async () => {
 		Manila.println('Building...')
-		
+
 		const flags = MSBuild.flags()
 		flags.binDir = binDir
 		flags.objDir = objDir
 		flags.srcFiles = srcFileSet.files()
-		flags.includeDirs.Add(Manila.dir("include"))
-		flags.libDirs.Add(Manila.dir("lib").join(`${config.config}-${config.arch}`))
+		flags.includeDirs.Add(Manila.dir('include'))
+		flags.libDirs.Add(Manila.dir('lib').join(`${config.config}-${config.arch}`))
 
 		binary = MSBuild.build(workspace, project, config, flags)
 	})
@@ -48,8 +50,7 @@ Manila.task('run')
 	.dependsOn(':client:compile')
 	.onExecute(async () => {
 		Manila.println('Running...')
-		const app = Manila.application(binary)
-		app.run()
+		Manila.application(binary).run()
 	})
 
 Manila.task('test').onExecute(async () => {

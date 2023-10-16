@@ -18,6 +18,10 @@ public static class Manila {
 	/// Object to get env variables
 	/// </summary>
 	public static readonly ENV env = new ENV();
+	/// <summary>
+	/// Object to access the time api
+	/// </summary>
+	public static readonly Time time = new Time();
 
 	/// <summary>
 	/// Creates a new file handle
@@ -206,4 +210,10 @@ public static class Manila {
 	public static Task task(string name) {
 		return new Task(name);
 	}
+
+	/// <summary>
+	/// Starts a new timer
+	/// </summary>
+	/// <returns>The timer handle</returns>
+	public static APITimer timer() { return new APITimer(); }
 }
