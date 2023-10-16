@@ -11,6 +11,8 @@ const objDir = baseObjDir.join(config.platform).join(`${config.config}-${config.
 const srcFileSet = Manila.fileSet(project.location)
 srcFileSet.include('src/**/*.c').include('src/**/*.cpp')
 
+let binary
+
 Manila.task('clean').onExecute(async () => {
 	Manila.println('Deleting Bin Dir...')
 	if (baseBinDir.exists()) baseBinDir.delete()
@@ -34,11 +36,11 @@ Manila.task('compile')
 		const flags = MSBuild.flags()
 		flags.binDir = binDir
 		flags.objDir = objDir
-		flags.srcFiles = srcFileSet
+		flags.srcFiles = srcFileSet.files()
 		flags.includeDirs.Add(Manila.dir("include"))
 		flags.libDirs.Add(Manila.dir("lib").join(`${config.config}-${config.arch}`))
 
-		MSBuild.build(workspace, project, config, flags)
+		binary = MSBuild.build(workspace, project, config, flags)
 	})
 
 Manila.task('run')
@@ -46,8 +48,8 @@ Manila.task('run')
 	.dependsOn(':client:compile')
 	.onExecute(async () => {
 		Manila.println('Running...')
-		const { dateTime } = Manila.http.get('https://www.timeapi.io/api/Time/current/zone?timeZone=Asia/Manila')
-		Manila.println(dateTime)
+		const app = Manila.application(binary)
+		app.run()
 	})
 
 Manila.task('test').onExecute(async () => {

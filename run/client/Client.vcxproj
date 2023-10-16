@@ -15,14 +15,14 @@
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>C:\dev\Manila\Manila-main\run\bin\windows\Debug-x86\Client</OutDir>
-    <IntDir>C:\dev\Manila\Manila-main\run\bin-int\windows\Debug-x86\Client</IntDir>
+    <OutDir>C:\dev\Manila\Manila-main\run\bin\windows\Debug-x86\Client\</OutDir>
+    <IntDir>C:\dev\Manila\Manila-main\run\bin-int\windows\Debug-x86\Client\</IntDir>
     <TargetName>Client</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\dev\Manila\Manila-main\run\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\dev\Manila\Manila-main\run\include\</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />

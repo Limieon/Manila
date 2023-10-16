@@ -39,6 +39,13 @@ public class BuildConfig {
 
 				var field = GetType().GetField(key);
 				if (field == null) throw new ConfigNotFoundException(key, GetType());
+
+				var _field = GetType().GetField("_" + key);
+				if (_field != null) {
+					var func = GetType().GetMethod(_field.FieldType.Name.ToLower() + "FromString");
+					_field.SetValue(this, func.Invoke(null, new object[] { val }));
+				}
+
 				if (field.FieldType.IsEnum) {
 					var func = GetType().GetMethod(field.FieldType.Name.ToLower() + "FromString");
 					field.SetValue(this, func.Invoke(null, new object[] { val }));
