@@ -256,6 +256,15 @@ public static class ScriptManager {
 	public static List<Scripting.API.Task> getTasks() {
 		return tasks;
 	}
+	public static Dictionary<string, List<Scripting.API.Task>> getTasksAsMap() {
+		var r = new Dictionary<string, List<Scripting.API.Task>>();
+		foreach (var t in getTasks()) {
+			var id = t.project == null ? "Global" : t.project.id;
+			if (!r.ContainsKey(id)) r.Add(id, new List<Scripting.API.Task>());
+			r[id].Add(t);
+		}
+		return r;
+	}
 
 	/// <summary>
 	/// Gets every task tagged with a specific tag

@@ -90,6 +90,7 @@ class Launcher {
 				.addCommand(new CommandBuild())
 				.addCommand(new CommandRebuild())
 				.addCommand(new CommandRun())
+				.addCommand(new CommandTasks())
 				.parse(args);
 		} catch (ParameterNotProivdedException e) {
 			Console.WriteLine("Missing Parameter '" + e.parameter.name + "' on Command '" + e.command.name + "'!");

@@ -4,6 +4,7 @@
 		"Limieon"
 	],
 	"projects": [
-		"client"
+		"client",
+		"tests/client"
 	]
 }
