@@ -1,4 +1,5 @@
 
+using Manila.Scripting.API;
 using Manila.Utils;
 
 namespace Manila.Core;
@@ -8,6 +9,7 @@ namespace Manila.Core;
 /// </summary>
 public class ScriptInstance {
 	private readonly Dictionary<string, dynamic> properties = new Dictionary<string, dynamic>();
+	public readonly List<Scripting.API.Dependency.Resolver> depndencyResolvers = new List<Scripting.API.Dependency.Resolver>();
 
 	/// <summary>
 	/// Adds custom properties to the project.

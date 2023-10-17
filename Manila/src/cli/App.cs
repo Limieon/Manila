@@ -76,7 +76,7 @@ public class App {
 	/// <param name="command">The command to add</param>
 	/// <returns>The current <see cref="App"/> instanc.</returns>
 	public App addCommand(Command command) {
-		this.commands.Add(command);
+		commands.Add(command);
 		return this;
 	}
 

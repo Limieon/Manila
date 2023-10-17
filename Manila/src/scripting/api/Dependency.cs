@@ -1,4 +1,5 @@
 
+using Manila.Core;
 using Manila.Utils;
 using Microsoft.ClearScript;
 using Microsoft.ClearScript.V8;
@@ -49,10 +50,7 @@ public static class Dependency {
 	}
 
 	public static void dependencies(ScriptObject obj) {
-		var arr = ScriptUtils.toArray<Resolver>(obj);
-		foreach (var resolver in arr) {
-			resolver.resolve();
-		}
+		ScriptManager.currentScriptInstance.depndencyResolvers.AddRange(ScriptUtils.toArray<Resolver>(obj));
 	}
 	public static Resolver project(string id) {
 		return new ResolverProject(id);

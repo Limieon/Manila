@@ -21,8 +21,8 @@ public class CommandTasks : Command {
 						.Replace(t.project.id, $"[magenta]{t.project.id}[/]")
 						.Replace(":", "[gray]:[/]"),
 
-						t.project.name,
-						t.tags.Count > 0 ? string.Join("[gray],[/] ", t.tags) : ""
+						$"[yellow]{t.project.name}[/]",
+						t.tags.Count > 0 ? "[green]" + string.Join("[gray],[/] ", t.tags) + "[/]" : ""
 				);
 			}
 		}

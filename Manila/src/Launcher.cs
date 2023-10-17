@@ -4,8 +4,8 @@ using Manila.Plugin;
 using Manila.Utils;
 using Manila.CLI.Exceptions;
 using Manila.Core;
-using Spectre.Console;
 using Manila.Core.Exceptions;
+using Spectre.Console;
 
 namespace Manila;
 
@@ -92,6 +92,7 @@ class Launcher {
 				.addCommand(new CommandRun())
 				.addCommand(new CommandTasks())
 				.addCommand(new CommandPlugins())
+				.addCommand(new CommandProjects())
 				.parse(args);
 		} catch (ParameterNotProivdedException e) {
 			Console.WriteLine("Missing Parameter '" + e.parameter.name + "' on Command '" + e.command.name + "'!");
