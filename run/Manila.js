@@ -12,9 +12,7 @@ Manila.project(':client', () => {
 		version: '1.0.0'
 	})
 
-	dependencies([
-		project(':core')
-	])
+	dependencies([project(':core')])
 })
 
 Manila.project(':core', () => {
@@ -29,4 +27,15 @@ Manila.project(':tests:client', () => {
 		name: 'Client-Tests',
 		version: '1.0.0'
 	})
+})
+
+Manila.project(':tests:core', () => {
+	properties({
+		name: 'Core-Tests',
+		version: '1.0.0'
+	})
+})
+
+Manila.on('manila/finalize', () => {
+	Manila.println('Finalize Event!')
 })

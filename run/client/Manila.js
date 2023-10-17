@@ -11,8 +11,6 @@ const objDir = baseObjDir.join(config.platform).join(`${config.config}-${config.
 const srcFileSet = Manila.fileSet(project.location)
 srcFileSet.include('src/**/*.c').include('src/**/*.cpp')
 
-let binary
-
 Manila.task('clean').onExecute(async () => {
 	Manila.println('Deleting Bin Dir...')
 	if (baseBinDir.exists()) baseBinDir.delete()
@@ -30,6 +28,7 @@ Manila.task('recompile')
 
 Manila.task('compile')
 	.tag('manila/build')
+	.dependsOn(':core:compile')
 	.onExecute(async () => {
 		Manila.println('Building...')
 
@@ -41,13 +40,18 @@ Manila.task('compile')
 		flags.libDirs.Add(Manila.dir('lib').join(`${config.arch}`))
 		flags.binaryType = MSBuild.consoleApp()
 
-		binary = MSBuild.build(workspace, project, config, flags)
+		//MSBuild.project(workspace, project, config, flags)
+		Manila.println('Generating project file...')
 	})
 
 Manila.task('run')
 	.tag('manila/run')
+	.tag('manila/finalize')
 	.dependsOn(':client:compile')
+	.dependsOn(':tests:client:run')
+	.dependsOn(':tests:core:run')
 	.onExecute(async () => {
 		Manila.println('Running...')
-		Manila.application(binary).run()
+		/*const app = Manila.application(project.getBinary())
+		app.run()*/
 	})

@@ -38,6 +38,11 @@ public class Project : ScriptInstance {
 	public Workspace workspace { get; }
 
 	/// <summary>
+	/// The binary built by this project
+	/// </summary>
+	public ManilaFile? binary;
+
+	/// <summary>
 	/// Initializes a new instance of the <see cref="Project"/> class
 	/// </summary>
 	/// <param name="id">The id of the project</param>
@@ -68,5 +73,10 @@ public class Project : ScriptInstance {
 		}
 
 		base.addProperties(properties);
+	}
+
+	public ManilaFile getBinary() {
+		if (binary == null) throw new Exception("Binary has not been built!");
+		return binary;
 	}
 }

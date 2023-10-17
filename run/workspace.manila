@@ -5,6 +5,8 @@
 	],
 	"projects": [
 		"client",
-		"core"
+		"core",
+		"tests/client",
+		"tests/core"
 	]
 }

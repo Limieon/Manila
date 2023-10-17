@@ -1,11 +1,12 @@
-task('compile')
+Manila.task('compile')
 	.dependsOn(':client:compile')
-	.onExecute(() => {
-		print('Compiling Client Tests...')
+	.onExecute(async () => {
+		Manila.println('Compiling Client Tests...')
 	})
 
-task('run')
+Manila.task('run')
+	.tag('manila/finalize')
 	.dependsOn(':tests:client:compile')
-	.onExecute(() => {
-		print('Running client Tests...')
+	.onExecute(async () => {
+		Manila.println('Running Client Tests...')
 	})

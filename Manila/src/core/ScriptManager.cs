@@ -213,14 +213,30 @@ public static class ScriptManager {
 		timeBuildStarted = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 		var order = getTasksRec(task);
 
+		var nonFinalizeTasks = new List<Scripting.API.Task>(); // Storing tasks without the manila/finalize tag
+		var finalizeTasks = new List<Scripting.API.Task>();    // Storing tasks with    the manila/finalize tag
+
+		foreach (var t in order) {
+			if (t.tags.Contains("manila/finalize")) {
+				finalizeTasks.Add(t); continue;
+			}
+			nonFinalizeTasks.Add(t);
+		}
+
 		if (inline) {
 			Logger.system($"Running inline task [magenta]{ScriptUtils.getTaskName(task)}[/] and its [yellow]{order.Count}[/] dependencies...");
 		}
 
 		var taskNum = 1;
-		foreach (var t in order) {
+		foreach (var t in nonFinalizeTasks) {
 			if (!inline) Logger.printTaskHeader(t, taskNum++, order.Count);
+			await t.execute();
+		}
 
+		EventSystem.fire("manila/finalize");
+
+		foreach (var t in finalizeTasks) {
+			if (!inline) Logger.printTaskHeader(t, taskNum++, order.Count);
 			await t.execute();
 		}
 		return true;
