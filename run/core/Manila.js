@@ -9,7 +9,7 @@ const binDir = baseBinDir.join(config.platform).join(`${config.config}-${config.
 const objDir = baseObjDir.join(config.platform).join(`${config.config}-${config.arch}`).join(project.name)
 
 const srcFileSet = Manila.fileSet(project.location)
-srcFileSet.include('src/**/*.c').include('src/**/*.cpp')
+srcFileSet.include('src/**/*.c').include('src/**/*.cpp').include('src/**/*.h').include('src/**/*.hpp')
 
 Manila.task('clean').onExecute(async () => {
 	Manila.println('Deleting Bin Dir...')

@@ -166,6 +166,11 @@ public class ManilaFile {
 	/// <param name="to">the destination path (default is current directory)</param>
 	public string getPathRelative(string to = ".") { return Path.GetRelativePath(to, path); }
 	/// <summary>
+	/// Gets the relative path from the current path to the specified destination path
+	/// </summary>
+	/// <param name="to">the destination path</param>
+	public string getPathRelative(ManilaDirectory to) { return getPathRelative(to.getPath()); }
+	/// <summary>
 	/// Gets the name of the targeted file
 	/// </summary>
 	public string getFileName() { return Path.GetFileName(path); }

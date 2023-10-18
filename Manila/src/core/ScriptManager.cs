@@ -210,6 +210,8 @@ public static class ScriptManager {
 	/// <param name="task">the task to execute</param>
 	/// <returns>true: task succeded, false: task failed</returns>
 	public static async Task<bool> executeTask(Scripting.API.Task task, bool inline = false) {
+		Logger.debug("Root Task: " + task.name);
+
 		timeBuildStarted = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 		var order = getTasksRec(task);
 
@@ -287,10 +289,11 @@ public static class ScriptManager {
 	/// </summary>
 	/// <param name="tag">The tag to search for</param>
 	public static List<Scripting.API.Task> getTasks(string tag) {
-		// TODO: Sort tasks by dependency requirements
 		var res = new List<Scripting.API.Task>();
 		foreach (var t in tasks) {
-			if (t.tags.Contains(tag)) res.Add(t);
+			if (t.tags.Contains(tag)) {
+				res.Add(t);
+			}
 		}
 		if (res.Count < 1) throw new ArgumentException($"Task tag {tag} has no tasks!");
 		return res;

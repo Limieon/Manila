@@ -62,6 +62,11 @@ public class Workspace : ScriptInstance {
 		foreach (var f in projectFilters) f.run(p);
 	}
 
+	public Project getProject(string project) {
+		foreach (var p in projects) if (p.id == project) return p;
+		throw new ArgumentException($"Cannot find registered project with id '{project}'!");
+	}
+
 	/// <summary>
 	/// Adds properties to a workspace
 	/// </summary>

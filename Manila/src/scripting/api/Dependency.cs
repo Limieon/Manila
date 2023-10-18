@@ -14,17 +14,17 @@ public static class Dependency {
 	/// Base class for dependency resolvers
 	/// </summary>
 	public abstract class Resolver {
-		public abstract void resolve();
+		public abstract Project? resolve();
 	}
 	/// <summary>
 	/// Project dependency resolver
 	/// </summary>
 	public class ResolverProject : Resolver {
-		public readonly string id;
-		internal ResolverProject(string id) { this.id = id; }
+		public readonly string prjID;
+		internal ResolverProject(string prjID) { this.prjID = prjID; }
 
-		public override void resolve() {
-			Console.WriteLine("Loading project " + id);
+		public override Project? resolve() {
+			return ScriptManager.workspace.getProject(prjID);
 		}
 	}
 	/// <summary>
@@ -39,8 +39,9 @@ public static class Dependency {
 			this.projectID = projectID;
 		}
 
-		public override void resolve() {
+		public override Project? resolve() {
 			Console.WriteLine("Loading external dependency '" + projectNamespace + "':'" + projectID + "'");
+			return null;
 		}
 	}
 
@@ -52,8 +53,8 @@ public static class Dependency {
 	public static void dependencies(ScriptObject obj) {
 		ScriptManager.currentScriptInstance.depndencyResolvers.AddRange(ScriptUtils.toArray<Resolver>(obj));
 	}
-	public static Resolver project(string id) {
-		return new ResolverProject(id);
+	public static Resolver project(string prjID) {
+		return new ResolverProject(prjID);
 	}
 	public static Resolver external(string projectNamespace, string projectID) {
 		return new ResolverExternal(projectNamespace, projectID);

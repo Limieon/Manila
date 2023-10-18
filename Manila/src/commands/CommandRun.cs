@@ -9,6 +9,7 @@ internal class CommandRun : CLI.Command {
 	}
 
 	public override async void onExecute(Dictionary<string, object> p, Dictionary<string, object> o) {
+		System.Console.WriteLine("Running...");
 		foreach (var t in ScriptManager.getTasks("manila/run")) {
 			try {
 				await ScriptUtils.executeTask(t);

@@ -6,7 +6,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{62635E0F-0100-4093-AD6E-21D822358185}</ProjectGuid>
+    <ProjectGuid>{6A63851D-B681-4C19-A793-27CED3DC0B91}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -18,9 +18,9 @@
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>E:\dev\Manila\Manila-main\run\bin\windows\Debug-x64\Client\</OutDir>
-    <IntDir>E:\dev\Manila\Manila-main\run\bin-int\windows\Debug-x64\Client\</IntDir>
-    <TargetName>Client</TargetName>
+    <OutDir>E:\dev\Manila\Manila-main\run\bin\windows\Debug-x64\Client-Tests\</OutDir>
+    <IntDir>E:\dev\Manila\Manila-main\run\bin-int\windows\Debug-x64\Client-Tests\</IntDir>
+    <TargetName>Client-Tests</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -30,14 +30,8 @@
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ItemGroup>
-    <ClCompile Include="E:\dev\Manila\Manila-main\run\client\src\Main.cpp" />
-    <ClCompile Include="E:\dev\Manila\Manila-main\run\client\src\Math.cpp" />
-    <ClCompile Include="E:\dev\Manila\Manila-main\run\client\src\Math.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\core\Core.vcxproj">
-      <Project>{ADE8AC18-4AF9-4B63-A86B-40BD34D4B8DC}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Targets" />
 </Project>

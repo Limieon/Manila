@@ -6,6 +6,7 @@ indent_style = tab
 insert_final_newline = true
 
 [*.{cs,vb}]
+csharp_new_line_before_open_brace = none
 dotnet_style_coalesce_expression = true:suggestion
 dotnet_style_null_propagation = true:suggestion
 dotnet_style_prefer_is_null_check_over_reference_equality_method = true:suggestion
@@ -123,7 +124,6 @@ dotnet_naming_style.camel_case.required_suffix =
 dotnet_naming_style.camel_case.word_separator = 
 dotnet_naming_style.camel_case.capitalization = camel_case
 csharp_indent_labels = one_less_than_current
-csharp_new_line_before_open_brace = none
 csharp_space_around_binary_operators = before_and_after
 csharp_new_line_before_else = false
 csharp_new_line_before_catch = false
