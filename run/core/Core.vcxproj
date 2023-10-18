@@ -5,9 +5,6 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <PropertyGroup Label="Globals">
-    <ProjectGuid>{ADE8AC18-4AF9-4B63-A86B-40BD34D4B8DC}</ProjectGuid>
-  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PreferredToolArchitecture>x64</PreferredToolArchitecture>
@@ -34,6 +31,6 @@
     <ClCompile Include="E:\dev\Manila\Manila-main\run\core\src\Math.hpp" />
   </ItemGroup>
   <ItemGroup>
-  </ItemGroup>
+</ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Targets" />
 </Project>

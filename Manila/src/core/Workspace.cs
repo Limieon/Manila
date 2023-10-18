@@ -28,6 +28,11 @@ public class Workspace : ScriptInstance {
 	private readonly List<ProjectFilter> projectFilters;
 
 	/// <summary>
+	/// Gets named directories defined by the workspace
+	/// </summary>
+	public readonly Dictionary<string, ManilaDirectory> namedDirectories = new Dictionary<string, ManilaDirectory>();
+
+	/// <summary>
 	/// Initializes a new instance of the <see cref="Workspace"/> class.
 	/// </summary>
 	/// <param name="location">The location of the workspace.</param>

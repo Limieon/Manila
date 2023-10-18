@@ -234,4 +234,8 @@ public static class Manila {
 		if (e.StartsWith("manila/")) throw new Exception("Cannot fire internal evnets prefixed with 'manila/'!");
 		EventSystem.fire(e);
 	}
+
+	public static void include(string file) {
+		ScriptManager.engine.engine.ExecuteDocument(PathUtils.parse(file, ScriptManager.workspace));
+	}
 }

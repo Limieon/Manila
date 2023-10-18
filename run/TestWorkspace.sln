@@ -1,35 +1,27 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.7.34018.315
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30723.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client", "client\Client.vcxproj", "{62635E0F-0100-4093-AD6E-21D822358185}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client", "client\Client.vcxproj", "{92A576B3-2552-45B7-AC87-FED5EA965346}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Core", "core\Core.vcxproj", "{ADE8AC18-4AF9-4B63-A86B-40BD34D4B8DC}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Core", "core\Core.vcxproj", "{774DD77D-DF62-41CC-AE6B-347A135878E6}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client-Tests", "tests\client\Client-Tests.vcxproj", "{6A63851D-B681-4C19-A793-27CED3DC0B91}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client-Tests", "tests\client\Client-Tests.vcxproj", "{7B29834F-D0D6-438A-8541-B0852C6EFB70}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Core-Tests", "tests\core\Core-Tests.vcxproj", "{506151E6-A8FD-4378-84C6-4564088B4D8A}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{FD2AAFA0-2C47-452D-A5D9-52777B21A522}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Core-Tests", "tests\core\Core-Tests.vcxproj", "{439ABA83-74E8-4DB2-9B14-ADCFD5E55E3B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{62635E0F-0100-4093-AD6E-21D822358185}.Debug|x64.ActiveCfg = Debug|x64
-		{62635E0F-0100-4093-AD6E-21D822358185}.Debug|x64.Build.0 = Debug|x64
-		{ADE8AC18-4AF9-4B63-A86B-40BD34D4B8DC}.Debug|x64.ActiveCfg = Debug|x64
-		{ADE8AC18-4AF9-4B63-A86B-40BD34D4B8DC}.Debug|x64.Build.0 = Debug|x64
-		{6A63851D-B681-4C19-A793-27CED3DC0B91}.Debug|x64.ActiveCfg = Debug|x64
-		{6A63851D-B681-4C19-A793-27CED3DC0B91}.Debug|x64.Build.0 = Debug|x64
-		{506151E6-A8FD-4378-84C6-4564088B4D8A}.Debug|x64.ActiveCfg = Debug|x64
-		{506151E6-A8FD-4378-84C6-4564088B4D8A}.Debug|x64.Build.0 = Debug|x64
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{6A63851D-B681-4C19-A793-27CED3DC0B91} = {FD2AAFA0-2C47-452D-A5D9-52777B21A522}
+		{92A576B3-2552-45B7-AC87-FED5EA965346}.Debug|x64.ActiveCfg = Debug|x64
+		{92A576B3-2552-45B7-AC87-FED5EA965346}.Debug|x64.Build.0 = Debug|x64
+		{774DD77D-DF62-41CC-AE6B-347A135878E6}.Debug|x64.ActiveCfg = Debug|x64
+		{774DD77D-DF62-41CC-AE6B-347A135878E6}.Debug|x64.Build.0 = Debug|x64
+		{7B29834F-D0D6-438A-8541-B0852C6EFB70}.Debug|x64.ActiveCfg = Debug|x64
+		{7B29834F-D0D6-438A-8541-B0852C6EFB70}.Debug|x64.Build.0 = Debug|x64
+		{439ABA83-74E8-4DB2-9B14-ADCFD5E55E3B}.Debug|x64.ActiveCfg = Debug|x64
+		{439ABA83-74E8-4DB2-9B14-ADCFD5E55E3B}.Debug|x64.Build.0 = Debug|x64
 	EndGlobalSection
 EndGlobal

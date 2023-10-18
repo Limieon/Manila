@@ -8,5 +8,8 @@
 		"core",
 		"tests/client",
 		"tests/core"
-	]
+	],
+	"namedDirectories": {
+		"test": "test/"
+	}
 }

@@ -5,9 +5,6 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <PropertyGroup Label="Globals">
-    <ProjectGuid>{62635E0F-0100-4093-AD6E-21D822358185}</ProjectGuid>
-  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.default.props" />
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PreferredToolArchitecture>x64</PreferredToolArchitecture>
@@ -36,8 +33,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\core\Core.vcxproj">
-      <Project>{ADE8AC18-4AF9-4B63-A86B-40BD34D4B8DC}</Project>
+      <Project>{05501326-4C27-4AFD-A4E3-9CD75F492646}</Project>
     </ProjectReference>
-  </ItemGroup>
+</ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Targets" />
 </Project>

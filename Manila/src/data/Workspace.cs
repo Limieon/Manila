@@ -31,6 +31,11 @@ public class Workspace {
 		/// Gets or sets the Git repository URL for the workspace
 		/// </summary>
 		public string gitRepo;
+
+		/// <summary>
+		/// Gets the named directories defined in the workspace
+		/// </summary>
+		public readonly Dictionary<string, string> namedDirectories = new Dictionary<string, string>();
 	}
 
 	/// <summary>

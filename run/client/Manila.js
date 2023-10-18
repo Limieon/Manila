@@ -1,3 +1,5 @@
+Manila.include('@test/Defines.js')
+
 const project = Manila.getProject()
 const workspace = Manila.getWorkspace()
 const config = Manila.getConfig()
@@ -55,3 +57,7 @@ Manila.task('run')
 		/*const app = Manila.application(project.getBinary())
 		app.run()*/
 	})
+
+Manila.task('test').onExecute(async () => {
+	sayHello()
+})

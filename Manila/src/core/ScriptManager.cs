@@ -86,6 +86,14 @@ public static class ScriptManager {
 		Logger.debug("Running workspace file...");
 
 		workspace = new Workspace(new ManilaDirectory("."));
+		foreach (var e in workspaceData.data.namedDirectories) {
+			workspace.namedDirectories.Add(e.Key, new ManilaDirectory(e.Value));
+		}
+
+		foreach (var e in workspace.namedDirectories) {
+			Logger.info(e.Key + ": " + e.Value.getPath());
+		}
+
 		currentScriptInstance = workspace;
 		scope = Scope.WORKSPACE;
 
