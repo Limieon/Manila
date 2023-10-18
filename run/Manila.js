@@ -37,5 +37,6 @@ Manila.project(':tests:core', () => {
 })
 
 Manila.on('manila/finalize', () => {
-	Manila.println('Finalize Event!')
+	Manila.println("Generating solution...")
+	MSBuild.workspace(Manila.getWorkspace())
 })

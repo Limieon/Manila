@@ -43,6 +43,11 @@ public class Project : ScriptInstance {
 	public ManilaFile? binary;
 
 	/// <summary>
+	/// A random unique identifier
+	/// </summary>
+	public Guid uuid = Guid.NewGuid();
+
+	/// <summary>
 	/// Initializes a new instance of the <see cref="Project"/> class
 	/// </summary>
 	/// <param name="id">The id of the project</param>

@@ -39,6 +39,6 @@ Manila.task('compile')
 		flags.libDirs.Add(Manila.dir('lib').join(`${config.arch}`))
 		flags.binaryType = MSBuild.staticLib()
 
-		//MSBuild.project(workspace, project, config, flags)
 		Manila.println('Generating project file...')
+		MSBuild.project(workspace, project, config, flags)
 	})
