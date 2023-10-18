@@ -3,7 +3,11 @@
 **/bin-int/
 **/obj/
 test/
-run/.vs/
 
 # VSCode
 .VSCodeCounter/
+
+# VStudio
+run/.vs/
+*.vcxproj.user
+*.vcxproj.filter
