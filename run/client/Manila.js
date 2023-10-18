@@ -1,5 +1,3 @@
-Manila.include('@test/Defines.js')
-
 const project = Manila.getProject()
 const workspace = Manila.getWorkspace()
 const config = Manila.getConfig()
@@ -30,7 +28,6 @@ Manila.task('recompile')
 
 Manila.task('compile')
 	.tag('manila/build')
-	.dependsOn(':core:compile')
 	.onExecute(async () => {
 		Manila.println('Building...')
 

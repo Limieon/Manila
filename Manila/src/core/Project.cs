@@ -47,6 +47,13 @@ public class Project : ScriptInstance {
 	/// </summary>
 	public Guid uuid = Guid.NewGuid();
 
+	public Scripting.API.Task getBuildTask() {
+		foreach (var t in ScriptManager.getTasks("manila/build")) {
+			if (t.project.id == id) return t;
+		}
+		throw new Exception($"Project '{id}' does not contain a build task!");
+	}
+
 	/// <summary>
 	/// Initializes a new instance of the <see cref="Project"/> class
 	/// </summary>

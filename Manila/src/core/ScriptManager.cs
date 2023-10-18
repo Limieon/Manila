@@ -204,8 +204,15 @@ public static class ScriptManager {
 	private static List<Scripting.API.Task> getTasksRec(Scripting.API.Task task, List<Scripting.API.Task> tasks = null) {
 		if (tasks == null) tasks = new List<Scripting.API.Task>();
 
-		foreach (var d in task.getDependencies())
+		foreach (var d in task.getDependencies()) {
+			foreach (var r in d.project.depndencyResolvers) {
+				var buildTask = r.resolve().getBuildTask();
+
+				if (!tasks.Contains(buildTask)) tasks.Add(buildTask);
+			}
+
 			if (!tasks.Contains(d)) tasks = getTasksRec(d, tasks);
+		}
 
 		if (!tasks.Contains(task)) tasks.Add(task);
 

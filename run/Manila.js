@@ -27,6 +27,8 @@ Manila.project(':tests:client', () => {
 		name: 'Client-Tests',
 		version: '1.0.0'
 	})
+
+	dependencies([project(':client')])
 })
 
 Manila.project(':tests:core', () => {
@@ -34,6 +36,8 @@ Manila.project(':tests:core', () => {
 		name: 'Core-Tests',
 		version: '1.0.0'
 	})
+
+	dependencies([project(':core')])
 })
 
 Manila.on('manila/finalize', () => {

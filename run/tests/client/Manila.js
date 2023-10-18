@@ -28,7 +28,6 @@ Manila.task('recompile')
 
 Manila.task('compile')
 	.tag('manila/build')
-	.dependsOn(':client:compile')
 	.onExecute(async () => {
 		Manila.println('Building...')
 
