@@ -1,12 +1,10 @@
 
 using System.Text.RegularExpressions;
 using Manila.Core.Exceptions;
-using Manila.Data;
 using Manila.Scripting;
 using Manila.Scripting.API;
 using Manila.Scripting.Exceptions;
 using Manila.Utils;
-using Spectre.Console;
 
 namespace Manila.Core;
 
