@@ -1,7 +1,6 @@
 
 using System.Text.RegularExpressions;
 using Manila.Core.Exceptions;
-using Manila.Plugin;
 using Manila.Scripting;
 using Manila.Scripting.API;
 using Manila.Scripting.Exceptions;
@@ -54,8 +53,8 @@ public static class ScriptManager {
 	}
 
 	internal static List<Scripting.API.Task> tasks = new List<Scripting.API.Task>();
-	public static Core.Workspace? workspace { get; internal set; }
-	public static BuildConfig? buildConfig { get; internal set; }
+	internal static Core.Workspace? workspace;
+	internal static BuildConfig? buildConfig = null;
 
 	/// <summary>
 	/// The unix time when the build was invoked
@@ -67,7 +66,7 @@ public static class ScriptManager {
 	/// </summary>
 	public static Data.Workspace? workspaceData = null;
 
-	public static ScriptInstance? currentScriptInstance { get; internal set; }
+	internal static ScriptInstance? currentScriptInstance { get; set; }
 
 	internal static readonly ScriptEngine engine = new ScriptEngine();
 
@@ -75,7 +74,6 @@ public static class ScriptManager {
 	internal static Scope scope { get; private set; }
 
 	internal static void init(Data.Workspace workspace) {
-		buildConfig = null;
 		workspaceData = workspace;
 
 		state = State.INITIALIZING;
@@ -137,9 +135,7 @@ public static class ScriptManager {
 			projectID = projectID.Replace('\\', ':');
 		}
 
-		Project p = new Project(":" + projectID, file.getFileDirHandle(), workspace) {
-			template = new Plugin.API.ScriptTemplate()
-		};
+		Project p = new Project(":" + projectID, file.getFileDirHandle(), workspace);
 		currentScriptInstance = p;
 
 		Logger.debug($"ID: '{p.id}'");
@@ -314,41 +310,5 @@ public static class ScriptManager {
 		}
 		if (res.Count < 1) throw new ArgumentException($"Task tag {tag} has no tasks!");
 		return res;
-	}
-
-	public static Project getProject() {
-		return ((Project) currentScriptInstance).template.getProject();
-	}
-	public static Workspace getWorkspace() {
-		return ((Project) currentScriptInstance).template.getWorkspace();
-	}
-	public static BuildConfig getBuildConfig() {
-		return ((Project) currentScriptInstance).template.getBuildConfig();
-	}
-
-	/// <summary>
-	/// Applies a script template to the current propject
-	/// </summary>
-	/// <param name="t">The script template key</param>
-	/// <exception cref="ArgumentException"></exception>
-	public static void applyTemplate(string t) {
-		if (!t.Contains("/")) throw new ArgumentException($"Plugin template keys have to be provided in the following format: PLUGIN_ID/TEMPLATE_ID, got: {t}!");
-
-		var temp = t.Split("/");
-		if (temp.Length > 2) throw new ArgumentException($"Plugin template keys have to be provided in the following format: PLUGIN_ID/TEMPLATE_ID, got: {t}!");
-
-		var pluginKey = temp[0].ToLower();
-		var templateKey = temp[1].ToLower();
-
-		foreach (var p in PluginManager.plugins) {
-			if (p.id.ToLower() == pluginKey) {
-				foreach (var template in p.templates) {
-					if (template.id.ToLower() == templateKey) ((Project) currentScriptInstance).template = template;
-					return;
-				}
-			}
-		}
-
-		throw new ArgumentException($"Could not find a template in plugin '{pluginKey}' with template key '{templateKey}'!");
 	}
 }

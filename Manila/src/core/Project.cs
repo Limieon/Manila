@@ -1,6 +1,5 @@
 
 using System.Collections.Immutable;
-using Manila.Plugin.API;
 using Manila.Scripting.API;
 
 namespace Manila.Core;
@@ -42,8 +41,6 @@ public class Project : ScriptInstance {
 	/// The binary built by this project
 	/// </summary>
 	public ManilaFile? binary;
-
-	public ScriptTemplate template { get; internal set; }
 
 	/// <summary>
 	/// A random unique identifier

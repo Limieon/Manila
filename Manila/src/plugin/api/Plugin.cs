@@ -20,11 +20,6 @@ public abstract class Plugin {
 	/// </summary>
 	public PluginManager.Meta meta { get; }
 
-	/// <summary>
-	/// Stores Script templates associated with this plugin
-	/// </summary>
-	public readonly List<ScriptTemplate> templates = new List<ScriptTemplate>();
-
 	internal readonly Dictionary<string, Storage> storages = new Dictionary<string, Storage>();
 
 	/// <summary>
@@ -159,12 +154,4 @@ public abstract class Plugin {
 	/// </summary>
 	/// <param name="app">The CLI application to add commands to.</param>
 	public virtual void commands(CLI.App app) { }
-
-	/// <summary>
-	/// Regisers a new script template
-	/// </summary>
-	/// <param name="t">The script template instance</param>
-	protected void addScriptTemplate(ScriptTemplate t) {
-		this.templates.Add(t);
-	}
 }

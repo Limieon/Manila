@@ -76,15 +76,15 @@ public static class Manila {
 	/// <summary>
 	/// Gets the current project
 	/// </summary>
-	public static Project getProject() { return ScriptManager.getProject(); }
+	public static Project getProject() { return (Project) ScriptManager.currentScriptInstance; }
 	/// <summary>
 	/// Gets the current workspace
 	/// </summary>
-	public static Workspace getWorkspace() { return ScriptManager.getWorkspace(); }
+	public static Workspace getWorkspace() { return ScriptManager.workspace; }
 	/// <summary>
 	/// Gets the build configuration
 	/// </summary>
-	public static BuildConfig getConfig() { return ScriptManager.getBuildConfig(); }
+	public static object getConfig() { return ScriptManager.buildConfig; }
 
 	/// <summary>
 	/// Adds a project filter using a string filter

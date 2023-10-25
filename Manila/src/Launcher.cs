@@ -12,8 +12,7 @@ namespace Manila;
 class Launcher {
 	public static async Task<int> Main(string[] args) {
 #if DEBUG
-		if (Directory.Exists("../run")) Directory.SetCurrentDirectory("../run");
-		else Directory.SetCurrentDirectory("../../../../run/");
+		Directory.SetCurrentDirectory("../run/");
 #endif
 		AnsiConsole.Write(new FigletText(FigletFont.Parse(CLI.Fonts.Doom.get()), "Manila").LeftJustified().Color(Color.DodgerBlue3));
 
