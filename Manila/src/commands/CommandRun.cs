@@ -9,14 +9,17 @@ internal class CommandRun : CLI.Command {
 	}
 
 	public override async void onExecute(Dictionary<string, object> p, Dictionary<string, object> o) {
-		System.Console.WriteLine("Running...");
-		foreach (var t in ScriptManager.getTasks("manila/run")) {
-			try {
+		Console.WriteLine("Running...");
+
+		try {
+			var tasks = ScriptManager.getTasks("manila/run");
+
+			foreach (var t in tasks) {
 				await ScriptUtils.executeTask(t);
-			} catch (Exception e) {
-				Logger.infoMarkup($"[red]{e.Message}[/]");
-				Logger.exception(e);
 			}
+		} catch (Exception e) {
+			Logger.infoMarkup($"[red]{e.Message}[/]");
+			Logger.exception(e);
 		}
 	}
 }

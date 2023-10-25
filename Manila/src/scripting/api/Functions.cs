@@ -22,6 +22,7 @@ public static class Functions {
 		e.AddHostObject("markupln", markupln);
 		e.AddHostObject("regex", regex);
 		e.AddHostObject("properties", properties);
+		e.AddHostObject("apply", apply);
 
 		Action<ScriptObject, int> setTimeout = (func, delay) => {
 			var timer = new Timer(_ => func.Invoke(false));
@@ -103,5 +104,9 @@ public static class Functions {
 	public static void properties(ScriptObject obj) {
 		if (ScriptManager.currentScriptInstance == null) throw new Exception("Cannot set properties in the current context!");
 		ScriptManager.currentScriptInstance.addProperties(ScriptUtils.toMap<dynamic>(obj));
+	}
+
+	public static void apply(string scriptTemplate) {
+		ScriptManager.applyTemplate(scriptTemplate);
 	}
 }

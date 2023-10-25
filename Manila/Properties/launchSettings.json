@@ -1,8 +1,8 @@
 {
-	"profiles": {
-		"Manila": {
-			"commandName": "Project",
-			"workingDirectory": "E:\\dev\\Manila\\run"
-		}
-	}
+  "profiles": {
+    "Manila": {
+      "commandName": "Project",
+      "commandLineArgs": "run --verbose"
+    }
+  }
 }

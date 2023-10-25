@@ -27,4 +27,8 @@ public class ScriptEngine {
 	internal void run(string file) {
 		engine.ExecuteDocument(file, ModuleCategory.Standard);
 	}
+
+	internal void runCommand(string src) {
+		engine.ExecuteCommand(src);
+	}
 }
