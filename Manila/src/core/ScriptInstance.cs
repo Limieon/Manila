@@ -1,5 +1,4 @@
 
-using Manila.Scripting.API;
 using Manila.Utils;
 
 namespace Manila.Core;
@@ -8,7 +7,10 @@ namespace Manila.Core;
 /// Represents a ScriptInstance that allows the addition and retrieval of custom properties.
 /// </summary>
 public class ScriptInstance {
-	private readonly Dictionary<string, dynamic> properties = new Dictionary<string, dynamic>();
+	/// <summary>
+	/// Properties for this instance
+	/// </summary>
+	public readonly Dictionary<string, dynamic> properties = new Dictionary<string, dynamic>();
 	public readonly List<Scripting.API.Dependency.Resolver> depndencyResolvers = new List<Scripting.API.Dependency.Resolver>();
 
 	/// <summary>
@@ -16,7 +18,10 @@ public class ScriptInstance {
 	/// </summary>
 	/// <param name="properties">A dictionary of key-value pairs representing the properties to add.</param>
 	public virtual void addProperties(Dictionary<string, dynamic> properties) {
-		foreach (var e in properties) { this.properties[e.Key] = e.Value; }
+		foreach (var e in properties) {
+			this.properties[e.Key] = e.Value;
+		}
+
 	}
 
 	/// <summary>
@@ -27,5 +32,25 @@ public class ScriptInstance {
 	public dynamic getProperty(string key) {
 		if (!properties.ContainsKey(key)) throw new KeyNotFoundException("Object does not contain property '" + key + "'!");
 		return properties[key];
+	}
+
+	/// <summary>
+	/// Registers a basic property on the project
+	/// </summary>
+	/// <param name="id">The id of the property (required to get the data)</param>
+	/// <param name="type">The type of the property</param>
+	/// <exception cref="ArgumentException"></exception>
+	public void registerProperty(string id, Type type) {
+		var func = (dynamic data) => {
+			if (data.GetType() != type) throw new ArgumentException($"Tried to assign value of type 'string' to property '{id}' which required type '{type.FullName}'!");
+
+			properties[id] = data;
+		};
+
+		ScriptManager.engine.engine.AddHostObject(id, func);
+	}
+
+	public void registerPropertyFunction<T>(string funcName, Action<T> func) {
+		ScriptManager.engine.engine.AddHostObject(funcName, func);
 	}
 }
