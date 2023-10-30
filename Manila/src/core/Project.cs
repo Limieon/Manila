@@ -2,6 +2,8 @@
 using System.Collections.Immutable;
 using Manila.Plugin.API;
 using Manila.Scripting.API;
+using Manila.Utils;
+using Microsoft.ClearScript;
 
 namespace Manila.Core;
 
@@ -43,7 +45,7 @@ public class Project : ScriptInstance {
 	/// </summary>
 	public ManilaFile? binary;
 
-	public ScriptTemplate template { get; internal set; }
+	public ProjectConfigurator configurator { get; set; }
 
 	/// <summary>
 	/// A random unique identifier
@@ -93,5 +95,17 @@ public class Project : ScriptInstance {
 	public ManilaFile getBinary() {
 		if (binary == null) throw new Exception("Binary has not been built!");
 		return binary;
+	}
+
+	public void configure(ScriptObject func) {
+		func.InvokeAsFunction(configurator);
+	}
+	public void applyConfigurator() {
+		properties = properties.Concat(configurator.getProperties().Where(x => !properties.ContainsKey(x.Key))).ToDictionary(x => x.Key, x => x.Value);
+
+		Logger.info("Properties:");
+		foreach (var e in properties) {
+			Logger.info($"{e.Key}: {e.Value}");
+		}
 	}
 }

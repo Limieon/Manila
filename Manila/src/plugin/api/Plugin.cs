@@ -23,7 +23,7 @@ public abstract class Plugin {
 	/// <summary>
 	/// Stores Script templates associated with this plugin
 	/// </summary>
-	public readonly List<ScriptTemplate> templates = new List<ScriptTemplate>();
+	public readonly Dictionary<string, ProjectConfigurator> configurators = new Dictionary<string, ProjectConfigurator>();
 
 	internal readonly Dictionary<string, Storage> storages = new Dictionary<string, Storage>();
 
@@ -164,7 +164,7 @@ public abstract class Plugin {
 	/// Regisers a new script template
 	/// </summary>
 	/// <param name="t">The script template instance</param>
-	protected void addScriptTemplate(ScriptTemplate t) {
-		this.templates.Add(t);
+	protected void addProjectConfigurator(string id, ProjectConfigurator t) {
+		configurators.Add(id, t);
 	}
 }

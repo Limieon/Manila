@@ -12,6 +12,10 @@ public class Workspace {
 	/// Represents the data associated with the workspace
 	/// </summary>
 	public class Data {
+		public class ProjectData {
+			public string configurator;
+		}
+
 		/// <summary>
 		/// Gets or sets the name of the workspace
 		/// </summary>
@@ -23,9 +27,9 @@ public class Workspace {
 		public List<string> authors = new List<string>();
 
 		/// <summary>
-		/// Gets or sets the list of projects in the workspace
+		/// Gets or sets the object of projects in the workspace
 		/// </summary>
-		public List<string> projects = new List<string>();
+		public Dictionary<string, ProjectData> projects = new Dictionary<string, ProjectData>();
 
 		/// <summary>
 		/// Gets or sets the Git repository URL for the workspace

@@ -53,6 +53,9 @@ public static class ScriptManager {
 		PROJECT
 	}
 
+	private record RecordProjectProperties(string id, ManilaFile file, Data.Workspace.Data.ProjectData data) {
+	}
+
 	internal static List<Scripting.API.Task> tasks = new List<Scripting.API.Task>();
 	public static Core.Workspace? workspace { get; internal set; }
 	public static BuildConfig? buildConfig { get; internal set; }
@@ -113,11 +116,11 @@ public static class ScriptManager {
 	private static void runProjectFiles() {
 		Logger.debug("Running project files...");
 
-		var files = new List<ManilaFile>();
+		var files = new List<RecordProjectProperties>();
 		foreach (var p in workspaceData.data.projects) {
-			var f = new ManilaFile(p, "Manila.js");
+			var f = new ManilaFile(p.Key, "Manila.js");
 			if (!f.exists()) throw new FileNotFoundException("Project located in [blue]" + f.getFileDir() + "[/] does not contain a [yellow]Manila.js buildfile[/]!");
-			files.Add(f);
+			files.Add(new RecordProjectProperties(p.Key, f, p.Value));
 		}
 
 		foreach (var f in files) {
@@ -127,7 +130,14 @@ public static class ScriptManager {
 		state = State.RUNNING;
 	}
 
-	private static void runProjectFile(ManilaFile file) {
+	private static void runProjectFile(RecordProjectProperties data) {
+		var lastDir = Directory.GetCurrentDirectory();
+		Directory.SetCurrentDirectory(data.file.getFileDir());
+
+		var file = data.file;
+		var id = data.id;
+		var props = data.data;
+
 		Logger.debug("Running project file", file.getPathRelative(workspace.location.getPath()));
 		var projectID = file.getFileDirHandle().getPathRelative(workspace.location.getPath());
 		while (projectID.Contains('/')) {
@@ -138,7 +148,7 @@ public static class ScriptManager {
 		}
 
 		Project p = new Project(":" + projectID, file.getFileDirHandle(), workspace) {
-			template = new Plugin.API.ScriptTemplate()
+			configurator = PluginManager.getConfigurator(props.configurator)
 		};
 		currentScriptInstance = p;
 
@@ -159,6 +169,9 @@ public static class ScriptManager {
 		Logger.debug("Version:", p.version);
 
 		workspace.addProject(p);
+		p.applyConfigurator();
+
+		Directory.SetCurrentDirectory(lastDir);
 	}
 
 	internal static void shutdown() {
@@ -252,7 +265,7 @@ public static class ScriptManager {
 			await t.execute();
 		}
 
-		EventSystem.fire("manila/finalize");
+		Scripting.API.Manila.eventSystem.fire("manila/finalize");
 
 		foreach (var t in finalizeTasks) {
 			if (!inline) Logger.printTaskHeader(t, taskNum++, order.Count);
@@ -317,38 +330,12 @@ public static class ScriptManager {
 	}
 
 	public static Project getProject() {
-		return ((Project) currentScriptInstance).template.getProject();
+		return (Project) currentScriptInstance;
 	}
 	public static Workspace getWorkspace() {
-		return ((Project) currentScriptInstance).template.getWorkspace();
+		return workspace;
 	}
 	public static BuildConfig getBuildConfig() {
-		return ((Project) currentScriptInstance).template.getBuildConfig();
-	}
-
-	/// <summary>
-	/// Applies a script template to the current propject
-	/// </summary>
-	/// <param name="t">The script template key</param>
-	/// <exception cref="ArgumentException"></exception>
-	public static void applyTemplate(string t) {
-		if (!t.Contains("/")) throw new ArgumentException($"Plugin template keys have to be provided in the following format: PLUGIN_ID/TEMPLATE_ID, got: {t}!");
-
-		var temp = t.Split("/");
-		if (temp.Length > 2) throw new ArgumentException($"Plugin template keys have to be provided in the following format: PLUGIN_ID/TEMPLATE_ID, got: {t}!");
-
-		var pluginKey = temp[0].ToLower();
-		var templateKey = temp[1].ToLower();
-
-		foreach (var p in PluginManager.plugins) {
-			if (p.id.ToLower() == pluginKey) {
-				foreach (var template in p.templates) {
-					if (template.id.ToLower() == templateKey) ((Project) currentScriptInstance).template = template;
-					return;
-				}
-			}
-		}
-
-		throw new ArgumentException($"Could not find a template in plugin '{pluginKey}' with template key '{templateKey}'!");
+		return buildConfig;
 	}
 }

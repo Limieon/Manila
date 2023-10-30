@@ -6,11 +6,11 @@ namespace Manila.Core;
 /// <summary>
 /// Represents a ScriptInstance that allows the addition and retrieval of custom properties.
 /// </summary>
-public class ScriptInstance {
+public class ScriptInstance : EventSystem {
 	/// <summary>
 	/// Properties for this instance
 	/// </summary>
-	public readonly Dictionary<string, dynamic> properties = new Dictionary<string, dynamic>();
+	internal Dictionary<string, dynamic> properties = new Dictionary<string, dynamic>();
 	public readonly List<Scripting.API.Dependency.Resolver> depndencyResolvers = new List<Scripting.API.Dependency.Resolver>();
 
 	/// <summary>
@@ -39,15 +39,17 @@ public class ScriptInstance {
 	/// </summary>
 	/// <param name="id">The id of the property (required to get the data)</param>
 	/// <param name="type">The type of the property</param>
+	/// <param name="functionName">Sets the name of the function</param>
 	/// <exception cref="ArgumentException"></exception>
-	public void registerProperty(string id, Type type) {
+	public void registerProperty(string id, Type type, string? functionName = null) {
+		if (functionName == null) functionName = id;
 		var func = (dynamic data) => {
 			if (data.GetType() != type) throw new ArgumentException($"Tried to assign value of type 'string' to property '{id}' which required type '{type.FullName}'!");
 
 			properties[id] = data;
 		};
 
-		ScriptManager.engine.engine.AddHostObject(id, func);
+		ScriptManager.engine.engine.AddHostObject(functionName, func);
 	}
 
 	public void registerPropertyFunction<T>(string funcName, Action<T> func) {

@@ -4,7 +4,7 @@ using Microsoft.ClearScript;
 
 namespace Manila.Core;
 
-public static class EventSystem {
+public class EventSystem {
 	public class Listener {
 		public Listener() { }
 		public virtual void on() { }
@@ -17,15 +17,21 @@ public static class EventSystem {
 		public override void on() { func.InvokeAsFunction(); }
 	}
 
-	private static Dictionary<string, List<Listener>> listeners = new Dictionary<string, List<Listener>>();
+	private Dictionary<string, List<Listener>> listeners = new Dictionary<string, List<Listener>>();
 
-	public static void addListener(string e, Listener l) {
+	public void addListener(string e, Listener l) {
 		if (!listeners.ContainsKey(e)) listeners.Add(e, new List<Listener>());
 		listeners[e].Add(l);
 	}
 
-	public static void fire(string e) {
+	public void fire(string e) {
+		if (!listeners.ContainsKey(e)) return;
 		Logger.debug($"Executing {listeners[e].Count} listener functions for {e}...");
 		foreach (var l in listeners[e]) l.on();
+	}
+
+	public void on(string e, ScriptObject func) {
+		if (!listeners.ContainsKey(e)) listeners.Add(e, new List<Listener>());
+		listeners[e].Add(new ScriptListener(func));
 	}
 }

@@ -6,7 +6,7 @@ using Microsoft.VisualBasic;
 namespace Manila.Scripting.API;
 
 public class FileSet {
-	private readonly string root;
+	public readonly string root;
 	private readonly Matcher matcher;
 
 	public FileSet(string root) {

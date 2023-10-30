@@ -201,6 +201,10 @@ public class ManilaFile {
 			}
 		}
 	}
+
+	public override string ToString() {
+		return getPath();
+	}
 }
 
 /// <summary>
@@ -345,5 +349,9 @@ public class ManilaDirectory {
 
 	public void delete() {
 		Directory.Delete(path, true);
+	}
+
+	public override string ToString() {
+		return getPath();
 	}
 }

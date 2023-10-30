@@ -23,6 +23,8 @@ public static class Manila {
 	/// </summary>
 	public static readonly Time time = new Time();
 
+	public static EventSystem eventSystem = new EventSystem();
+
 	/// <summary>
 	/// Creates a new file handle
 	/// </summary>
@@ -223,7 +225,7 @@ public static class Manila {
 	/// <param name="e">The event id</param>
 	/// <param name="func">The function</param>
 	public static void on(string e, ScriptObject func) {
-		EventSystem.addListener(e, new EventSystem.ScriptListener(func));
+		eventSystem.addListener(e, new EventSystem.ScriptListener(func));
 	}
 	/// <summary>
 	/// Fires a event
@@ -232,7 +234,7 @@ public static class Manila {
 	/// <exception cref="Exception">When trying to fire an internal event</exception>
 	public static void fire(string e) {
 		if (e.StartsWith("manila/")) throw new Exception("Cannot fire internal evnets prefixed with 'manila/'!");
-		EventSystem.fire(e);
+		eventSystem.fire(e);
 	}
 
 	public static void include(string file) {

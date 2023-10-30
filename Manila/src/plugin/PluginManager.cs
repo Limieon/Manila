@@ -1,5 +1,6 @@
 
 using System.Reflection;
+using Manila.Plugin.API;
 using Manila.Scripting.API;
 using Manila.Scripting.Exceptions;
 using Manila.Utils;
@@ -112,5 +113,23 @@ public static class PluginManager {
 		foreach (var p in plugins) {
 			p.shutdown();
 		}
+	}
+
+	public static API.Plugin getPlugin(string id) {
+		foreach (var p in plugins) { if (p.id == id) return p; }
+		throw new PluginNotFoundException(id);
+	}
+
+	public static ProjectConfigurator getConfigurator(string id) {
+		if (!id.Contains("/")) throw new ArgumentException("The project type ID must be in th following format: Plugin/type");
+		var temp = id.Split("/");
+		if (temp.Length < 2) throw new ArgumentException("The project type ID must be in th following format: Plugin/type");
+
+		var plugin = getPlugin(temp[0]);
+		ProjectConfigurator? conf = null;
+		if (plugin.configurators.ContainsKey(temp[1])) conf = plugin.configurators[temp[1]];
+		if (conf == null) throw new ConfiguratorNotFoundException(plugin, id);
+		conf.init();
+		return conf;
 	}
 }

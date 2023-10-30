@@ -1,7 +1,7 @@
 
 namespace Manila.Scripting.Exceptions {
 	/// <summary>
-	/// Gets thrown when a task could not be found
+	/// Gets thrown when a plugin could not be found
 	/// </summary>
 	public class PluginNotFoundException : Exception {
 		/// <summary>
@@ -10,10 +10,10 @@ namespace Manila.Scripting.Exceptions {
 		public string id { get; private set; }
 
 		/// <summary>
-		/// Creates a new TaskNotFoundException when a task was not found
+		/// Creates a new PluginNotFoundException when a plugin was not found
 		/// </summary>
 		/// <param name="id">The plugin id that was not found</param>
-		public PluginNotFoundException(string id) : base("Plugin Meta for plugin '" + id + "' could not be found!") {
+		public PluginNotFoundException(string id) : base("Plugin '" + id + "' could not be found!") {
 			this.id = id;
 		}
 	}

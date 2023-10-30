@@ -3,12 +3,14 @@
 	"authors": [
 		"Limieon"
 	],
-	"projects": [
-		"client",
-		"core",
-		"tests/client",
-		"tests/core"
-	],
+	"projects": {
+		"client": {
+			"configurator": "manilacpp/application"	
+		},
+		"core": {
+			"configurator": "manilacpp/application"	
+		}
+	},
 	"namedDirectories": {
 	}
 }
