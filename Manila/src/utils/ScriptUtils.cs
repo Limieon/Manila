@@ -1,6 +1,5 @@
 
 using Manila.Core;
-using Manila.Plugin;
 using Manila.Scripting.Exceptions;
 using Microsoft.ClearScript;
 
@@ -26,6 +25,29 @@ public static class ScriptUtils {
 			l.Add((T) obj[i]);
 		}
 		return l.ToArray();
+	}
+	/// <summary>
+	/// Checks if a script object is an array (it is counted as an array when it contains a defined lenght property)
+	/// </summary>
+	/// <param name="obj">The script object</param>
+	/// <returns>true: is array</returns>
+	public static bool isArray(ScriptObject obj) {
+		return obj["length"] != null && obj["length"].GetType() == typeof(Undefined);
+	}
+	/// <summary>
+	/// Checks if all values in a array are the same type
+	/// </summary>
+	/// <typeparam name="T">The type to check for</typeparam>
+	/// <param name="obj">The script object</param>
+	/// <returns>true: all of type T</returns>
+	public static bool isArrayTypeOf<T>(ScriptObject obj) {
+		if (!isArray(obj)) return false;
+
+		for (var i = 0; i < (int) obj["length"]; ++i) {
+			if (obj[i].GetType() != typeof(T)) return false;
+		}
+
+		return true;
 	}
 
 	/// <summary>
