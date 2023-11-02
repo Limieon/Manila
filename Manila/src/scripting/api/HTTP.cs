@@ -11,10 +11,6 @@ namespace Manila.Scripting.API;
 /// API for HTTP Requests
 /// </summary>
 public class HTTP {
-	public enum Method {
-		GET, POST, PUT, PATCH, DELETE
-	}
-
 	private HttpClient client = new HttpClient();
 
 	/// <summary>
