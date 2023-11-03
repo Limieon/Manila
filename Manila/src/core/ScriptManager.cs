@@ -123,6 +123,8 @@ public static class ScriptManager {
 			files.Add(new RecordProjectProperties(p.Key, f, p.Value));
 		}
 
+		workspace.cookFilters();
+
 		foreach (var f in files) {
 			runProjectFile(f);
 		}

@@ -9,7 +9,10 @@ namespace Manila.Core;
 /// An abstract class for project filtering.
 /// </summary>
 public abstract class ProjectFilter {
+	private static int currentID = 0;
+
 	private readonly ScriptObject func;
+	internal readonly int id;
 
 	/// <summary>
 	/// Initializes a new instance of the ProjectFilter class with a dynamic function delegate.
@@ -17,6 +20,7 @@ public abstract class ProjectFilter {
 	/// <param name="func">The dynamic function delegate to be associated with the filter.</param>
 	public ProjectFilter(ScriptObject func) {
 		this.func = func;
+		id = ++currentID;
 	}
 
 	/// <summary>
@@ -90,5 +94,13 @@ public abstract class ProjectFilter {
 
 		/// <inheritdoc />
 		public override bool predicate(Project project) { return project.id == filter; }
+	}
+
+	public static int getPriority(ProjectFilter f) {
+		var t = f.GetType();
+		return t == typeof(RegexFilter) ? 0 :
+			t == typeof(ArrayFilter) ? 1 :
+			t == typeof(SpecificFilter) ? 2 : throw new Exception($"Type {t.Name} is not a project filter!");
+		;
 	}
 }

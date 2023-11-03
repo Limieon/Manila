@@ -1,5 +1,7 @@
 
+using System.Reflection.Metadata.Ecma335;
 using Manila.Scripting.API;
+using Manila.Utils;
 
 namespace Manila.Core;
 
@@ -58,6 +60,19 @@ public class Workspace : ScriptInstance {
 	/// <param name="filter">The project filter to add.</param>
 	public void addProjectFilter(ProjectFilter filter) {
 		projectFilters.Add(filter);
+	}
+
+	/// <summary>
+	/// Sorts the project filters
+	/// </summary>
+	public void cookFilters() {
+		projectFilters.Sort((a, b) => {
+			var pa = ProjectFilter.getPriority(a);
+			var pb = ProjectFilter.getPriority(b);
+
+			if (pa == pb) return a.id - b.id;
+			return pb - pa;
+		});
 	}
 
 	/// <summary>
