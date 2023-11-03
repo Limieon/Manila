@@ -5,12 +5,15 @@
 	],
 	"projects": {
 		"client": {
-			"configurator": "manilacpp/application"	
+			"configurator": "manilacpp/application"
 		},
 		"core": {
-			"configurator": "manilacpp/application"	
+			"configurator": "manilacpp/application"
 		}
 	},
+	"configurations": [
+		"Debug", "Release", "Dist"
+	],
 	"namedDirectories": {
 	}
 }

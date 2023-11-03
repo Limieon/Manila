@@ -101,6 +101,7 @@ public class Project : ScriptInstance {
 		func.InvokeAsFunction(configurator);
 	}
 	public void applyConfigurator() {
+		configurator.check();
 		properties = properties.Concat(configurator.getProperties().Where(x => !properties.ContainsKey(x.Key))).ToDictionary(x => x.Key, x => x.Value);
 	}
 }

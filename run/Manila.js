@@ -4,6 +4,11 @@ properties({
 
 Manila.project(regex('.*'), () => {
 	properties({})
+
+	Manila.getProject().configure(_ => {
+		_.arch('x64')
+		_.cppdialect('C++20')
+	})
 })
 
 Manila.project(':client', () => {
@@ -41,5 +46,5 @@ Manila.project(':tests:core', () => {
 })
 
 Manila.on('manila/finalize', () => {
-	Manila.println('Generating solution...')
+	MSBuild.generate(Manila.getWorkspace(), Manila.getConfig())
 })

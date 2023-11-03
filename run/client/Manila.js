@@ -2,6 +2,9 @@ const project = Manila.getProject()
 const workspace = Manila.getWorkspace()
 const config = Manila.getConfig()
 
+const binDir = project.location.join('bin')
+const objDir = project.location.join('bin-int')
+
 project.configure(_ => {
 	_.fileSets({
 		src: Manila.fileSet(project.location)
@@ -10,6 +13,7 @@ project.configure(_ => {
 			.include('src/**/*.c')
 			.include('src/**/*.h')
 			.files(),
+
 		test: Manila.fileSet(project.location)
 			.include('test/**/*.cpp')
 			.include('test/**/*.hpp')
@@ -17,6 +21,9 @@ project.configure(_ => {
 			.include('test/**/*.h')
 			.files()
 	})
+	_.binDir(binDir)
+	_.objDir(objDir)
+	_.workingDir(binDir)
 })
 
 Manila.task('run')
