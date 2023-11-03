@@ -102,10 +102,5 @@ public class Project : ScriptInstance {
 	}
 	public void applyConfigurator() {
 		properties = properties.Concat(configurator.getProperties().Where(x => !properties.ContainsKey(x.Key))).ToDictionary(x => x.Key, x => x.Value);
-
-		Logger.info("Properties:");
-		foreach (var e in properties) {
-			Logger.info($"{e.Key}: {e.Value}");
-		}
 	}
 }
