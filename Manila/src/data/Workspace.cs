@@ -40,6 +40,11 @@ public class Workspace {
 		/// Gets the named directories defined in the workspace
 		/// </summary>
 		public readonly Dictionary<string, string> namedDirectories = new Dictionary<string, string>();
+
+		/// <summary>
+		/// Gets the configurations
+		/// </summary>
+		public List<string> configurations;
 	}
 
 	/// <summary>

@@ -44,6 +44,7 @@ class Launcher {
 			}
 
 			// Run script manager
+			if (ScriptManager.buildConfig == null) ScriptManager.buildConfig = new BuildConfig();
 			ScriptManager.init(workspace);
 			try {
 				ScriptManager.runWorkspaceFile();

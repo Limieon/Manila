@@ -78,7 +78,6 @@ public static class ScriptManager {
 	internal static Scope scope { get; private set; }
 
 	internal static void init(Data.Workspace workspace) {
-		buildConfig = null;
 		workspaceData = workspace;
 
 		state = State.INITIALIZING;
@@ -88,9 +87,14 @@ public static class ScriptManager {
 	internal static void runWorkspaceFile() {
 		Logger.debug("Running workspace file...");
 
-		workspace = new Workspace(new ManilaDirectory("."));
+		workspace = new Workspace(new ManilaDirectory("."), workspaceData.data.configurations);
 		foreach (var e in workspaceData.data.namedDirectories) {
 			workspace.namedDirectories.Add(e.Key, new ManilaDirectory(e.Value));
+		}
+
+		Console.WriteLine("Config: " + buildConfig.config);
+		if (!workspace.configurations.Contains(buildConfig.config)) {
+			throw new Exception($"Unknown configuration '{buildConfig.config}'!");
 		}
 
 		foreach (var e in workspace.namedDirectories) {

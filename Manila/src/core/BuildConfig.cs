@@ -9,9 +9,14 @@ namespace Manila.Core;
 /// </summary>
 public class BuildConfig {
 	/// <summary>
-	/// Gets the name of the platform (e.g., "windows", "linux", "osx", "freebsd", or "unknown").
+	/// The name of the platform (e.g., "windows", "linux", "osx", "freebsd", or "unknown").
 	/// </summary> 
 	public readonly string platform;
+
+	/// <summary>
+	/// The name of the build config
+	/// </summary>
+	public string config;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="BuildConfig"/> class.

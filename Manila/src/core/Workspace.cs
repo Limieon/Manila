@@ -29,6 +29,8 @@ public class Workspace : ScriptInstance {
 
 	private readonly List<ProjectFilter> projectFilters;
 
+	public readonly List<string> configurations;
+
 	/// <summary>
 	/// Gets named directories defined by the workspace
 	/// </summary>
@@ -38,9 +40,10 @@ public class Workspace : ScriptInstance {
 	/// Initializes a new instance of the <see cref="Workspace"/> class.
 	/// </summary>
 	/// <param name="location">The location of the workspace.</param>
-	public Workspace(ManilaDirectory location) {
+	public Workspace(ManilaDirectory location, List<string> configurations) {
 		name = "";
 		this.location = location;
+		this.configurations = configurations;
 
 		projects = new List<Project>();
 		projectFilters = new List<ProjectFilter>();
