@@ -29,6 +29,11 @@ project.configure(_ => {
 Manila.task('run')
 	.tag('manila/run')
 	.onExecute(async () => {
-		const app = Manila.app(project.getBinary())
-		app.run()
+		Manila.runTask(':test')
+	})
+
+Manila.task('test')
+	.hide()
+	.onExecute(async () => {
+		Manila.println('Test task!')
 	})

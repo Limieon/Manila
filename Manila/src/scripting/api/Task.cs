@@ -16,6 +16,7 @@ public class Task {
 	public string name { get; private set; }
 	public List<string> dependencies { get; private set; }
 	public List<string> tags { get; private set; }
+	public bool hidden { get; private set; }
 	private ScriptObject func;
 
 	public static bool inTask { get; private set; }
@@ -32,6 +33,7 @@ public class Task {
 	public Task(string name) {
 		if (ScriptManager.scope == ScriptManager.Scope.PROJECT) project = (Project) ScriptManager.currentScriptInstance;
 
+		hidden = false;
 		this.name = ":" + name;
 		dependencies = new List<string>();
 		tags = new List<string>();
@@ -66,6 +68,11 @@ public class Task {
 	/// <returns></returns>
 	public Task tag(string tag) {
 		tags.Add(tag);
+		return this;
+	}
+
+	public Task hide() {
+		hidden = true;
 		return this;
 	}
 
