@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using Manila.Core;
 using Manila.Utils;
 using Microsoft.ClearScript;
+using Microsoft.ClearScript.JavaScript;
 
 namespace Manila.Scripting.API;
 
@@ -201,7 +202,13 @@ public static class Manila {
 	/// </summary>
 	/// <param name="id">The id of the task</param>
 	public static void runTask(string id) {
-		ScriptManager.executeTask(ScriptManager.getTask(id), true);
+		var t = ScriptManager.getTask(id);
+
+		try {
+			t.execute();
+		} catch (Exception e) {
+			System.Console.WriteLine(e);
+		}
 	}
 
 	/// <summary>
@@ -239,5 +246,9 @@ public static class Manila {
 
 	public static void include(string file) {
 		ScriptManager.engine.engine.ExecuteDocument(PathUtils.parse(file, ScriptManager.workspace));
+	}
+
+	public static void sleep(int time) {
+		Thread.Sleep(time);
 	}
 }

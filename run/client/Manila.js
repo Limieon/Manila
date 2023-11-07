@@ -28,12 +28,15 @@ project.configure(_ => {
 
 Manila.task('run')
 	.tag('manila/run')
-	.onExecute(async () => {
+	.onExecute(() => {
+		Manila.runTask(':test')
+		Manila.runTask(':test')
 		Manila.runTask(':test')
 	})
 
 Manila.task('test')
 	.hide()
-	.onExecute(async () => {
+	.onExecute(() => {
 		Manila.println('Test task!')
+		Manila.sleep(200)
 	})

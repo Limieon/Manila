@@ -44,7 +44,7 @@ public class Task {
 	/// </summary>
 	/// <param name="func">the function</param>
 	/// <returns>true: task suceeded, false: task failed</returns>
-	public void onExecute(dynamic func) {
+	public void onExecute(ScriptObject func) {
 		this.func = func; /*() => {
 			var res = func();
 			// Return true if nothing or undefined gets returned
@@ -88,10 +88,13 @@ public class Task {
 		}
 
 		inTask = true;
-		var res = await func.InvokeAsFunction().ToTask();
+		TaskSummary.taskStarted(this);
+		var res = func.InvokeAsFunction();
+		var bRes = res.GetType() != typeof(bool) ? true : (bool) res;
+		TaskSummary.taskEnded(bRes ? TaskSummary.TaskStatus.SUCCESS : TaskSummary.TaskStatus.FAILED);
 		inTask = false;
 
-		return res.GetType() != typeof(bool) ? true : (bool) res;
+		return bRes;
 	}
 
 	/// <summary>

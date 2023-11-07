@@ -112,6 +112,7 @@ class Launcher {
 
 		PluginManager.shutdown();
 		ScriptManager.shutdown();
+		TaskSummary.printResults();
 
 		return 0;
 	}
