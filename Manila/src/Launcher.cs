@@ -25,64 +25,21 @@ class Launcher {
 		Logger.init(verbose);
 
 		var rootDir = Scripting.API.Manila.dir(Directory.GetCurrentDirectory());
-		var app = new CLI.App("Manila", "A Build System written in [green4]C#[/] using [yellow]JavaScript[/] as Build Scripts", "1.0.0");
+		var app = new CLI.App("Manila", "A extensible Build System written in [green4]C#[/] using [yellow]JavaScript[/] as Build Scripts", "1.0.0");
 
 		var workspace = new Data.Workspace();
-		FileUtils.init(rootDir, workspace.data.name != null);
+		FileUtils.init(null, workspace.data.name != null);
 
-		Logger.debug("Root Dir:", rootDir.getPath());
-		if (rootDir.join(".manila").exists() && workspace.data.name != null) {
-			PluginManager.init();
+		ScriptManager.init(workspace);
+		PluginManager.init();
 
-			try {
-				PluginManager.loadPlugins(app);
-			} catch (ConfigNotFoundException e) {
-				Logger.infoMarkup($"[red]Config called[/] [yellow]{e.name}[/] [red]was not found![/]");
-				Logger.exception(e);
+		try {
+			PluginManager.loadPlugins(app);
+		} catch (ConfigNotFoundException e) {
+			Logger.infoMarkup($"[red]Config called[/] [yellow]{e.name}[/] [red]was not found![/]");
+			Logger.exception(e);
 
-				return -1;
-			}
-
-			// Run script manager
-			if (ScriptManager.buildConfig == null) ScriptManager.buildConfig = new BuildConfig();
-			ScriptManager.init(workspace);
-			try {
-				ScriptManager.runWorkspaceFile();
-			} catch (FileNotFoundException e) {
-				Logger.infoMarkup($"[red]{e.Message}[/]");
-				Logger.exception(e);
-
-				return -1;
-			} catch (PropertyNotFoundException e) {
-				Logger.infoMarkup($"[red]Project[/] [blue]{e.project.id}[/] [red]does not contain property[/] [blue]{e.property}[/][red]![/]");
-				Logger.exception(e);
-
-				return -1;
-			} catch (NoScriptEnvException e) {
-				Logger.infoMarkup("[red]Could not find[/] [yellow]Manila.js[/] [red]build script![/]");
-				Logger.infoMarkup("Directory does not seem to be a [blue]script environment[/]!");
-				Logger.exception(e);
-
-				return -1;
-			} catch (Exception e) {
-				Logger.infoMarkup($"[red]An unknown exception occured![/] [yellow]{e.Message}[/]");
-				Logger.exception(e);
-
-				return -1;
-			}
-
-			if (args.Length > 0) {
-				if (args[0].StartsWith(":")) {
-					await ScriptUtils.executeTask(ScriptManager.getTask(args[0]));
-				} else if (args[0].StartsWith("/")) {
-					try {
-						foreach (var t in ScriptManager.getTasks(args[0][1..])) await ScriptUtils.executeTask(ScriptManager.getTask(t.name));
-					} catch (ArgumentException e) {
-						Logger.infoMarkup($"[red]Tag {args[0]} contains no tasks![/]");
-						Logger.exception(e);
-					}
-				}
-			}
+			return -1;
 		}
 
 		try {
@@ -95,6 +52,7 @@ class Launcher {
 				.addCommand(new CommandTasks())
 				.addCommand(new CommandPlugins())
 				.addCommand(new CommandProjects())
+				.addCommand(new CommandGenerate())
 				.parse(args);
 		} catch (ParameterNotProivdedException e) {
 			Console.WriteLine("Missing Parameter '" + e.parameter.name + "' on Command '" + e.command.name + "'!");
@@ -109,10 +67,6 @@ class Launcher {
 			Logger.infoMarkup($"[red]An unknown exception occured![/] [yellow]{e.Message}[/]");
 			Logger.exception(e);
 		}
-
-		PluginManager.shutdown();
-		ScriptManager.shutdown();
-		TaskSummary.printResults();
 
 		return 0;
 	}

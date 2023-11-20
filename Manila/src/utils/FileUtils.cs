@@ -36,7 +36,9 @@ public static class FileUtils {
 	/// Initilizes the File Utilites
 	/// </summary>
 	/// <param name="rootDir">the working directory</param>
-	public static void init(ManilaDirectory rootDir, bool create) {
+	public static void init(ManilaDirectory? rootDir, bool create) {
+		if (rootDir == null) rootDir = Scripting.API.Manila.dir(Directory.GetCurrentDirectory());
+
 		workspaceFile = rootDir.file("workspace.manila");
 
 		manilaDirectory = rootDir.join(".manila");

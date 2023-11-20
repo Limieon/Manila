@@ -92,10 +92,10 @@ public static class ScriptManager {
 			workspace.namedDirectories.Add(e.Key, new ManilaDirectory(e.Value));
 		}
 
-		Console.WriteLine("Config: " + buildConfig.config);
+		/*Console.WriteLine("Config: " + buildConfig.config);
 		if (!workspace.configurations.Contains(buildConfig.config)) {
 			throw new Exception($"Unknown configuration '{buildConfig.config}'!");
-		}
+		}*/
 
 		foreach (var e in workspace.namedDirectories) {
 			Logger.info(e.Key + ": " + e.Value.getPath());

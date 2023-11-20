@@ -1,23 +1,17 @@
 
+using Manila.CLI;
 using Manila.Core;
-using Manila.Scripting.API;
-using Manila.Utils;
-using Spectre.Console;
+using Manila.Scripting;
 
 namespace Manila.Commands;
 
-internal class CommandBuild : CLI.Command {
-	public CommandBuild() : base("build", "Build a Manila project") {
+internal class CommandBuild : Command {
+	public CommandBuild() : base("build", "Build projects using buildfiles") {
 	}
 
-	public override async void onExecute(Dictionary<string, object> p, Dictionary<string, object> o) {
-		foreach (var t in ScriptManager.getTasks("manila/build")) {
-			try {
-				await ScriptUtils.executeTask(t);
-			} catch (Exception e) {
-				Logger.infoMarkup($"[red]{e.Message}[/]");
-				Logger.exception(e);
-			}
-		}
+
+	public override void onExecute(Dictionary<string, object> p, Dictionary<string, object> o, App app) {
+		ScriptManager.runWorkspaceFile();
+		WorkspaceUtils.launchBuildConfigurators((string) o["toolset"]);
 	}
 }

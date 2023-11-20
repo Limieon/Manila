@@ -1,8 +1,8 @@
 {
-  "profiles": {
-    "Manila": {
-      "commandName": "Project",
-      "commandLineArgs": "run --verbose"
-    }
-  }
+	"profiles": {
+		"Manila": {
+			"commandName": "Project",
+			"commandLineArgs": ""
+		}
+	}
 }

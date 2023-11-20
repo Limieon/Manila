@@ -90,6 +90,8 @@ public static class TaskSummary {
 	}
 
 	internal static void printResults() {
+		if (data.Count < 1) return;
+
 		var t = getResultTable();
 		t.Border(TableBorder.Rounded);
 		AnsiConsole.Write(t);
