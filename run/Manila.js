@@ -1,5 +1,6 @@
 properties({
-	name: 'TestWorkspace'
+	name: 'TestWorkspace',
+	toolset: 'msvc' // Can be set using arguments later
 })
 
 Manila.project(regex('.*'), () => {
@@ -43,8 +44,4 @@ Manila.project(':tests:core', () => {
 	})
 
 	dependencies([project(':core')])
-})
-
-Manila.on('manila/finalize', () => {
-	MSBuild.generate(Manila.getWorkspace(), Manila.getConfig())
 })

@@ -7,7 +7,7 @@ namespace Manila.Utils;
 /// <summary>
 /// A simple logger to hide verbose / debug messages
 /// </summary>
-public static class Logger {
+internal static class Logger {
 	private static bool verbose = false;
 
 	/// <summary>

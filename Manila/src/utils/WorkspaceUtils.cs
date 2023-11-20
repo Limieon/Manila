@@ -1,7 +1,6 @@
 
-using Manila.Core;
 using Manila.Plugin.API;
-using Manila.Scripting.API;
+using Manila.Utils;
 
 namespace Manila.Scripting;
 
@@ -12,6 +11,7 @@ public static class WorkspaceUtils {
 			if (!configurators.Contains(prj.configurator)) configurators.Add(prj.configurator);
 		}
 
+		Logger.debug($"Generating using {configurators.Count} configurator(s)...");
 		foreach (var cfg in configurators) {
 			cfg.generate(API.Manila.getWorkspace(), toolset == null ? API.Manila.getWorkspace().getProperty("toolset") : toolset);
 		}
@@ -23,6 +23,7 @@ public static class WorkspaceUtils {
 			if (!configurators.Contains(prj.configurator)) configurators.Add(prj.configurator);
 		}
 
+		Logger.debug($"Building using {configurators.Count} configurator(s)...");
 		foreach (var cfg in configurators) {
 			cfg.build(API.Manila.getWorkspace(), toolset == null ? API.Manila.getWorkspace().getProperty("toolset") : toolset);
 		}
